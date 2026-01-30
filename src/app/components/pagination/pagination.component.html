@@ -1,0 +1,73 @@
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-3" *ngIf="totalRecords > 0">
+  <!-- Records Info -->
+  <div class="text-muted fs-6">
+    <span class="fw-medium">Showing</span> <span class="fw-medium ms-1 me-1">{{ startRecord }}</span> 
+    <span class="fw-medium">to</span> <span class="fw-medium ms-1 me-1">{{ endRecord }}</span> 
+    <span class="fw-medium">of</span> <span class="fw-medium ms-1 me-1">{{ totalRecords }}</span> 
+    <span class="fw-medium">entries</span>
+  </div>
+  
+  <!-- Pagination Controls -->
+  <nav aria-label="Page navigation">
+    <ul class="pagination pagination-sm mb-0 shadow-sm">
+      <!-- First Button -->
+      <li class="page-item" [class.disabled]="!canGoFirst">
+        <button class="page-link rounded-start" (click)="onFirst()" [disabled]="!canGoFirst" aria-label="First" 
+                title="First Page">
+          <span style="font-size: 0.75rem;">⏮</span>
+        </button>
+      </li>
+
+      <!-- Previous Button -->
+      <li class="page-item" [class.disabled]="!canGoPrevious">
+        <button class="page-link" (click)="onPrevious()" [disabled]="!canGoPrevious" aria-label="Previous"
+                title="Previous Page">
+          <span style="font-size: 0.75rem;">◀</span>
+        </button>
+      </li>
+
+      <!-- Page Numbers with Ellipsis -->
+      <ng-container *ngFor="let page of pages; let i = index">
+        <!-- Show ellipsis before page if there's a gap -->
+        <li class="page-item disabled" *ngIf="i > 0 && page - pages[i-1] > 1">
+          <span class="page-link">...</span>
+        </li>
+        
+        <!-- Page number -->
+        <li class="page-item" [class.active]="page === currentPage">
+          <button class="page-link" (click)="onPageChange(page)" [attr.aria-current]="page === currentPage ? 'page' : null">
+            {{ page }}
+          </button>
+        </li>
+      </ng-container>
+
+      <!-- Next Button -->
+      <li class="page-item" [class.disabled]="!canGoNext">
+        <button class="page-link" (click)="onNext()" [disabled]="!canGoNext" aria-label="Next"
+                title="Next Page">
+          <span style="font-size: 0.75rem;">▶</span>
+        </button>
+      </li>
+
+      <!-- Last Button -->
+      <li class="page-item" [class.disabled]="!canGoLast">
+        <button class="page-link rounded-end" (click)="onLast()" [disabled]="!canGoLast" aria-label="Last"
+                title="Last Page">
+          <span style="font-size: 0.75rem;">⏭</span>
+        </button>
+      </li>
+    </ul>
+  </nav>
+</div>
+
+<!-- Empty State -->
+<div class="text-center text-muted py-5" *ngIf="totalRecords === 0">
+  <div class="mb-3">
+    <span style="font-size: 3rem; opacity: 0.5;">📭</span>
+  </div>
+  <p class="mb-0 fs-5">
+    <span style="margin-right: 0.5rem;">🔍</span>
+    No records found
+  </p>
+  <small class="text-muted">Try adjusting your search or filters</small>
+</div>

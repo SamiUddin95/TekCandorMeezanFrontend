@@ -1,0 +1,303 @@
+//
+// _custom-theme.scss
+// Custom theme styles to match mobile UI design
+//
+
+// Primary button with theme colors
+.btn-primary {
+    background: linear-gradient(135deg, rgb(112, 30, 125) 0%, rgb(140, 60, 155) 100%);
+    border: none;
+    color: #ffffff !important;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0.3px;
+    box-shadow: 0 4px 12px rgba(112, 30, 125, 0.3);
+    
+    &:hover {
+        background: linear-gradient(135deg, #adb5bd 0%, #6c757d 100%);
+        color: #000000 !important;
+        box-shadow: 0 6px 16px rgba(173, 181, 189, 0.4);
+        transform: translateY(-1px);
+    }
+    
+    &:active,
+    &:focus {
+        background: linear-gradient(135deg, rgb(140, 60, 155) 0%, rgb(112, 30, 125) 100%);
+        color: #ffffff !important;
+    }
+}
+
+// Secondary button with theme colors
+.btn-secondary {
+    background: linear-gradient(135deg, #adb5bd 0%, #6c757d 100%);
+    border: none;
+    color: #000000 !important;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0.3px;
+    box-shadow: 0 4px 12px rgba(173, 181, 189, 0.3);
+    
+    &:hover {
+        background: linear-gradient(135deg, rgb(112, 30, 125) 0%, rgb(140, 60, 155) 100%);
+        color: #ffffff !important;
+        box-shadow: 0 6px 16px rgba(112, 30, 125, 0.4);
+        transform: translateY(-1px);
+    }
+    
+    &:active,
+    &:focus {
+        background: linear-gradient(135deg, #6c757d 0%, #adb5bd 100%);
+        color: #000000 !important;
+    }
+}
+
+// Outline buttons
+.btn-outline-primary {
+    border: 2px solid rgb(112, 30, 125);
+    color: rgb(112, 30, 125);
+    background: transparent;
+    
+    &:hover {
+        background: rgb(112, 30, 125);
+        color: #ffffff !important;
+        border-color: rgb(112, 30, 125);
+    }
+}
+
+.btn-outline-secondary {
+    border: 2px solid rgb(187, 185, 185);
+    color: rgb(187, 185, 185);
+    background: transparent;
+    
+    &:hover {
+        background: rgb(187, 185, 185);
+        color: #000000 !important;
+        border-color: rgb(187, 185, 185);
+    }
+}
+
+// Form controls with rounded corners
+.form-control,
+.form-select {
+    border-radius: 1rem;
+    border: 1px solid #e0e4e8;
+    padding: 0.75rem 1.25rem;
+    background-color: #fafafa;
+    transition: all 0.3s ease;
+    
+    &:focus {
+        border-color: rgb(112, 30, 125);
+        box-shadow: 0 0 0 0.2rem rgba(112, 30, 125, 0.15);
+        background-color: #ffffff;
+    }
+    
+    &::placeholder {
+        color: rgb(187, 185, 185);
+    }
+}
+
+// Cards with better styling
+.card {
+    border-radius: 1.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+    
+    .card-header {
+        border-radius: 1.5rem 1.5rem 0 0;
+        background-color: rgba(255, 255, 255, 0.8);
+    }
+}
+
+// Auth page gradient background
+.auth-gradient-bg {
+    background: linear-gradient(180deg, rgb(112, 30, 125) 0%, rgb(140, 60, 155) 40%, rgb(187, 185, 185) 70%, rgb(160, 158, 158) 100%);
+    position: relative;
+    
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 20% 30%, rgba(112, 30, 125, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 70%, rgba(187, 185, 185, 0.2) 0%, transparent 50%);
+        pointer-events: none;
+    }
+}
+
+// Auth gradient side panel (for login/signup pages)
+.auth-gradient-side {
+    background: linear-gradient(180deg, rgb(112, 30, 125) 0%, rgb(140, 60, 155) 40%, rgb(187, 185, 185) 70%, rgb(160, 158, 158) 100%);
+    position: relative;
+    
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 30% 20%, rgba(112, 30, 125, 0.15) 0%, transparent 60%),
+            radial-gradient(circle at 70% 80%, rgba(187, 185, 185, 0.3) 0%, transparent 60%);
+        pointer-events: none;
+    }
+}
+
+// Women in Networks Logo styling
+.women-in-networks-logo {
+    h1 {
+        line-height: 1.2;
+        font-family: 'Open Sans', sans-serif;
+        font-weight: 700;
+        
+        span {
+            display: inline-block;
+        }
+    }
+    
+    .sun-circle-logo {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        
+        svg {
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+    }
+}
+
+// Auth gradient side text styling
+.auth-gradient-side {
+    h2 {
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+    
+    .sun-circle-logo-white {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        
+        svg {
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+    }
+}
+
+// Dark mode adjustments
+html[data-bs-theme="dark"] {
+    .btn-primary {
+        background: linear-gradient(135deg, rgb(140, 60, 155) 0%, rgb(112, 30, 125) 100%);
+        color: #ffffff !important;
+        
+        &:hover {
+            background: linear-gradient(135deg, #adb5bd 0%, #6c757d 100%);
+            color: #000000 !important;
+        }
+    }
+    
+    .btn-secondary {
+        background: linear-gradient(135deg, #6c757d 0%, #adb5bd 100%);
+        color: #000000 !important;
+        
+        &:hover {
+            background: linear-gradient(135deg, rgb(112, 30, 125) 0%, rgb(140, 60, 155) 100%);
+            color: #ffffff !important;
+        }
+    }
+    
+    .form-control,
+    .form-select {
+        background-color: #1b263b;
+        border-color: #2d3e50;
+        color: #e0e6ed;
+        
+        &:focus {
+            background-color: #1b263b;
+            border-color: rgb(140, 60, 155);
+            color: #e0e6ed;
+        }
+        
+        &::placeholder {
+            color: rgb(160, 158, 158);
+        }
+    }
+    
+    .card {
+        background-color: #1b263b;
+        border-color: #2d3e50;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    .auth-gradient-bg {
+        background: linear-gradient(180deg, #0d1b2a 0%, #1b263b 40%, #2d3e50 70%, #415a77 100%);
+    }
+    
+    .auth-gradient-side {
+        background: linear-gradient(180deg, #0d1b2a 0%, #1b263b 40%, #2d3e50 70%, #415a77 100%);
+    }
+    
+    .women-in-networks-logo {
+        h1 {
+            color: #e0e6ed !important;
+        }
+        
+        .sun-circle-logo {
+            svg {
+                circle:first-child {
+                    fill: #1b263b;
+                    stroke: rgb(140, 60, 155);
+                }
+                
+                line {
+                    stroke: rgb(140, 60, 155);
+                }
+            }
+        }
+    }
+}
+
+// Social login buttons
+.btn-social {
+    border-radius: 1rem;
+    padding: 0.75rem 1.25rem;
+    border: 1px solid #e0e4e8;
+    background: #ffffff;
+    color: #2c3e50;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    
+    &:hover {
+        background: #f8f9fa;
+        border-color: rgb(112, 30, 125);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+    
+    svg, img {
+        margin-right: 0.75rem;
+    }
+}
+
+// Link styling
+a {
+    color: rgb(112, 30, 125);
+    text-decoration: none;
+    transition: color 0.3s ease;
+    
+    &:hover {
+        color: rgb(187, 185, 185);
+    }
+}
+
+html[data-bs-theme="dark"] {
+    a {
+        color: rgb(140, 60, 155);
+        
+        &:hover {
+            color: rgb(187, 185, 185);
+        }
+    }
+}

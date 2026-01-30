@@ -1,0 +1,126 @@
+/* User Profile Component Styles */
+
+.user-info-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 12px;
+  // border-radius: 1rem;
+  // background: linear-gradient(135deg, rgba(112, 30, 125, 0.1) 0%, rgba(112, 30, 125, 0.05) 100%);
+  // border: 1px solid rgba(112, 30, 125, 0.2);
+  transition: all 0.3s ease;
+  min-height: 33px;
+
+  &:hover {
+    background: linear-gradient(135deg, rgba(112, 30, 125, 0.15) 0%, rgba(112, 30, 125, 0.1) 100%);
+    border-color: rgba(112, 30, 125, 0.3);
+    transform: translateY(-1px);
+  }
+}
+
+.user-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, rgb(112, 30, 125) 0%, rgb(140, 60, 155) 100%);
+  box-shadow: 0 2px 4px rgba(112, 30, 125, 0.2);
+
+  span {
+    color: white;
+    font-weight: 600;
+    font-size: 12px;
+  }
+}
+
+.user-details {
+  h5 {
+    margin: 0;
+    margin-top: 5px !important ;
+    color: rgb(112, 30, 125);
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1.0;
+  }
+
+  small {
+    color: rgb(139, 139, 139);
+    font-size: 12px;
+    line-height: 1;
+  }
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, rgb(112, 30, 125) 0%, rgb(140, 60, 155) 100%);
+  border: none;
+  color: white;
+  font-weight: 500;
+  font-size: 13px;
+  box-shadow: 0 2px 8px rgba(112, 30, 125, 0.3);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  min-height: 36px;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(112, 30, 125, 0.4);
+    background: linear-gradient(135deg, rgb(140, 60, 155) 0%, rgb(112, 30, 125) 100%);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(112, 30, 125, 0.3);
+  }
+
+  ng-icon {
+    transition: transform 0.2s ease;
+  }
+
+  &:hover ng-icon {
+    transform: translateX(2px);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .user-info-card {
+    padding: 6px 10px;
+    gap: 6px;
+  }
+
+  .user-avatar {
+    width: 28px;
+    height: 28px;
+
+    span {
+      font-size: 12px;
+    }
+  }
+
+  .user-details {
+    h5 {
+      font-size: 11px;
+    }
+
+    small {
+      font-size: 9px;
+    }
+  }
+
+  .logout-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+    gap: 6px;
+
+    ng-icon {
+      font-size: 14px;
+    }
+  }
+}

@@ -1,0 +1,18 @@
+<header class="app-topbar">
+    <div class="container-fluid topbar-menu">
+        <div class="d-flex align-items-center gap-2">
+            <!-- Sidebar Menu Toggle Button -->
+            <button (click)="toggleSidebar()" class="sidenav-toggle-button btn btn-primary btn-icon">
+                <ng-icon name="tablerMenu4" class="fs-22"/>
+            </button>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+            <app-theme-toggler/>
+
+            <!-- User Dropdown -->  
+            <app-user-profile-topbar/>
+
+        </div>
+    </div>
+</header>

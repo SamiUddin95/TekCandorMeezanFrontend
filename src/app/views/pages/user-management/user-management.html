@@ -1,0 +1,255 @@
+<div class="row mt-2">
+    <div class="col-lg-12">
+
+
+        <!-- User Management Table -->
+        <div class="card">
+            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">User Management</h5>
+                <button class="btn btn-primary btn-sm" (click)="onAddNew()">ADD NEW</button>
+            </div>
+
+        <!-- Statistics Cards -->
+        <div class="row p-2 mb-lg-n1">
+            <div class="col-xl-3 col-lg-6">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <h3 class="mb-0 text-white fw-bold">{{ totalUsers }}</h3>
+                                <p class="mb-0 text-white-50 fw-semibold">Total Users</p>
+                            </div>
+                            <div class="avatar-sm bg-white bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="fas fa-users fa-lg text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-6">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <h3 class="mb-0 text-white fw-bold">{{ verifiedUsers }}</h3>
+                                <p class="mb-0 text-white-50 fw-semibold">Verified Users</p>
+                            </div>
+                            <div class="avatar-sm bg-white bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="fas fa-check-circle fa-lg text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-6">
+                <div class="card bg-warning text-white">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <h3 class="mb-0 text-white fw-bold">{{ activeUsers }}</h3>
+                                <p class="mb-0 text-white-50 fw-semibold">Active Users</p>
+                            </div>
+                            <div class="avatar-sm bg-white bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="fas fa-toggle-on fa-lg text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-6">
+                <div class="card bg-danger text-white">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <h3 class="mb-0 text-white fw-bold">{{ totalReports }}</h3>
+                                <p class="mb-0 text-white-50 fw-semibold">New Today</p>
+                            </div>
+                            <div class="avatar-sm bg-white bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="fas fa-exclamation-triangle fa-lg text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+            <div class="card-body mt-lg-n4">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped table-sm">
+                        <thead class="bg-light">
+                            <tr>
+                                <th style="width: 8%;">User ID</th>
+                                <th style="width: 12%;">Avatar</th>
+                                <th style="width: 15%;">User Name</th>
+                                <th style="width: 20%;">Email</th>
+                                <th style="width: 8%;">Type</th>
+                                <th style="width: 8%;">Status</th>
+                                <th style="width: 8%;">Verified</th>
+                                <th style="width: 10%;">Joined On</th>
+                                <th style="width: 10%;">Last Active</th>
+                                <th style="width: 8%;">Report</th>
+                                <th style="width: 8%;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-group-divider">
+                            <tr *ngFor="let user of paginatedUsers; let i = index">
+                                <td style="width: 8%;">{{ user.id }}</td>
+                                <td style="width: 12%;">
+                                    <img [src]="user.avatar" class="rounded-circle" alt="User Avatar" style="width: 35px; height: 35px; object-fit: cover; cursor: pointer;" (click)="showImagePreview(user.avatar)">
+                                </td>
+                                <td style="width: 15%;">{{ user.name }}</td>
+                                <td style="width: 20%;">{{ user.email }}</td>
+                                <td style="width: 8%;">
+                                    <span class="badge text-bg-primary" style="font-size: small;">{{ user.role }}</span>
+                                </td>
+                                <td style="width: 8%;">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" [(ngModel)]="user.status" (change)="onStatusChange(user)">
+                                    </div>
+                                </td>
+                                <td style="width: 8%;">
+                                    <span class="badge" [class]="user.verified ? 'text-bg-success' : 'text-bg-secondary'">{{ user.verified ? '✓' : '✗' }}</span>
+                                </td>
+                                <td style="width: 10%;">{{ user.joinedOn }}</td>
+                                <td style="width: 10%;">{{ user.lastActive }}</td>
+                                <td style="width: 8%;">
+                                    <span class="badge text-bg-warning d-flex justify-content-center align-items-center" style="width: 20px; font-size: small;">{{ user.reports }}</span>
+                                </td>
+                                <td style="width: 8%;">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <button class="btn btn-outline-primary btn-sm" (click)="onEdit(user)">EDIT</button>
+                                        <button class="btn btn-outline-danger btn-sm" (click)="onDelete(user, i)">DEL</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination Component -->
+                <div class="mt-3">
+                    <app-pagination 
+                        [currentPage]="currentPage"
+                        [pageSize]="pageSize"
+                        [totalRecords]="totalRecords"
+                        (pageChange)="onPageChange($event)">
+                    </app-pagination>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Image Preview Modal -->
+<div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-labelledby="imagePreviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title" id="imagePreviewModalLabel">User Avatar Preview</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body bg-light text-center">
+                <img [src]="previewImage" class="img-fluid rounded" alt="Full Size Avatar Preview" style="max-height: 500px;">
+            </div>
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit User Modal -->
+<div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content rounded-4">
+            <div class="modal-header bg-light rounded-top-4">
+                <h5 class="modal-title" id="userModalLabel">{{ isEditMode ? 'Edit User' : 'Add New User' }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body bg-light">
+                <form>
+                    <!-- Avatar Upload - Full Width First -->
+                    <div class="row mb-4">
+                        <div class="col-6 mt-3">
+                            <div class="text-center">
+                                <img [src]="selectedUser.avatar" class="rounded-circle mb-3" alt="Current Avatar" style="width: 100px; height: 100px; object-fit: cover; cursor: pointer;" (click)="showImagePreview(selectedUser.avatar)">
+                                <div>
+                                    <input type="file" class="form-control form-control-sm d-none" id="avatarUpload" accept="image/*" (change)="onAvatarUpload($event)">
+                                    <button type="button" class="btn btn-primary" (click)="triggerAvatarUpload()">
+                                        <i class="fas fa-upload me-2"></i>Upload Avatar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mt-3">
+                            <label for="userName" class="form-label">User Name</label>
+                            <input type="text" class="form-control rounded-3" id="userName" placeholder="Enter user name" [(ngModel)]="selectedUser.name" name="userName">
+                            <label for="userEmail" class="form-label mt-2">Email Address</label>
+                            <input type="email" class="form-control rounded-3" id="userEmail" placeholder="Enter email address" [(ngModel)]="selectedUser.email" name="userEmail">
+                        </div>
+
+                    </div>
+
+                    <!-- Two Column Fields -->
+                    <!-- <div class="row">
+                        <div class="col-md-6 mb-3">
+                        </div>
+                    </div> -->
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="userRole" class="form-label">Role</label>
+                            <select class="form-select rounded-3" id="userRole" [(ngModel)]="selectedUser.role" name="userRole">
+                                <option value="admin">Admin</option>
+                                <option value="user">User</option>
+                                <option value="moderator">Moderator</option>
+                            </select>
+                        </div>
+                     <div class="col-md-6 mb-3">
+                            <label for="userReports" class="form-label">Reports</label>
+                            <input type="number" class="form-control rounded-3" id="userReports" placeholder="Number of reports" [(ngModel)]="selectedUser.reports" name="userReports" min="0">
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-2 mt-4">
+                            <!-- <label for="userVerified" class="form-label">Verified</label> -->
+                            <div class="form-check form-switch mt-2">
+                                <input class="form-check-input" type="checkbox" [(ngModel)]="selectedUser.verified" name="userVerified" id="userVerified">
+                                <label class="form-check-label" for="userVerified">
+                                    {{ selectedUser.verified ? 'Verified' : 'Not Verified' }}
+                                </label>
+                            </div>
+                            <!-- <label for="userStatus" class="form-label">Status</label> -->
+                            <div class="form-check form-switch mt-2">
+                                <input class="form-check-input" type="checkbox" [(ngModel)]="selectedUser.status" name="userStatus" id="userStatus">
+                                <label class="form-check-label" for="userStatus">
+                                    {{ selectedUser.status ? 'Active' : 'Inactive' }}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-10 mb-3">
+                            <!-- Admin Notes (Only in Edit Mode) - Full Width -->
+                            @if (isEditMode) {
+                                <div class="row">
+                                    <div class="col-12 mb-3">
+                                        <label for="adminNotes" class="form-label">Admin Notes</label>
+                                        <textarea class="form-control rounded-3" id="adminNotes" rows="3" placeholder="Add admin notes about this user..." [(ngModel)]="selectedUser.adminNotes" name="adminNotes"></textarea>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer bg-light rounded-bottom-4">
+                <button type="button" class="btn btn-secondary rounded-3" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary rounded-3" (click)="onSaveUser()">{{ isEditMode ? 'Update User' : 'Add User' }}</button>
+            </div>
+        </div>
+    </div>
+</div>
