@@ -18,12 +18,12 @@ export class SignInComponent {
 
     constructor(private router: Router, private authService: AuthService) {}
 
-    signIn(email: string, password: string){
-        if (!email || !password) {
+    signIn(loginName: string, password: string){
+        if (!loginName || !password) {
             Swal.fire({
                 icon: 'warning',
                 title: 'Missing Information',
-                text: 'Please enter both email and password.'
+                text: 'Please enter both login name and password.'
             });
             return;
         }
@@ -36,17 +36,16 @@ export class SignInComponent {
             }
         });
 
-        this.authService.login({ email, password }).subscribe({
+        this.authService.login({ loginName, password }).subscribe({
             next: (response) => {
                 Swal.close();
                 
                 // AuthService automatically handles session storage
-                // No need to manually store token and user
                 
                 Swal.fire({
                     icon: 'success',
                     title: 'Successfully logged in',
-                    text: `Welcome, ${response.user.name}!`,
+                    text: `Welcome, ${response.data.name}!`,
                     showConfirmButton: false,
                     timer: 1400
                 }).then(() => this.router.navigate(['/dashboard']));
@@ -54,7 +53,7 @@ export class SignInComponent {
             error: (error) => {
                 Swal.close();
                 
-                const errorMessage = error.error?.message || 'Invalid email or password.';
+                const errorMessage = error.error?.errorMessage || 'Invalid login name or password.';
                 
                 Swal.fire({
                     icon: 'error',

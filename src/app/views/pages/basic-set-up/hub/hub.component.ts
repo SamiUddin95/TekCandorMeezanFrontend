@@ -1,18 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PaginationComponent } from '@app/components/pagination/pagination.component';
 import Swal from 'sweetalert2';
-
-interface HubItem {
-  id: number;
-  code: string;
-  name: string;
-  creditAccountSameDay: string;
-  creditAccountNormal: string;
-  creditAccountIntercity: string;
-  creditAccountDollar: string;
-}
+import { HubService, HubItem, HubListResponse } from '../../../../services/hub.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-hub',
@@ -20,35 +12,58 @@ interface HubItem {
   templateUrl: './hub.component.html',
   styleUrl: './hub.component.scss'
 })
-export class Hub {
+export class Hub implements OnInit {
   searchName = '';
   isEditMode = false;
   currentPage: number = 1;
   pageSize: number = 10;
 
-  hubs: HubItem[] = [
-    { id: 1, code: 'HUB-001', name: 'Central Hub', creditAccountSameDay: 'ACC-SD-001', creditAccountNormal: 'ACC-N-001', creditAccountIntercity: 'ACC-IC-001', creditAccountDollar: 'ACC-D-001' },
-    { id: 2, code: 'HUB-002', name: 'North Hub', creditAccountSameDay: 'ACC-SD-002', creditAccountNormal: 'ACC-N-002', creditAccountIntercity: 'ACC-IC-002', creditAccountDollar: 'ACC-D-002' },
-    { id: 3, code: 'HUB-003', name: 'South Hub', creditAccountSameDay: 'ACC-SD-003', creditAccountNormal: 'ACC-N-003', creditAccountIntercity: 'ACC-IC-003', creditAccountDollar: 'ACC-D-003' },
-    { id: 4, code: 'HUB-004', name: 'East Hub', creditAccountSameDay: 'ACC-SD-004', creditAccountNormal: 'ACC-N-004', creditAccountIntercity: 'ACC-IC-004', creditAccountDollar: 'ACC-D-004' },
-    { id: 5, code: 'HUB-005', name: 'West Hub', creditAccountSameDay: 'ACC-SD-005', creditAccountNormal: 'ACC-N-005', creditAccountIntercity: 'ACC-IC-005', creditAccountDollar: 'ACC-D-005' },
-    { id: 6, code: 'HUB-006', name: 'Airport Hub', creditAccountSameDay: 'ACC-SD-006', creditAccountNormal: 'ACC-N-006', creditAccountIntercity: 'ACC-IC-006', creditAccountDollar: 'ACC-D-006' },
-    { id: 7, code: 'HUB-007', name: 'Industrial Hub', creditAccountSameDay: 'ACC-SD-007', creditAccountNormal: 'ACC-N-007', creditAccountIntercity: 'ACC-IC-007', creditAccountDollar: 'ACC-D-007' },
-    { id: 8, code: 'HUB-008', name: 'Downtown Hub', creditAccountSameDay: 'ACC-SD-008', creditAccountNormal: 'ACC-N-008', creditAccountIntercity: 'ACC-IC-008', creditAccountDollar: 'ACC-D-008' },
-    { id: 9, code: 'HUB-009', name: 'Shopping Hub', creditAccountSameDay: 'ACC-SD-009', creditAccountNormal: 'ACC-N-009', creditAccountIntercity: 'ACC-IC-009', creditAccountDollar: 'ACC-D-009' },
-    { id: 10, code: 'HUB-010', name: 'University Hub', creditAccountSameDay: 'ACC-SD-010', creditAccountNormal: 'ACC-N-010', creditAccountIntercity: 'ACC-IC-010', creditAccountDollar: 'ACC-D-010' },
-    { id: 11, code: 'HUB-011', name: 'Hospital Hub', creditAccountSameDay: 'ACC-SD-011', creditAccountNormal: 'ACC-N-011', creditAccountIntercity: 'ACC-IC-011', creditAccountDollar: 'ACC-D-011' },
-    { id: 12, code: 'HUB-012', name: 'Station Hub', creditAccountSameDay: 'ACC-SD-012', creditAccountNormal: 'ACC-N-012', creditAccountIntercity: 'ACC-IC-012', creditAccountDollar: 'ACC-D-012' },
-  ];
+  hubs: HubItem[] = [];
+  totalRecords: number = 0;
+  totalPages: number = 0;
+  isLoading: boolean = false;
 
   selectedHub: HubItem = this.getEmptyHub();
+  private subscriptions: Subscription[] = [];
 
-  constructor() {
-    // Total records will be updated dynamically based on filtered data
+  constructor(private hubService: HubService) {}
+
+  ngOnInit() {
+    this.loadHubs();
   }
 
-  get totalRecords(): number {
-    return this.filteredHubs.length;
+  ngOnDestroy() {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
+  loadHubs() {
+    this.isLoading = true;
+    const subscription = this.hubService.getHubs(this.currentPage, this.pageSize).subscribe({
+      next: (response: HubListResponse) => {
+        if (response.status === 'success') {
+          this.hubs = response.data.items;
+          this.totalRecords = response.data.totalCount;
+          this.totalPages = response.data.totalPages;
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: response.errorMessage || 'Failed to load hubs'
+          });
+        }
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading hubs:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to load hubs. Please try again.'
+        });
+        this.isLoading = false;
+      }
+    });
+    this.subscriptions.push(subscription);
   }
 
   get filteredHubs(): HubItem[] {
@@ -69,6 +84,7 @@ export class Hub {
   onPageChange(event: { page: number; pageSize: number }) {
     this.currentPage = event.page;
     this.pageSize = event.pageSize;
+    this.loadHubs();
   }
 
   onAddNew() {
@@ -95,30 +111,45 @@ export class Hub {
       cancelButtonText: 'Cancel'
     }).then((result: any) => {
       if (result.isConfirmed) {
-        const actualIndex = this.hubs.findIndex(h => h.id === hub.id);
-        if (actualIndex !== -1) {
-          this.hubs.splice(actualIndex, 1);
-          
-          // Adjust current page if necessary
-          const totalPages = Math.ceil(this.totalRecords / this.pageSize);
-          if (this.currentPage > totalPages && totalPages > 0) {
-            this.currentPage = totalPages;
-          }
-          
-          Swal.fire({
-            title: 'Deleted!',
-            text: `${hub.name} has been deleted successfully.`,
-            icon: 'success',
-            timer: 2000,
-            showConfirmButton: false
-          });
-        }
+        this.deleteHub(hub.id);
       }
     });
   }
 
+  deleteHub(id: number) {
+    const subscription = this.hubService.deleteHub(id).subscribe({
+      next: (response) => {
+        if (response.status === 'success') {
+          Swal.fire({
+            title: 'Deleted!',
+            text: 'Hub has been deleted successfully.',
+            icon: 'success',
+            timer: 2000,
+            showConfirmButton: false
+          });
+          this.loadHubs(); // Reload the list
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: response.errorMessage || 'Failed to delete hub'
+          });
+        }
+      },
+      error: (error) => {
+        console.error('Error deleting hub:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to delete hub. Please try again.'
+        });
+      }
+    });
+    this.subscriptions.push(subscription);
+  }
+
   onSave() {
-    if (!this.selectedHub.code || !this.selectedHub.name || !this.selectedHub.creditAccountSameDay || !this.selectedHub.creditAccountNormal || !this.selectedHub.creditAccountIntercity || !this.selectedHub.creditAccountDollar) {
+    if (!this.selectedHub.code || !this.selectedHub.name || !this.selectedHub.crAccSameDay || !this.selectedHub.crAccNormal || !this.selectedHub.crAccIntercity || !this.selectedHub.crAccDollar) {
       Swal.fire({
         title: 'Error!',
         text: 'Please fill in all required fields',
@@ -128,30 +159,102 @@ export class Hub {
       return;
     }
 
-    if (this.isEditMode) {
-      const idx = this.hubs.findIndex((h) => h.id === this.selectedHub.id);
-      if (idx !== -1) this.hubs[idx] = { ...this.selectedHub };
-    } else {
-      const newId = this.hubs.length ? Math.max(...this.hubs.map((h) => h.id)) + 1 : 1;
-      this.hubs.push({ ...this.selectedHub, id: newId });
-      
-      // Go to last page to show the new item
-      const totalPages = Math.ceil(this.totalRecords / this.pageSize);
-      this.currentPage = totalPages;
-    }
+    const hubData = {
+      code: this.selectedHub.code,
+      name: this.selectedHub.name,
+      crAccSameDay: this.selectedHub.crAccSameDay,
+      crAccNormal: this.selectedHub.crAccNormal,
+      crAccIntercity: this.selectedHub.crAccIntercity,
+      crAccDollar: this.selectedHub.crAccDollar
+    };
 
-    this.closeModal();
+    if (this.isEditMode) {
+      this.updateHub(this.selectedHub.id, hubData);
+    } else {
+      this.createHub(hubData);
+    }
+  }
+
+  createHub(hubData: any) {
+    const subscription = this.hubService.createHub(hubData).subscribe({
+      next: (response) => {
+        if (response.status === 'success') {
+          Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: 'Hub created successfully!',
+            timer: 2000,
+            showConfirmButton: false
+          });
+          this.closeModal();
+          this.loadHubs(); // Reload the list
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: response.errorMessage || 'Failed to create hub'
+          });
+        }
+      },
+      error: (error) => {
+        console.error('Error creating hub:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to create hub. Please try again.'
+        });
+      }
+    });
+    this.subscriptions.push(subscription);
+  }
+
+  updateHub(id: number, hubData: any) {
+    const subscription = this.hubService.updateHub(id, hubData).subscribe({
+      next: (response) => {
+        if (response.status === 'success') {
+          Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: 'Hub updated successfully!',
+            timer: 2000,
+            showConfirmButton: false
+          });
+          this.closeModal();
+          this.loadHubs(); // Reload the list
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: response.errorMessage || 'Failed to update hub'
+          });
+        }
+      },
+      error: (error) => {
+        console.error('Error updating hub:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to update hub. Please try again.'
+        });
+      }
+    });
+    this.subscriptions.push(subscription);
   }
 
   private getEmptyHub(): HubItem {
     return { 
       id: 0, 
+      isDeleted: false,
       code: '', 
       name: '', 
-      creditAccountSameDay: '', 
-      creditAccountNormal: '', 
-      creditAccountIntercity: '', 
-      creditAccountDollar: '' 
+      createdBy: '', 
+      updatedBy: '', 
+      createdOn: '', 
+      updatedOn: '', 
+      crAccSameDay: '', 
+      crAccNormal: '', 
+      crAccIntercity: '', 
+      crAccDollar: '' 
     };
   }
 

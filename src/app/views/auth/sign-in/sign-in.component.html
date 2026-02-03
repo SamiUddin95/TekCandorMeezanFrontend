@@ -16,8 +16,6 @@
                             </div>
                         </div>
 
-                      
-                      
                         <div class="col-lg-6 auth-right-panel">
                             <div class="card-body">
                                 <div class="auth-brand text-center mb-4">
@@ -28,18 +26,18 @@
                                         </h1>
                                     </div>
                                     <h4 class="fw-bold mt-4 auth-welcome">Welcome Back </h4>
-                                    <p class="w-lg-75 mx-auto">Let's get you signed in. Enter your email and
+                                    <p class="w-lg-75 mx-auto">Let's get you signed in. Enter your login name and
                                         password to continue.</p>
                                 </div>
  
                                 <form>
                                     <div class="mb-3">
-                                        <label for="userEmail" class="form-label auth-label">Email address <span
+                                        <label for="userLoginName" class="form-label auth-label">Login Name <span
                                                 class="text-danger">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-light"><ng-icon name="tablerMail"/></span>
-                                            <input #userEmail type="email" class="form-control" id="userEmail"
-                                                placeholder="you@example.com" required>
+                                            <input #userLoginName type="text" class="form-control" id="userLoginName"
+                                                placeholder="Enter your login name" required>
                                         </div>
                                     </div>
 
@@ -64,7 +62,7 @@
                                     </div>
 
                                     <div class="d-grid">
-                                        <button type="button" class="btn fw-semibold py-2 signin-btn" (click)="signIn(userEmail.value, userPassword.value)">Sign In</button>
+                                        <button type="button" class="btn fw-semibold py-2 signin-btn" (click)="signIn(userLoginName.value, userPassword.value)">Sign In</button>
                                     </div>
                                 </form>
                             </div>

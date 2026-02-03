@@ -39,7 +39,10 @@
                 </td>
               </tr>
               <tr *ngIf="paginatedHubs.length === 0">
-                <td colspan="3" class="text-center text-muted py-3">No records found</td>
+                <td colspan="3" class="text-center text-muted py-3">
+                  <span *ngIf="isLoading">Loading...</span>
+                  <span *ngIf="!isLoading">No records found</span>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -96,7 +99,7 @@
                 id="creditAccountSameDay"
                 type="text"
                 class="form-control rounded-3"
-                [(ngModel)]="selectedHub.creditAccountSameDay"
+                [(ngModel)]="selectedHub.crAccSameDay"
                 name="creditAccountSameDay"
                 placeholder="Enter same day account" />
             </div>
@@ -109,7 +112,7 @@
                 id="creditAccountNormal"
                 type="text"
                 class="form-control rounded-3"
-                [(ngModel)]="selectedHub.creditAccountNormal"
+                [(ngModel)]="selectedHub.crAccNormal"
                 name="creditAccountNormal"
                 placeholder="Enter normal account" />
             </div>
@@ -119,7 +122,7 @@
                 id="creditAccountIntercity"
                 type="text"
                 class="form-control rounded-3"
-                [(ngModel)]="selectedHub.creditAccountIntercity"
+                [(ngModel)]="selectedHub.crAccIntercity"
                 name="creditAccountIntercity"
                 placeholder="Enter intercity account" />
             </div>
@@ -129,7 +132,7 @@
                 id="creditAccountDollar"
                 type="text"
                 class="form-control rounded-3"
-                [(ngModel)]="selectedHub.creditAccountDollar"
+                [(ngModel)]="selectedHub.crAccDollar"
                 name="creditAccountDollar"
                 placeholder="Enter dollar account" />
             </div>
