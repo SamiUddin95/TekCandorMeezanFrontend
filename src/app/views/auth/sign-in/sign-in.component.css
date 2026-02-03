@@ -1,0 +1,122 @@
+/* Sign-in component styles */
+
+.auth-box {
+  min-height: 100vh;
+  background-image: url('/assets/images/background-main.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.auth-card {
+  box-shadow: 0 5px 5px rgba(224, 218, 218, 0.932), 0 0 5px rgba(235, 192, 255, 0.65);
+}
+
+.auth-left-panel {
+  background-image: url('/assets/images/Meezan_Bank_Head_Background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.auth-left-overlay {
+  background-color: rgba(0, 0, 0, 0.479);
+  border-radius: inherit;
+}
+
+.auth-logo-container {
+  position: relative;
+  z-index: 1;
+}
+
+.auth-logo {
+  max-height: 191px;
+  max-width: 88%;
+  object-fit: contain;
+}
+
+.auth-right-panel {
+  background-color: whitesmoke;
+  border-radius: 35px;
+}
+
+.auth-title {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  color: var(--primary-color);
+}
+
+.auth-subtitle {
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  width: 100%;
+  color: var(--secondary-color);
+}
+
+.auth-welcome {
+  color: var(--primary-color);
+}
+
+.auth-label {
+  color: var(--primary-color);
+}
+
+.auth-password-icon {
+  color: var(--secondary-color);
+}
+
+/* Custom input group styles */
+.input-group-text {
+  background-color: #6a1b9a !important;
+  border-color: #6a1b9a !important;
+}
+
+.input-group-text ng-icon {
+  color: white !important;
+}
+
+.form-control {
+  background-color: rgba(106, 27, 154, 0.1) !important;
+  border-color: #6a1b9a !important;
+}
+
+.form-control:focus {
+  background-color: rgba(106, 27, 154, 0.15) !important;
+  border-color: #6a1b9a !important;
+  box-shadow: 0 0 0 0.2rem rgba(106, 27, 154, 0.25) !important;
+}
+
+.signin-btn {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.signin-btn:hover {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+  color: black;
+}
+
+[data-bs-theme="dark"] .signin-btn:hover {
+  color: white;
+}
+
+[data-bs-theme="dark"] .card-body {
+  background-color: var(--bs-gray-800);
+  color: var(--bs-gray-100);
+}
+
+[data-bs-theme="dark"] .form-control {
+  background-color: var(--bs-gray-700);
+  border-color: var(--bs-gray-600);
+  color: var(--bs-gray-100);
+}
+
+[data-bs-theme="dark"] .input-group-text {
+  background-color: var(--bs-gray-700);
+  border-color: var(--bs-gray-600);
+}

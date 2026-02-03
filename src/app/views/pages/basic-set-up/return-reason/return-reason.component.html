@@ -1,0 +1,139 @@
+<div class="row mt-2">
+  <div class="col-lg-12">
+    <div class="card">
+      <div class="card-header bg-light d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">Return Reason</h5>
+        <button class="btn btn-primary btn-sm" (click)="onAddNew()">ADD</button>
+      </div>
+
+      <div class="card-body">
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <label class="form-label mb-1">Search (Name)</label>
+            <input
+              type="text"
+              class="form-control form-control-sm"
+              placeholder="Search by name..."
+              [(ngModel)]="searchName" />
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-hover table-striped table-sm">
+            <thead class="bg-light">
+              <tr>
+                <th style="width: 15%;">Code</th>
+                <th style="width: 15%;">Return Code</th>
+                <th style="width: 40%;">Name</th>
+                <th style="width: 15%;">Default Call Back</th>
+                <th style="width: 15%;">Action</th>
+              </tr>
+            </thead>
+            <tbody class="table-group-divider">
+              <tr *ngFor="let returnReason of paginatedReturnReasons">
+                <td>{{ returnReason.code }}</td>
+                <td>{{ returnReason.numericReturnCodes }}</td>
+                <td>{{ returnReason.name }}</td>
+                <td>
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" [(ngModel)]="returnReason.defaultCallBack" disabled>
+                  </div>
+                </td>
+                <td>
+                  <div class="btn-group btn-group-sm" role="group">
+                    <button class="btn btn-outline-primary btn-sm" (click)="onEdit(returnReason)">EDIT</button>
+                    <button class="btn btn-outline-danger btn-sm" (click)="onDelete(returnReason)">DEL</button>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="paginatedReturnReasons.length === 0">
+                <td colspan="5" class="text-center text-muted py-3">No records found</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <!-- Pagination Component -->
+        <div class="mt-3">
+          <app-pagination 
+            [currentPage]="currentPage"
+            [pageSize]="pageSize"
+            [totalRecords]="totalRecords"
+            (pageChange)="onPageChange($event)">
+          </app-pagination>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="returnReasonModal" tabindex="-1" aria-labelledby="returnReasonModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content rounded-4">
+      <div class="modal-header bg-light rounded-top-4">
+        <h5 class="modal-title" id="returnReasonModalLabel">{{ isEditMode ? 'Edit Return Reason' : 'Add Return Reason' }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body bg-light">
+        <form>
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label for="returnReasonCode" class="form-label">Code</label>
+              <input
+                id="returnReasonCode"
+                type="text"
+                class="form-control rounded-3"
+                [(ngModel)]="selectedReturnReason.code"
+                name="returnReasonCode"
+                placeholder="Enter code" />
+            </div>
+            <div class="col-md-4 mb-3">
+              <label for="numericReturnCodes" class="form-label">Return Code</label>
+              <input
+                id="numericReturnCodes"
+                type="text"
+                class="form-control rounded-3"
+                [(ngModel)]="selectedReturnReason.numericReturnCodes"
+                name="numericReturnCodes"
+                placeholder="Enter Return Code" />
+            </div>
+            <div class="col-md-4 mb-3">
+              <label for="returnReasonName" class="form-label">Name</label>
+              <input
+                id="returnReasonName"
+                type="text"
+                class="form-control rounded-3"
+                [(ngModel)]="selectedReturnReason.name"
+                name="returnReasonName"
+                placeholder="Enter name" />
+            </div>
+            <div class="col-md-4 mb-3">
+              <label for="returnReasonName" class="form-label">Return Description</label>
+              <input
+                id="returnReasonName"
+                type="text"
+                class="form-control rounded-3"
+                [(ngModel)]="selectedReturnReason.name"
+                name="returnReasonName"
+                placeholder="Enter name" />
+            </div>
+            <div class="col-md-4 mb-3">
+              <label for="defaultCallBack" class="form-label">Default Call Back</label>
+              <div class="form-check form-switch mt-2">
+                <input class="form-check-input" type="checkbox" [(ngModel)]="selectedReturnReason.defaultCallBack" name="defaultCallBack" id="defaultCallBack">
+                <label class="form-check-label" for="defaultCallBack">
+                  {{ selectedReturnReason.defaultCallBack ? 'Yes' : 'No' }}
+                </label>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer bg-light rounded-bottom-4">
+        <button type="button" class="btn btn-secondary rounded-3" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary rounded-3" (click)="onSave()">{{ isEditMode ? 'Update' : 'Add' }}</button>
+      </div>
+    </div>
+  </div>
+</div>

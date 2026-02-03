@@ -1,55 +1,54 @@
-<div class="auth-box d-flex align-items-center position-relative" style="min-height: 100vh;">
-    <!-- Overlay for better text visibility -->
-    <div class="position-absolute w-100 h-100"></div>
+<div class="auth-box d-flex align-items-center">
     
-    <div class="container-xxl position-relative z-1">
+    
+    <div class="container-xxl position-relative">
         <div class="row align-items-center justify-content-center">
             <div class="col-xl-10">
-                <div class="card rounded-4">
+                <div class="card rounded-4 auth-card">
                     <div class="row justify-content-between g-0">
                         <!-- Left side showing background image -->
                         <div class="col-lg-6 d-none d-lg-block">
-                            <div class="h-100 position-relative rounded-start-4" style="background-image: url('assets/images/background-main.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat;">
-                                <div class="h-100 d-flex align-items-center justify-content-center">
-                                    <img src="assets/images/meezan-logo.png" alt="MEEZAN BANK" style="max-height: 120px; max-width: 80%; object-fit: contain;">
+                            <div class="h-100 position-relative rounded-start-4 auth-left-panel">
+                                <div class="position-absolute w-100 h-100 auth-left-overlay"></div>
+                                <div class="h-100 d-flex align-items-center justify-content-center auth-logo-container">
+                                    <img src="assets/images/meezan-logo.png" alt="MEEZAN BANK" class="auth-logo">
                                 </div>
                             </div>
                         </div>
 
                       
                       
-                        <div class="col-lg-6">
+                        <div class="col-lg-6 auth-right-panel">
                             <div class="card-body">
                                 <div class="auth-brand text-center mb-4">
                                     <div class="women-in-networks-logo mb-4">
-                                        <h1 class="fw-bold mb-0" style="font-size: 2rem; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; color: var(--primary-color);">
+                                        <h1 class="fw-bold mb-0 auth-title">
                                             <span>TEK - CANDOR</span>
-                                            <span style="font-size: 1.2rem; letter-spacing: 2px; width: 100%; margin-top: 8px; color: var(--secondary-color);"><u>Cheque clearing</u></span>
+                                            <span class="auth-subtitle"><u>Cheque clearing</u></span>
                                         </h1>
                                     </div>
-                                    <h4 class="fw-bold mt-4" style="color: var(--primary-color);">Welcome Back </h4>
-                                    <p class="w-lg-75 mx-auto" style="color: var(--secondary-color);">Let's get you signed in. Enter your email and
+                                    <h4 class="fw-bold mt-4 auth-welcome">Welcome Back </h4>
+                                    <p class="w-lg-75 mx-auto">Let's get you signed in. Enter your email and
                                         password to continue.</p>
                                 </div>
  
                                 <form>
                                     <div class="mb-3">
-                                        <label for="userEmail" class="form-label" style="color: var(--primary-color);">Email address <span
+                                        <label for="userEmail" class="form-label auth-label">Email address <span
                                                 class="text-danger">*</span></label>
                                         <div class="input-group">
-                                            <span class="input-group-text bg-light"><ng-icon name="tablerMail"
-                                                    style="color: var(--secondary-color);" /></span>
+                                            <span class="input-group-text bg-light"><ng-icon name="tablerMail"/></span>
                                             <input #userEmail type="email" class="form-control" id="userEmail"
                                                 placeholder="you@example.com" required>
                                         </div>
                                     </div>
 
                                     <div class="mb-3">
-                                        <label for="userPassword" class="form-label" style="color: var(--primary-color);">Password <span
+                                        <label for="userPassword" class="form-label auth-label">Password <span
                                                 class="text-danger">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-light"><ng-icon
-                                                    name="tablerLockPassword" style="color: var(--secondary-color);" /></span>
+                                                    name="tablerLockPassword" class="auth-password-icon" /></span>
                                             <input #userPassword type="password" class="form-control" id="userPassword"
                                                 placeholder="••••••••" required>
                                         </div>
@@ -57,27 +56,17 @@
 
                                     <div class="d-flex justify-content-between align-items-center mb-3">
                                         <div class="form-check">
-                                            <input class="form-check-input form-check-input-light fs-14" type="checkbox"
+                                            <input class="form-check-input form-check-input-light fs-14 " type="checkbox"
                                                 id="rememberMe">
-                                            <label class="form-check-label" for="rememberMe" style="color: var(--secondary-color);">Keep me signed in</label>
+                                            <label class="form-check-label" for="rememberMe" style="color: black;">Keep me signed in</label>
                                         </div>
-                                        <a routerLink="/auth-2/reset-pw"
-                                            class="text-decoration-underline link-offset-3" style="color: var(--secondary-color);">Forgot
-                                            Password?</a>
+                                         
                                     </div>
 
                                     <div class="d-grid">
                                         <button type="button" class="btn fw-semibold py-2 signin-btn" (click)="signIn(userEmail.value, userPassword.value)">Sign In</button>
                                     </div>
                                 </form>
-
-                                <!-- <p class="text-muted text-center mt-4 mb-0">
-                                    New here? <a routerLink="sign-up"
-                                        class="text-decoration-underline link-offset-3 fw-semibold">Create an
-                                        account</a>
-                                </p> -->
-
-                                 
                             </div>
                         </div>
                     </div>

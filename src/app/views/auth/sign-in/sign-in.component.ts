@@ -10,35 +10,7 @@ import { AuthService } from '@/app/services/auth.service';
     host: { 'data-component-id': 'auth2-sign-in' },
     imports: [RouterLink,NgIcon],
     templateUrl: './sign-in.component.html',
-    styles: [`
-        .signin-btn {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-            color: white;
-            transition: all 0.3s ease;
-        }
-        .signin-btn:hover {
-            background-color: var(--secondary-color);
-            border-color: var(--secondary-color);
-            color: black;
-        }
-        [data-bs-theme="dark"] .signin-btn:hover {
-            color: white;
-        }
-        [data-bs-theme="dark"] .card-body {
-            background-color: var(--bs-gray-800);
-            color: var(--bs-gray-100);
-        }
-        [data-bs-theme="dark"] .form-control {
-            background-color: var(--bs-gray-700);
-            border-color: var(--bs-gray-600);
-            color: var(--bs-gray-100);
-        }
-        [data-bs-theme="dark"] .input-group-text {
-            background-color: var(--bs-gray-700);
-            border-color: var(--bs-gray-600);
-        }
-    `],
+    styleUrl: './sign-in.component.css'
 })
 export class SignInComponent {
     currentYear = currentYear

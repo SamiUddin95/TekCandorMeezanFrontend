@@ -25,10 +25,10 @@ export const menuItems: MenuItemType[] = [
         icon: 'tablerSettings',
         isCollapsed: true,
         children: [
-            { label: 'Cycle', icon: 'tablerRefresh', url: '/pages/business-table' },
-            { label: 'Branch', icon: 'tablerBuilding', url: '/pages/events-table' },
-            { label: 'Hub', icon: 'tablerNetwork', url: '/pages/forums' },
-            { label: 'Return Reason', icon: 'tablerArrowBackUp', url: '/pages/paid-content' },
+            { label: 'Cycle', icon: 'tablerRefresh', url: '/pages/basic-set-up/cycle' },
+            { label: 'Branch', icon: 'tablerBuilding', url: '/pages/basic-set-up/branch' },
+            { label: 'Hub', icon: 'tablerNetwork', url: '/pages/basic-set-up/hub' },
+            { label: 'Return Reason', icon: 'tablerArrowBackUp', url: '/pages/basic-set-up/return-reason' },
         ]
     },
 
