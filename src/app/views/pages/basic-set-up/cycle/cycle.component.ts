@@ -1,14 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PaginationComponent } from '@app/components/pagination/pagination.component';
 import Swal from 'sweetalert2';
-
-interface CycleItem {
-  id: number;
-  name: string;
-  code: string;
-}
+import { CycleService, CycleItem, CycleListResponse } from '../../../../services/cycle.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-cycle',
@@ -16,35 +12,58 @@ interface CycleItem {
   templateUrl: './cycle.component.html',
   styleUrl: './cycle.component.scss'
 })
-export class Cycle {
+export class Cycle implements OnInit {
   searchName = '';
   isEditMode = false;
   currentPage: number = 1;
   pageSize: number = 10;
 
-  cycles: CycleItem[] = [
-    { id: 1, name: 'Cycle A', code: 'CYC-A' },
-    { id: 2, name: 'Cycle B', code: 'CYC-B' },
-    { id: 3, name: 'Cycle C', code: 'CYC-C' },
-    { id: 4, name: 'Cycle D', code: 'CYC-D' },
-    { id: 5, name: 'Cycle E', code: 'CYC-E' },
-    { id: 6, name: 'Cycle F', code: 'CYC-F' },
-    { id: 7, name: 'Cycle G', code: 'CYC-G' },
-    { id: 8, name: 'Cycle H', code: 'CYC-H' },
-    { id: 9, name: 'Cycle I', code: 'CYC-I' },
-    { id: 10, name: 'Cycle J', code: 'CYC-J' },
-    { id: 11, name: 'Cycle K', code: 'CYC-K' },
-    { id: 12, name: 'Cycle L', code: 'CYC-L' },
-  ];
+  cycles: CycleItem[] = [];
+  totalRecords: number = 0;
+  totalPages: number = 0;
+  isLoading: boolean = false;
 
   selectedCycle: CycleItem = this.getEmptyCycle();
+  private subscriptions: Subscription[] = [];
 
-  constructor() {
-    // Total records will be updated dynamically based on filtered data
+  constructor(private cycleService: CycleService) {}
+
+  ngOnInit() {
+    this.loadCycles();
   }
 
-  get totalRecords(): number {
-    return this.filteredCycles.length;
+  ngOnDestroy() {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
+  loadCycles() {
+    this.isLoading = true;
+    const subscription = this.cycleService.getCycles(this.currentPage, this.pageSize).subscribe({
+      next: (response: CycleListResponse) => {
+        if (response.status === 'success') {
+          this.cycles = response.data.items;
+          this.totalRecords = response.data.totalCount;
+          this.totalPages = response.data.totalPages;
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: response.errorMessage || 'Failed to load cycles'
+          });
+        }
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading cycles:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to load cycles. Please try again.'
+        });
+        this.isLoading = false;
+      }
+    });
+    this.subscriptions.push(subscription);
   }
 
   get filteredCycles(): CycleItem[] {
@@ -65,6 +84,7 @@ export class Cycle {
   onPageChange(event: { page: number; pageSize: number }) {
     this.currentPage = event.page;
     this.pageSize = event.pageSize;
+    this.loadCycles();
   }
 
   onAddNew() {
@@ -91,30 +111,45 @@ export class Cycle {
       cancelButtonText: 'Cancel'
     }).then((result: any) => {
       if (result.isConfirmed) {
-        const actualIndex = this.cycles.findIndex(c => c.id === cycle.id);
-        if (actualIndex !== -1) {
-          this.cycles.splice(actualIndex, 1);
-          
-          // Adjust current page if necessary
-          const totalPages = Math.ceil(this.totalRecords / this.pageSize);
-          if (this.currentPage > totalPages && totalPages > 0) {
-            this.currentPage = totalPages;
-          }
-          
-          Swal.fire({
-            title: 'Deleted!',
-            text: `${cycle.name} has been deleted successfully.`,
-            icon: 'success',
-            timer: 2000,
-            showConfirmButton: false
-          });
-        }
+        this.deleteCycle(cycle.id);
       }
     });
   }
 
+  deleteCycle(id: number) {
+    const subscription = this.cycleService.deleteCycle(id).subscribe({
+      next: (response) => {
+        if (response.status === 'success') {
+          Swal.fire({
+            title: 'Deleted!',
+            text: 'Cycle has been deleted successfully.',
+            icon: 'success',
+            timer: 2000,
+            showConfirmButton: false
+          });
+          this.loadCycles(); // Reload the list
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: response.errorMessage || 'Failed to delete cycle'
+          });
+        }
+      },
+      error: (error) => {
+        console.error('Error deleting cycle:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to delete cycle. Please try again.'
+        });
+      }
+    });
+    this.subscriptions.push(subscription);
+  }
+
   onSave() {
-    if (!this.selectedCycle.name || !this.selectedCycle.code) {
+    if (!this.selectedCycle.code || !this.selectedCycle.name) {
       Swal.fire({
         title: 'Error!',
         text: 'Please fill in all required fields',
@@ -124,23 +159,95 @@ export class Cycle {
       return;
     }
 
-    if (this.isEditMode) {
-      const idx = this.cycles.findIndex((c) => c.id === this.selectedCycle.id);
-      if (idx !== -1) this.cycles[idx] = { ...this.selectedCycle };
-    } else {
-      const newId = this.cycles.length ? Math.max(...this.cycles.map((c) => c.id)) + 1 : 1;
-      this.cycles.push({ ...this.selectedCycle, id: newId });
-      
-      // Go to last page to show the new item
-      const totalPages = Math.ceil(this.totalRecords / this.pageSize);
-      this.currentPage = totalPages;
-    }
+    const cycleData = {
+      code: this.selectedCycle.code,
+      name: this.selectedCycle.name
+    };
 
-    this.closeModal();
+    if (this.isEditMode) {
+      this.updateCycle(this.selectedCycle.id, cycleData);
+    } else {
+      this.createCycle(cycleData);
+    }
+  }
+
+  createCycle(cycleData: any) {
+    const subscription = this.cycleService.createCycle(cycleData).subscribe({
+      next: (response) => {
+        if (response.status === 'success') {
+          Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: 'Cycle created successfully!',
+            timer: 2000,
+            showConfirmButton: false
+          });
+          this.closeModal();
+          this.loadCycles(); // Reload the list
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: response.errorMessage || 'Failed to create cycle'
+          });
+        }
+      },
+      error: (error) => {
+        console.error('Error creating cycle:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to create cycle. Please try again.'
+        });
+      }
+    });
+    this.subscriptions.push(subscription);
+  }
+
+  updateCycle(id: number, cycleData: any) {
+    const subscription = this.cycleService.updateCycle(id, cycleData).subscribe({
+      next: (response) => {
+        if (response.status === 'success') {
+          Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: 'Cycle updated successfully!',
+            timer: 2000,
+            showConfirmButton: false
+          });
+          this.closeModal();
+          this.loadCycles(); // Reload the list
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: response.errorMessage || 'Failed to update cycle'
+          });
+        }
+      },
+      error: (error) => {
+        console.error('Error updating cycle:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to update cycle. Please try again.'
+        });
+      }
+    });
+    this.subscriptions.push(subscription);
   }
 
   private getEmptyCycle(): CycleItem {
-    return { id: 0, name: '', code: '' };
+    return { 
+      id: 0, 
+      code: '', 
+      name: '', 
+      isDeleted: false,
+      createdBy: '', 
+      updatedBy: '', 
+      createdOn: '', 
+      updatedOn: null
+    };
   }
 
   private openModal() {

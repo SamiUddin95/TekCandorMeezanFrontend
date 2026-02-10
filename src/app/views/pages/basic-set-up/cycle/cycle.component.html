@@ -39,7 +39,10 @@
                 </td>
               </tr>
               <tr *ngIf="paginatedCycles.length === 0">
-                <td colspan="3" class="text-center text-muted py-3">No records found</td>
+                <td colspan="3" class="text-center text-muted py-3">
+                  <span *ngIf="isLoading">Loading...</span>
+                  <span *ngIf="!isLoading">No records found</span>
+                </td>
               </tr>
             </tbody>
           </table>
