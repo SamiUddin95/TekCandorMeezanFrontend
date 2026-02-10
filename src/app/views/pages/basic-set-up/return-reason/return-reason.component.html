@@ -32,7 +32,7 @@
             <tbody class="table-group-divider">
               <tr *ngFor="let returnReason of paginatedReturnReasons">
                 <td>{{ returnReason.code }}</td>
-                <td>{{ returnReason.numericReturnCodes }}</td>
+                <td>{{ returnReason.alphaReturnCodes }} / {{ returnReason.numericReturnCodes }}</td>
                 <td>{{ returnReason.name }}</td>
                 <td>
                   <div class="form-check form-switch">
@@ -47,7 +47,10 @@
                 </td>
               </tr>
               <tr *ngIf="paginatedReturnReasons.length === 0">
-                <td colspan="5" class="text-center text-muted py-3">No records found</td>
+                <td colspan="5" class="text-center text-muted py-3">
+                  <span *ngIf="isLoading">Loading...</span>
+                  <span *ngIf="!isLoading">No records found</span>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -89,16 +92,29 @@
                 placeholder="Enter code" />
             </div>
             <div class="col-md-4 mb-3">
-              <label for="numericReturnCodes" class="form-label">Return Code</label>
+              <label for="alphaReturnCodes" class="form-label">Alpha Return Code</label>
+              <input
+                id="alphaReturnCodes"
+                type="text"
+                class="form-control rounded-3"
+                [(ngModel)]="selectedReturnReason.alphaReturnCodes"
+                name="alphaReturnCodes"
+                placeholder="Enter Alpha Return Code" />
+            </div>
+            <div class="col-md-4 mb-3">
+              <label for="numericReturnCodes" class="form-label">Numeric Return Code</label>
               <input
                 id="numericReturnCodes"
                 type="text"
                 class="form-control rounded-3"
                 [(ngModel)]="selectedReturnReason.numericReturnCodes"
                 name="numericReturnCodes"
-                placeholder="Enter Return Code" />
+                placeholder="Enter Numeric Return Code" />
             </div>
-            <div class="col-md-4 mb-3">
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
               <label for="returnReasonName" class="form-label">Name</label>
               <input
                 id="returnReasonName"
@@ -108,16 +124,19 @@
                 name="returnReasonName"
                 placeholder="Enter name" />
             </div>
-            <div class="col-md-4 mb-3">
-              <label for="returnReasonName" class="form-label">Return Description</label>
+            <div class="col-md-6 mb-3">
+              <label for="descriptionWithReturnCodes" class="form-label">Description with Return Codes</label>
               <input
-                id="returnReasonName"
+                id="descriptionWithReturnCodes"
                 type="text"
                 class="form-control rounded-3"
-                [(ngModel)]="selectedReturnReason.name"
-                name="returnReasonName"
-                placeholder="Enter name" />
+                [(ngModel)]="selectedReturnReason.descriptionWithReturnCodes"
+                name="descriptionWithReturnCodes"
+                placeholder="Enter description" />
             </div>
+          </div>
+          
+          <div class="row">
             <div class="col-md-4 mb-3">
               <label for="defaultCallBack" class="form-label">Default Call Back</label>
               <div class="form-check form-switch mt-2">
@@ -126,6 +145,12 @@
                   {{ selectedReturnReason.defaultCallBack ? 'Yes' : 'No' }}
                 </label>
               </div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <!-- Empty column for spacing -->
+            </div>
+            <div class="col-md-4 mb-3">
+              <!-- Empty column for spacing -->
             </div>
           </div>
         </form>

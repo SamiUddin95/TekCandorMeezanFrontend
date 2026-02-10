@@ -33,8 +33,8 @@
               <tr *ngFor="let branch of paginatedBranches">
                 <td>{{ branch.name }}</td>
                 <td>{{ branch.code }}</td>
-                <td>{{ branch.hub }}</td>
-                <td>{{ branch.numericReturnCodes }}</td>
+                <td>{{ getHubName(branch.hubId) }}</td>
+                <td>{{ branch.niftBranchCode }}</td>
                 <td>
                   <div class="btn-group btn-group-sm" role="group">
                     <button class="btn btn-outline-primary btn-sm" (click)="onEdit(branch)">EDIT</button>
@@ -43,7 +43,10 @@
                 </td>
               </tr>
               <tr *ngIf="paginatedBranches.length === 0">
-                <td colspan="5" class="text-center text-muted py-3">No records found</td>
+                <td colspan="5" class="text-center text-muted py-3">
+                  <span *ngIf="isLoading">Loading...</span>
+                  <span *ngIf="!isLoading">No records found</span>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -95,27 +98,27 @@
                 placeholder="Enter branch code" />
             </div>
             <div class="col-md-4 mb-3">
-              <label for="numericReturnCodes" class="form-label">Nift Branch Code</label>
+              <label for="niftBranchCode" class="form-label">Nift Branch Code</label>
               <input
-                id="numericReturnCodes"
+                id="niftBranchCode"
                 type="text"
                 class="form-control rounded-3"
-                [(ngModel)]="selectedBranch.numericReturnCodes"
-                name="numericReturnCodes"
+                [(ngModel)]="selectedBranch.niftBranchCode"
+                name="niftBranchCode"
                 placeholder="Enter NIFT branch code" />
             </div>
           </div>
           
           <div class="row">
             <div class="col-md-4 mb-3">
-              <label for="hub" class="form-label">Hub</label>
+              <label for="hubId" class="form-label">Hub</label>
               <select
-                id="hub"
+                id="hubId"
                 class="form-select rounded-3"
-                [(ngModel)]="selectedBranch.hub"
-                name="hub">
+                [(ngModel)]="selectedBranch.hubId"
+                name="hubId">
                 <option value="">Select Hub</option>
-                <option *ngFor="let hub of hubOptions" [value]="hub">{{ hub }}</option>
+                <option *ngFor="let hub of hubOptions" [value]="hub.id">{{ hub.name }}</option>
               </select>
             </div>
             <div class="col-md-4 mb-3">

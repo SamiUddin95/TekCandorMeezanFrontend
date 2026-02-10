@@ -1,16 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PaginationComponent } from '@app/components/pagination/pagination.component';
 import Swal from 'sweetalert2';
-
-interface ReturnReasonItem {
-  id: number;
-  code: string;
-  numericReturnCodes: string;
-  name: string;
-  defaultCallBack: boolean;
-}
+import { ReturnReasonService, ReturnReasonItem, ReturnReasonListResponse } from '../../../../services/return-reason.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-return-reason',
@@ -18,35 +12,58 @@ interface ReturnReasonItem {
   templateUrl: './return-reason.component.html',
   styleUrl: './return-reason.component.scss'
 })
-export class ReturnReason {
+export class ReturnReason implements OnInit {
   searchName = '';
   isEditMode = false;
   currentPage: number = 1;
   pageSize: number = 10;
 
-  returnReasons: ReturnReasonItem[] = [
-    { id: 1, code: 'RR-001', numericReturnCodes: 'NIFT-001', name: 'Insufficient Funds', defaultCallBack: true },
-    { id: 2, code: 'RR-002', numericReturnCodes: 'NIFT-002', name: 'Account Closed', defaultCallBack: false },
-    { id: 3, code: 'RR-003', numericReturnCodes: 'NIFT-003', name: 'Stop Payment', defaultCallBack: true },
-    { id: 4, code: 'RR-004', numericReturnCodes: 'NIFT-004', name: 'Signature Mismatch', defaultCallBack: false },
-    { id: 5, code: 'RR-005', numericReturnCodes: 'NIFT-005', name: 'Post Dated Cheque', defaultCallBack: true },
-    { id: 6, code: 'RR-006', numericReturnCodes: 'NIFT-006', name: 'Amount in Words Mismatch', defaultCallBack: false },
-    { id: 7, code: 'RR-007', numericReturnCodes: 'NIFT-007', name: 'Stale Cheque', defaultCallBack: true },
-    { id: 8, code: 'RR-008', numericReturnCodes: 'NIFT-008', name: 'Alteration Required', defaultCallBack: false },
-    { id: 9, code: 'RR-009', numericReturnCodes: 'NIFT-009', name: 'Exceeds Limit', defaultCallBack: true },
-    { id: 10, code: 'RR-010', numericReturnCodes: 'NIFT-010', name: 'Frozen Account', defaultCallBack: false },
-    { id: 11, code: 'RR-011', numericReturnCodes: 'NIFT-011', name: 'Invalid Account', defaultCallBack: true },
-    { id: 12, code: 'RR-012', numericReturnCodes: 'NIFT-012', name: 'Clearing Issues', defaultCallBack: false },
-  ];
+  returnReasons: ReturnReasonItem[] = [];
+  totalRecords: number = 0;
+  totalPages: number = 0;
+  isLoading: boolean = false;
 
   selectedReturnReason: ReturnReasonItem = this.getEmptyReturnReason();
+  private subscriptions: Subscription[] = [];
 
-  constructor() {
-    // Total records will be updated dynamically based on filtered data
+  constructor(private returnReasonService: ReturnReasonService) {}
+
+  ngOnInit() {
+    this.loadReturnReasons();
   }
 
-  get totalRecords(): number {
-    return this.filteredReturnReasons.length;
+  ngOnDestroy() {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
+  loadReturnReasons() {
+    this.isLoading = true;
+    const subscription = this.returnReasonService.getReturnReasons(this.currentPage, this.pageSize).subscribe({
+      next: (response: ReturnReasonListResponse) => {
+        if (response.status === 'success') {
+          this.returnReasons = response.data.items;
+          this.totalRecords = response.data.totalCount;
+          this.totalPages = response.data.totalPages;
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: response.errorMessage || 'Failed to load return reasons'
+          });
+        }
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading return reasons:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to load return reasons. Please try again.'
+        });
+        this.isLoading = false;
+      }
+    });
+    this.subscriptions.push(subscription);
   }
 
   get filteredReturnReasons(): ReturnReasonItem[] {
@@ -67,6 +84,7 @@ export class ReturnReason {
   onPageChange(event: { page: number; pageSize: number }) {
     this.currentPage = event.page;
     this.pageSize = event.pageSize;
+    this.loadReturnReasons();
   }
 
   onAddNew() {
@@ -93,30 +111,45 @@ export class ReturnReason {
       cancelButtonText: 'Cancel'
     }).then((result: any) => {
       if (result.isConfirmed) {
-        const actualIndex = this.returnReasons.findIndex(rr => rr.id === returnReason.id);
-        if (actualIndex !== -1) {
-          this.returnReasons.splice(actualIndex, 1);
-          
-          // Adjust current page if necessary
-          const totalPages = Math.ceil(this.totalRecords / this.pageSize);
-          if (this.currentPage > totalPages && totalPages > 0) {
-            this.currentPage = totalPages;
-          }
-          
-          Swal.fire({
-            title: 'Deleted!',
-            text: `${returnReason.name} has been deleted successfully.`,
-            icon: 'success',
-            timer: 2000,
-            showConfirmButton: false
-          });
-        }
+        this.deleteReturnReason(returnReason.id);
       }
     });
   }
 
+  deleteReturnReason(id: number) {
+    const subscription = this.returnReasonService.deleteReturnReason(id).subscribe({
+      next: (response) => {
+        if (response.status === 'success') {
+          Swal.fire({
+            title: 'Deleted!',
+            text: 'Return reason has been deleted successfully.',
+            icon: 'success',
+            timer: 2000,
+            showConfirmButton: false
+          });
+          this.loadReturnReasons(); // Reload the list
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: response.errorMessage || 'Failed to delete return reason'
+          });
+        }
+      },
+      error: (error) => {
+        console.error('Error deleting return reason:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to delete return reason. Please try again.'
+        });
+      }
+    });
+    this.subscriptions.push(subscription);
+  }
+
   onSave() {
-    if (!this.selectedReturnReason.code || !this.selectedReturnReason.numericReturnCodes || !this.selectedReturnReason.name) {
+    if (!this.selectedReturnReason.code || !this.selectedReturnReason.alphaReturnCodes || !this.selectedReturnReason.numericReturnCodes || !this.selectedReturnReason.name) {
       Swal.fire({
         title: 'Error!',
         text: 'Please fill in all required fields',
@@ -126,28 +159,102 @@ export class ReturnReason {
       return;
     }
 
-    if (this.isEditMode) {
-      const idx = this.returnReasons.findIndex((rr) => rr.id === this.selectedReturnReason.id);
-      if (idx !== -1) this.returnReasons[idx] = { ...this.selectedReturnReason };
-    } else {
-      const newId = this.returnReasons.length ? Math.max(...this.returnReasons.map((rr) => rr.id)) + 1 : 1;
-      this.returnReasons.push({ ...this.selectedReturnReason, id: newId });
-      
-      // Go to last page to show the new item
-      const totalPages = Math.ceil(this.totalRecords / this.pageSize);
-      this.currentPage = totalPages;
-    }
+    const returnReasonData = {
+      code: this.selectedReturnReason.code,
+      alphaReturnCodes: this.selectedReturnReason.alphaReturnCodes,
+      numericReturnCodes: this.selectedReturnReason.numericReturnCodes,
+      descriptionWithReturnCodes: this.selectedReturnReason.descriptionWithReturnCodes,
+      defaultCallBack: this.selectedReturnReason.defaultCallBack,
+      name: this.selectedReturnReason.name
+    };
 
-    this.closeModal();
+    if (this.isEditMode) {
+      this.updateReturnReason(this.selectedReturnReason.id, returnReasonData);
+    } else {
+      this.createReturnReason(returnReasonData);
+    }
+  }
+
+  createReturnReason(returnReasonData: any) {
+    const subscription = this.returnReasonService.createReturnReason(returnReasonData).subscribe({
+      next: (response) => {
+        if (response.status === 'success') {
+          Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: 'Return reason created successfully!',
+            timer: 2000,
+            showConfirmButton: false
+          });
+          this.closeModal();
+          this.loadReturnReasons(); // Reload the list
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: response.errorMessage || 'Failed to create return reason'
+          });
+        }
+      },
+      error: (error) => {
+        console.error('Error creating return reason:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to create return reason. Please try again.'
+        });
+      }
+    });
+    this.subscriptions.push(subscription);
+  }
+
+  updateReturnReason(id: number, returnReasonData: any) {
+    const subscription = this.returnReasonService.updateReturnReason(id, returnReasonData).subscribe({
+      next: (response) => {
+        if (response.status === 'success') {
+          Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: 'Return reason updated successfully!',
+            timer: 2000,
+            showConfirmButton: false
+          });
+          this.closeModal();
+          this.loadReturnReasons(); // Reload the list
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: response.errorMessage || 'Failed to update return reason'
+          });
+        }
+      },
+      error: (error) => {
+        console.error('Error updating return reason:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to update return reason. Please try again.'
+        });
+      }
+    });
+    this.subscriptions.push(subscription);
   }
 
   private getEmptyReturnReason(): ReturnReasonItem {
     return { 
       id: 0, 
       code: '', 
+      alphaReturnCodes: '',
       numericReturnCodes: '', 
-      name: '', 
-      defaultCallBack: false 
+      descriptionWithReturnCodes: '',
+      defaultCallBack: false,
+      name: '',
+      isDeleted: false,
+      createdBy: null,
+      updatedBy: null,
+      createdOn: null,
+      updatedOn: null
     };
   }
 

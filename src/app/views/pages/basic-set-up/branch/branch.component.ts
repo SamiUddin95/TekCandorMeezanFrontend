@@ -1,19 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PaginationComponent } from '@app/components/pagination/pagination.component';
 import Swal from 'sweetalert2';
-
-interface BranchItem {
-  id: number;
-  name: string;
-  code: string;
-  hub: string;
-  numericReturnCodes: string;
-  email1: string;
-  email2: string;
-  email3: string;
-}
+import { BranchService, BranchItem, BranchListResponse } from '../../../../services/branch.service';
+import { HubService, HubItem } from '../../../../services/hub.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-branch',
@@ -21,36 +13,76 @@ interface BranchItem {
   templateUrl: './branch.component.html',
   styleUrl: './branch.component.scss'
 })
-export class Branch {
+export class Branch implements OnInit {
   searchName = '';
   isEditMode = false;
   currentPage: number = 1;
   pageSize: number = 10;
 
-  branches: BranchItem[] = [
-    { id: 1, name: 'Main Branch', code: 'BR-001', hub: 'Hub A', numericReturnCodes: 'NIFT-001', email1: 'main@bank.com', email2: 'main2@bank.com', email3: 'main3@bank.com' },
-    { id: 2, name: 'City Branch', code: 'BR-002', hub: 'Hub B', numericReturnCodes: 'NIFT-002', email1: 'city@bank.com', email2: 'city2@bank.com', email3: 'city3@bank.com' },
-    { id: 3, name: 'Airport Branch', code: 'BR-003', hub: 'Hub A', numericReturnCodes: 'NIFT-003', email1: 'airport@bank.com', email2: 'airport2@bank.com', email3: 'airport3@bank.com' },
-    { id: 4, name: 'Downtown Branch', code: 'BR-004', hub: 'Hub C', numericReturnCodes: 'NIFT-004', email1: 'downtown@bank.com', email2: 'downtown2@bank.com', email3: 'downtown3@bank.com' },
-    { id: 5, name: 'Industrial Branch', code: 'BR-005', hub: 'Hub B', numericReturnCodes: 'NIFT-005', email1: 'industrial@bank.com', email2: 'industrial2@bank.com', email3: 'industrial3@bank.com' },
-    { id: 6, name: 'Shopping Mall Branch', code: 'BR-006', hub: 'Hub A', numericReturnCodes: 'NIFT-006', email1: 'mall@bank.com', email2: 'mall2@bank.com', email3: 'mall3@bank.com' },
-    { id: 7, name: 'University Branch', code: 'BR-007', hub: 'Hub D', numericReturnCodes: 'NIFT-007', email1: 'university@bank.com', email2: 'university2@bank.com', email3: 'university3@bank.com' },
-    { id: 8, name: 'Hospital Branch', code: 'BR-008', hub: 'Hub C', numericReturnCodes: 'NIFT-008', email1: 'hospital@bank.com', email2: 'hospital2@bank.com', email3: 'hospital3@bank.com' },
-    { id: 9, name: 'Station Branch', code: 'BR-009', hub: 'Hub B', numericReturnCodes: 'NIFT-009', email1: 'station@bank.com', email2: 'station2@bank.com', email3: 'station3@bank.com' },
-    { id: 10, name: 'Beach Branch', code: 'BR-010', hub: 'Hub A', numericReturnCodes: 'NIFT-010', email1: 'beach@bank.com', email2: 'beach2@bank.com', email3: 'beach3@bank.com' },
-    { id: 11, name: 'Park Branch', code: 'BR-011', hub: 'Hub D', numericReturnCodes: 'NIFT-011', email1: 'park@bank.com', email2: 'park2@bank.com', email3: 'park3@bank.com' },
-    { id: 12, name: 'Market Branch', code: 'BR-012', hub: 'Hub C', numericReturnCodes: 'NIFT-012', email1: 'market@bank.com', email2: 'market2@bank.com', email3: 'market3@bank.com' },
-  ];
+  branches: BranchItem[] = [];
+  totalRecords: number = 0;
+  totalPages: number = 0;
+  isLoading: boolean = false;
 
   selectedBranch: BranchItem = this.getEmptyBranch();
-  hubOptions = ['Hub A', 'Hub B', 'Hub C', 'Hub D'];
+  hubOptions: HubItem[] = [];
+  private subscriptions: Subscription[] = [];
 
-  constructor() {
-    // Total records will be updated dynamically based on filtered data
+  constructor(private branchService: BranchService, private hubService: HubService) {}
+
+  ngOnInit() {
+    this.loadBranches();
+    this.loadHubs();
   }
 
-  get totalRecords(): number {
-    return this.filteredBranches.length;
+  ngOnDestroy() {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
+  loadHubs() {
+    const subscription = this.hubService.getHubs(1, 100).subscribe({
+      next: (response) => {
+        if (response.status === 'success') {
+          this.hubOptions = response.data.items;
+        } else {
+          console.error('Failed to load hubs:', response.errorMessage);
+        }
+      },
+      error: (error) => {
+        console.error('Error loading hubs:', error);
+      }
+    });
+    this.subscriptions.push(subscription);
+  }
+
+  loadBranches() {
+    this.isLoading = true;
+    const subscription = this.branchService.getBranches(this.currentPage, this.pageSize).subscribe({
+      next: (response: BranchListResponse) => {
+        if (response.status === 'success') {
+          this.branches = response.data.items;
+          this.totalRecords = response.data.totalCount;
+          this.totalPages = response.data.totalPages;
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: response.errorMessage || 'Failed to load branches'
+          });
+        }
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading branches:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to load branches. Please try again.'
+        });
+        this.isLoading = false;
+      }
+    });
+    this.subscriptions.push(subscription);
   }
 
   get filteredBranches(): BranchItem[] {
@@ -71,6 +103,12 @@ export class Branch {
   onPageChange(event: { page: number; pageSize: number }) {
     this.currentPage = event.page;
     this.pageSize = event.pageSize;
+    this.loadBranches();
+  }
+
+  getHubName(hubId: number): string {
+    const hub = this.hubOptions.find(h => h.id === hubId);
+    return hub ? hub.name : 'Unknown';
   }
 
   onAddNew() {
@@ -97,30 +135,45 @@ export class Branch {
       cancelButtonText: 'Cancel'
     }).then((result: any) => {
       if (result.isConfirmed) {
-        const actualIndex = this.branches.findIndex(b => b.id === branch.id);
-        if (actualIndex !== -1) {
-          this.branches.splice(actualIndex, 1);
-          
-          // Adjust current page if necessary
-          const totalPages = Math.ceil(this.totalRecords / this.pageSize);
-          if (this.currentPage > totalPages && totalPages > 0) {
-            this.currentPage = totalPages;
-          }
-          
-          Swal.fire({
-            title: 'Deleted!',
-            text: `${branch.name} has been deleted successfully.`,
-            icon: 'success',
-            timer: 2000,
-            showConfirmButton: false
-          });
-        }
+        this.deleteBranch(branch.id);
       }
     });
   }
 
+  deleteBranch(id: number) {
+    const subscription = this.branchService.deleteBranch(id).subscribe({
+      next: (response) => {
+        if (response.status === 'success') {
+          Swal.fire({
+            title: 'Deleted!',
+            text: 'Branch has been deleted successfully.',
+            icon: 'success',
+            timer: 2000,
+            showConfirmButton: false
+          });
+          this.loadBranches(); // Reload the list
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: response.errorMessage || 'Failed to delete branch'
+          });
+        }
+      },
+      error: (error) => {
+        console.error('Error deleting branch:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to delete branch. Please try again.'
+        });
+      }
+    });
+    this.subscriptions.push(subscription);
+  }
+
   onSave() {
-    if (!this.selectedBranch.name || !this.selectedBranch.code || !this.selectedBranch.numericReturnCodes || !this.selectedBranch.hub) {
+    if (!this.selectedBranch.name || !this.selectedBranch.code || !this.selectedBranch.niftBranchCode || !this.selectedBranch.hubId) {
       Swal.fire({
         title: 'Error!',
         text: 'Please fill in all required fields',
@@ -130,28 +183,101 @@ export class Branch {
       return;
     }
 
-    if (this.isEditMode) {
-      const idx = this.branches.findIndex((b) => b.id === this.selectedBranch.id);
-      if (idx !== -1) this.branches[idx] = { ...this.selectedBranch };
-    } else {
-      const newId = this.branches.length ? Math.max(...this.branches.map((b) => b.id)) + 1 : 1;
-      this.branches.push({ ...this.selectedBranch, id: newId });
-      
-      // Go to last page to show the new item
-      const totalPages = Math.ceil(this.totalRecords / this.pageSize);
-      this.currentPage = totalPages;
-    }
+    const branchData = {
+      code: this.selectedBranch.code,
+      niftBranchCode: this.selectedBranch.niftBranchCode,
+      name: this.selectedBranch.name,
+      hubId: this.selectedBranch.hubId,
+      email1: this.selectedBranch.email1,
+      email2: this.selectedBranch.email2,
+      email3: this.selectedBranch.email3
+    };
 
-    this.closeModal();
+    if (this.isEditMode) {
+      this.updateBranch(this.selectedBranch.id, branchData);
+    } else {
+      this.createBranch(branchData);
+    }
+  }
+
+  createBranch(branchData: any) {
+    const subscription = this.branchService.createBranch(branchData).subscribe({
+      next: (response) => {
+        if (response.status === 'success') {
+          Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: 'Branch created successfully!',
+            timer: 2000,
+            showConfirmButton: false
+          });
+          this.closeModal();
+          this.loadBranches(); // Reload the list
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: response.errorMessage || 'Failed to create branch'
+          });
+        }
+      },
+      error: (error) => {
+        console.error('Error creating branch:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to create branch. Please try again.'
+        });
+      }
+    });
+    this.subscriptions.push(subscription);
+  }
+
+  updateBranch(id: number, branchData: any) {
+    const subscription = this.branchService.updateBranch(id, branchData).subscribe({
+      next: (response) => {
+        if (response.status === 'success') {
+          Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: 'Branch updated successfully!',
+            timer: 2000,
+            showConfirmButton: false
+          });
+          this.closeModal();
+          this.loadBranches(); // Reload the list
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: response.errorMessage || 'Failed to update branch'
+          });
+        }
+      },
+      error: (error) => {
+        console.error('Error updating branch:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to update branch. Please try again.'
+        });
+      }
+    });
+    this.subscriptions.push(subscription);
   }
 
   private getEmptyBranch(): BranchItem {
     return { 
       id: 0, 
-      name: '', 
       code: '', 
-      hub: '', 
-      numericReturnCodes: '', 
+      niftBranchCode: '',
+      name: '', 
+      hubId: 1,
+      isDeleted: false,
+      createdBy: null,
+      updatedBy: null,
+      createdOn: null,
+      updatedOn: null,
       email1: '', 
       email2: '', 
       email3: '' 
