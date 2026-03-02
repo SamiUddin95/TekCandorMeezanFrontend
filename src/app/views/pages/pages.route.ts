@@ -1,9 +1,11 @@
 import {Routes} from '@angular/router';
 import { UserManagement } from './user-management/user-management';
+import { GroupComponent } from './user-management/group/group.component';
 import { Cycle } from './basic-set-up/cycle/cycle.component';
 import { Branch } from './basic-set-up/branch/branch.component';
 import { Hub } from './basic-set-up/hub/hub.component';
 import { ReturnReason } from './basic-set-up/return-reason/return-reason.component';
+import { ManualImportComponent } from './ChequeProcess/manual-import/manual-import.component';
 
 
 
@@ -15,6 +17,11 @@ export const PAGES_ROUTES: Routes = [
                 path: 'user-management',
                 component: UserManagement,
                 data: {title: 'User Management'}
+            },
+            {
+                path: 'group',
+                component: GroupComponent,
+                data: {title: 'Group Management'}
             },
             {
                 path: 'basic-set-up',
@@ -39,6 +46,16 @@ export const PAGES_ROUTES: Routes = [
                         component: ReturnReason,
                         data: {title: 'Return Reason'}
                     },
+                ]
+            },
+            {
+                path: 'ChequeProcess',
+                children: [
+                    {
+                        path: 'manual-import',
+                        component: ManualImportComponent,
+                        data: {title: 'Manual Cheque Import'}
+                    }
                 ]
             },
         ]

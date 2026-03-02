@@ -43,6 +43,7 @@ export type MenuItemType = {
     isSpecial?: boolean
     children?: MenuItemType[]
     isCollapsed?: boolean
+    requiredPermissions?: string[] // Add this for permission-based menu filtering
 }
 
 export type LanguageOptionType = {

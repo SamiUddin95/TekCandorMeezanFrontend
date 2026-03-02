@@ -1,0 +1,300 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12 mt-2">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h4 class="mb-0">
+          <ng-icon name="tablerFileUpload" class="me-2"></ng-icon>
+          Manual Cheque Import
+        </h4>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Left Sidebar - Upload Options -->
+    <div class="col-lg-3">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0">
+            <ng-icon name="tablerUpload" class="me-2"></ng-icon>
+            Import Options
+          </h5>
+        </div>
+        <div class="card-body">
+          <!-- Image Upload -->
+          <div class="mb-4">
+            <label class="form-label fw-semibold">
+              <ng-icon name="tablerPhoto" class="me-1"></ng-icon>
+              Image Upload
+            </label>
+            <div class="upload-area"
+                 (click)="triggerImageUpload()">
+              <input type="file" 
+                     #imageInput 
+                     hidden 
+                     accept=".jpg,.jpeg"
+                     (change)="onImageSelect($event)">
+              <div class="upload-content text-center">
+                <ng-icon name="tablerPhotoPlus" class="upload-icon"></ng-icon>
+                <p class="mb-0">Click or drag image here</p>
+                <small class="text-muted">JPG files only (Max 5MB)</small>
+              </div>
+            </div>
+            <div *ngIf="selectedImage" class="mt-2">
+              <div class="d-flex justify-content-between align-items-center">
+                <small class="text-success">
+                  <ng-icon name="tablerCheck" class="me-1"></ng-icon>
+                  {{ selectedImage.name }}
+                </small>
+                <button class="btn btn-sm btn-outline-danger" (click)="clearImage()">
+                  <ng-icon name="tablerX"></ng-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- File Upload -->
+          <div class="mb-4">
+            <label class="form-label fw-semibold">
+              <ng-icon name="tablerFileText" class="me-1"></ng-icon>
+              File Upload
+            </label>
+            <div class="upload-area"
+                 (click)="triggerFileUpload()">
+              <input type="file" 
+                     #fileInput 
+                     hidden 
+                     accept=".txt"
+                     (change)="onFileSelect($event)">
+              <div class="upload-content text-center">
+                <ng-icon name="tablerFilePlus" class="upload-icon"></ng-icon>
+                <p class="mb-0">Click or drag file here</p>
+                <small class="text-muted">TXT files only (Max 10MB)</small>
+              </div>
+            </div>
+            <div *ngIf="selectedFile" class="mt-2">
+              <div class="d-flex justify-content-between align-items-center">
+                <small class="text-success">
+                  <ng-icon name="tablerCheck" class="me-1"></ng-icon>
+                  {{ selectedFile.name }}
+                </small>
+                <button class="btn btn-sm btn-outline-danger" (click)="clearFile()">
+                  <ng-icon name="tablerX"></ng-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Upload Button -->
+          <div class="mb-2">
+            <button class="btn btn-primary w-100" 
+                    (click)="uploadFile()"
+                    [disabled]="!selectedFile || isImporting">
+              <ng-icon name="tablerCloudUpload" class="me-2"></ng-icon>
+              Upload File
+            </button>
+          </div>
+
+          <div class="mb-4">
+            <button class="btn btn-success w-100" 
+                    (click)="importFile()">
+              <ng-icon name="tablerFileImport" class="me-2"></ng-icon>
+              {{ isImporting ? 'Importing...' : 'Import File' }}
+            </button>
+          </div>
+
+          <!-- Service Options -->
+          <div class="border-top pt-3">
+            <label class="form-label fw-semibold">
+              <ng-icon name="tablerSettings" class="me-1"></ng-icon>
+              Services
+            </label>
+            
+            <div class="form-check form-switch mb-2">
+              <input class="form-check-input" 
+                     type="checkbox" 
+                     id="startService">
+              <label class="form-check-label" for="startService">
+                Start Service
+              </label>
+            </div>
+
+            <div class="form-check form-switch mb-2">
+              <input class="form-check-input" 
+                     type="checkbox" 
+                     id="ssCardService">
+              <label class="form-check-label" for="ssCardService">
+                SS Card Service
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Content - Table -->
+    <div class="col-lg-9">
+      <div class="card">
+        <div class="card-header">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="card-title">
+              <ng-icon name="tablerList"></ng-icon>
+              Import History                
+            </h5>
+            
+            <!-- Search Filter -->
+            <div class="d-flex gap-2 me-2">
+              <div class="input-group" style="width: 250px;">
+                <span class="input-group-text">
+                  <ng-icon name="tablerCalendar"></ng-icon>
+                </span>
+                <input type="date" 
+                       class="form-control" 
+                       [(ngModel)]="filterDate"
+                       (change)="filterImports()">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <!-- Loading State -->
+          <div *ngIf="isLoading" class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2 text-muted">Loading import history...</p>
+          </div>
+
+          <!-- Empty State -->
+          <div *ngIf="!isLoading && filteredImports.length === 0" class="text-center py-5">
+            <ng-icon name="tablerInbox" class="text-muted" style="font-size: 3rem;"></ng-icon>
+            <h5 class="text-muted mt-3">No Import Records Found</h5>
+            <p class="text-muted">Start by uploading a file to see import history.</p>
+          </div>
+
+          <!-- Import History Table -->
+          <div *ngIf="!isLoading && filteredImports.length > 0">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead class="table-light">
+                  <tr>
+                    <th>File Name</th>
+                    <th>Import Date</th>
+                    <th>Total Records</th>
+                    <th>Successful Records</th>
+                    <th>Failure Records</th>
+                    <th>Status</th>
+                    <th width="80">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let import of filteredImports">
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <ng-icon name="tablerFileText" class="me-2 text-muted"></ng-icon>
+                        <span>{{ import.fileName }}</span>
+                      </div>
+                    </td>
+                    <td>{{ import.date | date:'dd MMM yyyy, HH:mm' }}</td>
+                    <td>
+                      <span class="badge bg-secondary">{{ import.totalRecords }}</span>
+                    </td>
+                    <td>
+                      <span>{{ import.successfullRecords }}</span>
+                    </td>
+                    <td>
+                      <span>{{ import.failureRecords }}</span>
+                    </td>
+                    <td>
+                      <span>
+                        Completed
+                      </span>
+                    </td>
+                    <td>
+                      <button class="btn btn-sm btn-outline-primary" 
+                              (click)="showImportDetails(import)"
+                              title="View Details">
+                        <ng-icon name="tablerEye"></ng-icon>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            
+            <!-- Pagination Component -->
+            <div class="mt-3">
+              <app-pagination 
+                [currentPage]="currentPage"
+                [pageSize]="pageSize"
+                [totalRecords]="totalRecords"
+                (pageChange)="onPageChange($event)">
+              </app-pagination>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Import Details Modal -->
+<div class="modal fade" 
+     #detailsModal 
+     tabindex="-1" 
+     aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <ng-icon name="tablerFileDescription" class="me-2"></ng-icon>
+          Import Details
+        </h5>
+        <button type="button" 
+                class="btn-close" 
+                data-bs-dismiss="modal"
+                aria-label="Close"></button>
+      </div>
+      <div class="modal-body" *ngIf="selectedImport">
+        <!-- Details Display Section -->
+        <div *ngIf="selectedImport && selectedImport.details && selectedImport.details.length > 0" class="mt-4">
+          <div class="table-responsive">
+              <table class="table table-hover">
+                <thead class="table-light">
+                  <tr>
+                    <th>Data</th>
+                    <th width="150">Date</th>
+                    <th>Error Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let detail of selectedImport?.details || []">
+                    <td>
+                      <small class="text-monospace">{{ detail.data }}</small>
+                    </td>
+                    <td>{{ detail.date | date:'dd MMM yyyy, HH:mm:ss' }}</td>
+                    <td>{{ detail.errorDescription }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+        </div>
+
+        <!-- No Details Message -->
+        <div *ngIf="!selectedImport?.details || selectedImport?.details?.length === 0" class="text-center py-4">
+          <div class="alert alert-success" role="alert">
+            <ng-icon name="tablerCircleCheck" class="me-2" style="font-size: 1.5rem;"></ng-icon>
+            <strong>Success!</strong> Import completed with no errors to display.
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" 
+                class="btn btn-secondary" 
+                data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

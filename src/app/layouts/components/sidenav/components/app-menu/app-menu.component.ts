@@ -8,16 +8,18 @@ import {filter} from 'rxjs';
 import {scrollToElement} from '@/app/utils/layout-utils';
 import {menuItems} from '@layouts/components/data';
 import {LayoutStoreService} from '@core/services/layout-store.service';
+import {MenuPermissionService} from '@/app/services/menu-permission.service';
 
 @Component({
     selector: 'app-menu',
-    imports: [NgIcon, NgbCollapse, RouterLink,CommonModule],
+    imports: [NgIcon, NgbCollapse, RouterLink, CommonModule],
     templateUrl: './app-menu.component.html'
 })
 export class AppMenuComponent implements OnInit {
 
     router = inject(Router)
     layout = inject(LayoutStoreService)
+    menuPermissionService = inject(MenuPermissionService)
 
     @ViewChild('MenuItemWithChildren', {static: true})
     menuItemWithChildren!: TemplateRef<{ item: MenuItemType }>;
@@ -25,9 +27,12 @@ export class AppMenuComponent implements OnInit {
     @ViewChild('MenuItem', {static: true})
     menuItem!: TemplateRef<{ item: MenuItemType }>;
 
-    menuItems = menuItems;
+    menuItems: MenuItemType[] = [];
 
     ngOnInit(): void {
+        // Load filtered menu items based on user permissions
+        this.loadMenuItems();
+
         this.router.events
             .pipe(filter(event => event instanceof NavigationEnd))
             .subscribe(() => {
@@ -37,6 +42,12 @@ export class AppMenuComponent implements OnInit {
 
         this.expandActivePaths(this.menuItems);
         setTimeout(() => this.scrollToActiveLink(), 100);
+    }
+
+    loadMenuItems() {
+        // Get filtered menu items based on user permissions
+        this.menuItems = this.menuPermissionService.getFilteredMenuItems();
+        console.log('Sidebar Menu Items (Filtered):', this.menuItems);
     }
 
     hasSubMenu(item: MenuItemType): boolean {
@@ -59,7 +70,7 @@ export class AppMenuComponent implements OnInit {
     }
 
     isActive(item: MenuItemType): boolean {
-        return this.router.url === item.url;
+        return item.url === this.router.url;
     }
 
     scrollToActiveLink(): void {

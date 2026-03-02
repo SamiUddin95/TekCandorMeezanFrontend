@@ -12,7 +12,7 @@
         <!-- Statistics Cards -->
         <div class="row p-2 mb-lg-n1">
             <div class="col-xl-3 col-lg-6">
-                <div class="card bg-primary text-white">
+                <div class="card" style="background-color: #a265f7; color: white;">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div class="flex-grow-1">
@@ -27,7 +27,7 @@
                 </div>
             </div>
             <div class="col-xl-3 col-lg-6">
-                <div class="card bg-success text-white">
+                <div class="card" style="background-color: #ec74ee; color: white;">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div class="flex-grow-1">
@@ -42,7 +42,7 @@
                 </div>
             </div>
             <div class="col-xl-3 col-lg-6">
-                <div class="card bg-warning text-white">
+                <div class="card" style="background-color: #b92efe; color: white;">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div class="flex-grow-1">
@@ -57,7 +57,7 @@
                 </div>
             </div>
             <div class="col-xl-3 col-lg-6">
-                <div class="card bg-danger text-white">
+                <div class="card" style="background-color: #ed5565; color: white;">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div class="flex-grow-1">
@@ -79,44 +79,20 @@
                     <table class="table table-hover table-striped table-sm">
                         <thead class="bg-light">
                             <tr>
-                                <th style="width: 8%;">User ID</th>
-                                <th style="width: 12%;">Avatar</th>
-                                <th style="width: 15%;">User Name</th>
-                                <th style="width: 20%;">Email</th>
-                                <th style="width: 8%;">Type</th>
-                                <th style="width: 8%;">Status</th>
-                                <th style="width: 8%;">Verified</th>
-                                <th style="width: 10%;">Joined On</th>
-                                <th style="width: 10%;">Last Active</th>
-                                <th style="width: 8%;">Report</th>
-                                <th style="width: 8%;">Action</th>
+                                <th style="width: 25%;">NAME</th>
+                                <th style="width: 25%;">LOGIN NAME</th>
+                                <th style="width: 25%;">EMAIL</th>
+                                <th style="width: 15%;">LAST LOGIN TIME</th>
+                                <th style="width: 10%;">ACTION</th>
                             </tr>
                         </thead>
                         <tbody class="table-group-divider">
                             <tr *ngFor="let user of paginatedUsers; let i = index">
-                                <td style="width: 8%;">{{ user.id }}</td>
-                                <td style="width: 12%;">
-                                    <img [src]="user.avatar" class="rounded-circle" alt="User Avatar" style="width: 35px; height: 35px; object-fit: cover; cursor: pointer;" (click)="showImagePreview(user.avatar)">
-                                </td>
-                                <td style="width: 15%;">{{ user.name }}</td>
-                                <td style="width: 20%;">{{ user.email }}</td>
-                                <td style="width: 8%;">
-                                    <span class="badge text-bg-primary" style="font-size: small;">{{ user.role }}</span>
-                                </td>
-                                <td style="width: 8%;">
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" [(ngModel)]="user.status" (change)="onStatusChange(user)">
-                                    </div>
-                                </td>
-                                <td style="width: 8%;">
-                                    <span class="badge" [class]="user.verified ? 'text-bg-success' : 'text-bg-secondary'">{{ user.verified ? '✓' : '✗' }}</span>
-                                </td>
-                                <td style="width: 10%;">{{ user.joinedOn }}</td>
-                                <td style="width: 10%;">{{ user.lastActive }}</td>
-                                <td style="width: 8%;">
-                                    <span class="badge text-bg-warning d-flex justify-content-center align-items-center" style="width: 20px; font-size: small;">{{ user.reports }}</span>
-                                </td>
-                                <td style="width: 8%;">
+                                <td style="width: 25%;">{{ user.name }}</td>
+                                <td style="width: 25%;">{{ user.loginName }}</td>
+                                <td style="width: 25%;">{{ user.email }}</td>
+                                <td style="width: 15%;">{{ user.lastLoginTime }}</td>
+                                <td style="width: 10%;">
                                     <div class="btn-group btn-group-sm" role="group">
                                         <button class="btn btn-outline-primary btn-sm" (click)="onEdit(user)">EDIT</button>
                                         <button class="btn btn-outline-danger btn-sm" (click)="onDelete(user, i)">DEL</button>
@@ -141,110 +117,134 @@
     </div>
 </div>
 
-<!-- Image Preview Modal -->
-<div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-labelledby="imagePreviewModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header bg-light">
-                <h5 class="modal-title" id="imagePreviewModalLabel">User Avatar Preview</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body bg-light text-center">
-                <img [src]="previewImage" class="img-fluid rounded" alt="Full Size Avatar Preview" style="max-height: 500px;">
-            </div>
-            <div class="modal-footer bg-light">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
+ 
 
 <!-- Add/Edit User Modal -->
 <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content rounded-4">
             <div class="modal-header bg-light rounded-top-4">
                 <h5 class="modal-title" id="userModalLabel">{{ isEditMode ? 'Edit User' : 'Add New User' }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body bg-light">
-                <form>
-                    <!-- Avatar Upload - Full Width First -->
-                    <div class="row mb-4">
-                        <div class="col-6 mt-3">
-                            <div class="text-center">
-                                <img [src]="selectedUser.avatar" class="rounded-circle mb-3" alt="Current Avatar" style="width: 100px; height: 100px; object-fit: cover; cursor: pointer;" (click)="showImagePreview(selectedUser.avatar)">
-                                <div>
-                                    <input type="file" class="form-control form-control-sm d-none" id="avatarUpload" accept="image/*" (change)="onAvatarUpload($event)">
-                                    <button type="button" class="btn btn-primary" (click)="triggerAvatarUpload()">
-                                        <i class="fas fa-upload me-2"></i>Upload Avatar
+                <!-- Tabs -->
+                <ul class="nav nav-tabs" id="userTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="basic-info-tab" data-bs-toggle="tab" data-bs-target="#basic-info" type="button" role="tab" aria-controls="basic-info" aria-selected="true">Basic Information</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="credentials-tab" data-bs-toggle="tab" data-bs-target="#credentials" type="button" role="tab" aria-controls="credentials" aria-selected="false">Credentials</button>
+                    </li>
+                </ul>
+
+                <!-- Tab Content -->
+                <div class="tab-content" id="userTabsContent">
+                    <!-- Basic Information Tab -->
+                    <div class="tab-pane fade show active" id="basic-info" role="tabpanel" aria-labelledby="basic-info-tab">
+                        <form class="mt-3">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="userName" class="form-label">Name</label>
+                                    <input type="text" class="form-control rounded-3" id="userName" placeholder="Enter name" [(ngModel)]="selectedUser.name" name="userName">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="userEmail" class="form-label">Email</label>
+                                    <input type="email" class="form-control rounded-3" id="userEmail" placeholder="Enter email" [(ngModel)]="selectedUser.email" name="userEmail">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="userPhone" class="form-label">Phone</label>
+                                    <input type="tel" class="form-control rounded-3" id="userPhone" placeholder="Enter phone" [(ngModel)]="selectedUser.phone" name="userPhone">
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Branch or Hub</label>
+                                    <div class="mt-2">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="branchOrHub" id="branchWise" value="branchWise" [(ngModel)]="selectedUser.branchOrHub">
+                                            <label class="form-check-label" for="branchWise">Branch Wise</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="branchOrHub" id="hubWise" value="hubWise" [(ngModel)]="selectedUser.branchOrHub">
+                                            <label class="form-check-label" for="hubWise">Hub Wise</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="userHub" class="form-label">Hub</label>
+                                    <select class="form-select rounded-3" id="userHub" [(ngModel)]="selectedUser.hubId" name="userHub">
+                                        <option value="">Select Hub</option>
+                                        <option value="1">Hub 1</option>
+                                        <option value="2">Hub 2</option>
+                                        <option value="3">Hub 3</option>
+                                        <option value="4">Hub 4</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="userBranch" class="form-label">Branch</label>
+                                    <select class="form-select rounded-3" id="userBranch" [(ngModel)]="selectedUser.branchId" name="userBranch">
+                                        <option value="">Select Branch</option>
+                                        <option value="1">Branch 1</option>
+                                        <option value="2">Branch 2</option>
+                                        <option value="3">Branch 3</option>
+                                        <option value="4">Branch 4</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="userGroup" class="form-label">Group</label>
+                                    <select class="form-select rounded-3" id="userGroup" [(ngModel)]="selectedUser.group" name="userGroup">
+                                        <option value="">Select Group</option>
+                                        <option value="admin">Admin</option>
+                                        <option value="operator">Operator</option>
+                                        <option value="supervisor">Supervisor</option>
+                                        <option value="viewer">Viewer</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Active</label>
+                                    <div class="mt-2">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="activeStatus" id="activeTrue" value="true" [(ngModel)]="selectedUser.active">
+                                            <label class="form-check-label" for="activeTrue">True</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="activeStatus" id="activeFalse" value="false" [(ngModel)]="selectedUser.active">
+                                            <label class="form-check-label" for="activeFalse">False</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Credentials Tab -->
+                    <div class="tab-pane fade" id="credentials" role="tabpanel" aria-labelledby="credentials-tab">
+                        <form class="mt-3">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="loginName" class="form-label">Login Name</label>
+                                    <input type="text" class="form-control rounded-3" id="loginName" placeholder="Enter login name" [(ngModel)]="selectedUser.loginName" name="loginName">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="loginPassword" class="form-label">Login Password</label>
+                                    <input type="password" class="form-control rounded-3" id="loginPassword" placeholder="Enter login password" [(ngModel)]="selectedUser.loginPassword" name="loginPassword">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button type="button" class="btn btn-primary rounded-3" (click)="onChangePassword()">
+                                        <i class="fas fa-key me-2"></i>Change Password
                                     </button>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="col-md-6 mt-3">
-                            <label for="userName" class="form-label">User Name</label>
-                            <input type="text" class="form-control rounded-3" id="userName" placeholder="Enter user name" [(ngModel)]="selectedUser.name" name="userName">
-                            <label for="userEmail" class="form-label mt-2">Email Address</label>
-                            <input type="email" class="form-control rounded-3" id="userEmail" placeholder="Enter email address" [(ngModel)]="selectedUser.email" name="userEmail">
-                        </div>
-
+                        </form>
                     </div>
-
-                    <!-- Two Column Fields -->
-                    <!-- <div class="row">
-                        <div class="col-md-6 mb-3">
-                        </div>
-                    </div> -->
-
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="userRole" class="form-label">Role</label>
-                            <select class="form-select rounded-3" id="userRole" [(ngModel)]="selectedUser.role" name="userRole">
-                                <option value="admin">Admin</option>
-                                <option value="user">User</option>
-                                <option value="moderator">Moderator</option>
-                            </select>
-                        </div>
-                     <div class="col-md-6 mb-3">
-                            <label for="userReports" class="form-label">Reports</label>
-                            <input type="number" class="form-control rounded-3" id="userReports" placeholder="Number of reports" [(ngModel)]="selectedUser.reports" name="userReports" min="0">
-                        </div>
-
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-2 mt-4">
-                            <!-- <label for="userVerified" class="form-label">Verified</label> -->
-                            <div class="form-check form-switch mt-2">
-                                <input class="form-check-input" type="checkbox" [(ngModel)]="selectedUser.verified" name="userVerified" id="userVerified">
-                                <label class="form-check-label" for="userVerified">
-                                    {{ selectedUser.verified ? 'Verified' : 'Not Verified' }}
-                                </label>
-                            </div>
-                            <!-- <label for="userStatus" class="form-label">Status</label> -->
-                            <div class="form-check form-switch mt-2">
-                                <input class="form-check-input" type="checkbox" [(ngModel)]="selectedUser.status" name="userStatus" id="userStatus">
-                                <label class="form-check-label" for="userStatus">
-                                    {{ selectedUser.status ? 'Active' : 'Inactive' }}
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-md-10 mb-3">
-                            <!-- Admin Notes (Only in Edit Mode) - Full Width -->
-                            @if (isEditMode) {
-                                <div class="row">
-                                    <div class="col-12 mb-3">
-                                        <label for="adminNotes" class="form-label">Admin Notes</label>
-                                        <textarea class="form-control rounded-3" id="adminNotes" rows="3" placeholder="Add admin notes about this user..." [(ngModel)]="selectedUser.adminNotes" name="adminNotes"></textarea>
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                    </div>
-
-                </form>
+                </div>
             </div>
             <div class="modal-footer bg-light rounded-bottom-4">
                 <button type="button" class="btn btn-secondary rounded-3" data-bs-dismiss="modal">Cancel</button>
