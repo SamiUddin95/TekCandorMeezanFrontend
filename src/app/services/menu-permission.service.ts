@@ -78,43 +78,43 @@ export class MenuPermissionService {
           { 
             label: 'Upload File', 
             icon: 'tablerFileUpload', 
-            url: '/pages/ChequeProcess/manual-import',
+            url: '/pages/ChequeProcess/upload-file',
             requiredPermissions: ['chequeProcess.UplaodFile']
           },
           { 
             label: 'Pending Cheques', 
             icon: 'tablerClock', 
-            url: '/pages/ChequeProcess/manual-import',
+            url: '/pages/ChequeProcess/pending-cheque',
             requiredPermissions: ['chequeProcess.pendingCheques']
           },
           { 
             label: 'Call back Cheques', 
             icon: 'tablerPhoneCall', 
-            url: '/pages/ChequeProcess/manual-import',
+            url: '/pages/ChequeProcess/callbackcheques',
             requiredPermissions: ['chequeProcess.callbackcheques']
           },
           { 
             label: 'Return Transactions', 
             icon: 'tablerArrowBackUp', 
-            url: '/pages/ChequeProcess/manual-import',
+            url: '/pages/ChequeProcess/return-transaction',
             requiredPermissions: ['chequeProcess.ReturnTransactions']
           },
           { 
             label: 'Branch return confirmations', 
             icon: 'tablerCheck', 
-            url: '/pages/ChequeProcess/manual-import',
+            url: '/pages/ChequeProcess/branch-return-confirmations',
             requiredPermissions: ['chequeProcess.ReturnTransactions']
           },
           { 
             label: 'Approved Transactions', 
             icon: 'tablerChecklist', 
-            url: '/pages/ChequeProcess/manual-import',
+            url: '/pages/ChequeProcess/approved-transactions',
             requiredPermissions: ['chequeProcess.ReturnTransactions']
           },
           { 
             label: 'UnAuthorized Transactions', 
             icon: 'tablerShieldX', 
-            url: '/pages/ChequeProcess/manual-import',
+            url: '/pages/ChequeProcess/unauthorize-transactions',
             requiredPermissions: ['chequeProcess.ReturnTransactions']
           },
           { 

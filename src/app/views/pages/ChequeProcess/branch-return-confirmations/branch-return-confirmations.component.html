@@ -1,0 +1,196 @@
+<div class="mt-1">
+ 
+  <div class="card mb-1">
+    <div class="card-header">
+      <div class="d-flex justify-content-between align-items-center">
+          <h6 class="card-title mb-0">
+            <ng-icon name="tablerSearch" class="me-2"></ng-icon>
+            Filters
+          </h6>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="row g-1">
+        <div class="col-md-3">
+          <label class="form-label mb-0">Branch</label>
+          <select class="form-select" [(ngModel)]="selectedBranch">
+            <option value="">All Branches</option>
+            <option *ngFor="let branch of branches" [value]="branch.value">
+              {{ branch.label }}
+            </option>
+          </select>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label mb-0">Account Number</label>
+          <input type="text" 
+                 class="form-control" 
+                 [(ngModel)]="accountNumber" 
+                 (input)="validateAccountNumber()"
+                 placeholder="16 digits"
+                 maxlength="16">
+        </div>
+
+        <!-- Cheque Number -->
+        <div class="col-md-3">
+          <label class="form-label mb-0">Cheque Number</label>
+          <input type="text" 
+                 class="form-control" 
+                 [(ngModel)]="chequeNumber" 
+                 (input)="validateChequeNumber()"
+                 placeholder="8 digits"
+                 maxlength="8">
+        </div>
+
+        <!-- Hub Dropdown -->
+        <div class="col-md-3">
+          <label class="form-label mb-0">Hub</label>
+          <select class="form-select" [(ngModel)]="selectedHub">
+            <option value="">All Hubs</option>
+            <option *ngFor="let hub of hubs" [value]="hub.value">
+              {{ hub.label }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Res(Core) Dropdown -->
+        <div class="col-md-3">
+          <label class="form-label mb-0">Res(Core)</label>
+          <select class="form-select" [(ngModel)]="selectedResCore">
+            <option value="">All</option>
+            <option *ngFor="let option of resCoreOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Status Dropdown -->
+        <div class="col-md-3">
+          <label class="form-label mb-0">Status</label>
+          <select class="form-select" [(ngModel)]="selectedStatus">
+            <option value="">All Status</option>
+            <option *ngFor="let option of statusOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Instrument Dropdown -->
+        <div class="col-md-3">
+          <label class="form-label mb-0">Instrument</label>
+          <select class="form-select" [(ngModel)]="selectedInstrument">
+            <option value="">All Instruments</option>
+            <option *ngFor="let option of instrumentOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Cycle Dropdown -->
+        <div class="col-md-3">
+          <label class="form-label mb-0">Cycle</label>
+          <select class="form-select" [(ngModel)]="selectedCycle">
+            <option value="">All Cycles</option>
+            <option *ngFor="let option of cycleOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Branch Return Confirmations Table -->
+  <div class="card">
+    <div class="card-body">
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2 text-muted">Loading branch return confirmations...</p>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="!isLoading && filteredConfirmations.length === 0" class="text-center py-5">
+        <ng-icon name="tablerCe" size="64" class="text-muted"></ng-icon>
+        <h5 class="mt-3 text-muted">No Branch Return Confirmations Found</h5>
+      </div>
+
+      <!-- Table -->
+      <div *ngIf="!isLoading && filteredConfirmations.length > 0">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead class="table-light">
+              <tr>
+                <th>Clearing cycle</th>
+                <th>Instrument</th>
+                <th>Cheque Number</th>
+                <th>Account Number</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Posting Restriction</th>
+                <th>Account Title</th>
+                <th>Account Balance</th>
+                <th width="80">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="table-group-divider">
+              <tr *ngFor="let confirmation of filteredConfirmations">
+                <td>
+                  <span class="">{{ confirmation.cycleCode }}</span>
+                </td>
+                <td>
+                  <span>{{ confirmation.instrumentNo }}</span>
+                </td>
+                <td>
+                  <span>{{ confirmation.chequeNumber }}</span>
+                </td>
+                <td>
+                  <small class="text-monospace">{{ confirmation.accountNumber }}</small>
+                </td>
+                <td>
+                  <span>{{ confirmation.amount }}</span>
+                </td>
+                <td>
+                  <span>
+                    {{ confirmation.status }}
+                  </span>
+                </td>
+                <td>
+                  <span class="text-center" >
+                    <span>{{ confirmation.postRestriction || '-' }}</span>
+                  </span>
+                </td>
+                <td>
+                  <span class="text-center" >
+                    <span>{{ confirmation.accountTitle || '-' }}</span>
+                  </span>
+                </td>
+                <td>
+                  <span >{{ confirmation.accountBalance || '0.00' }}</span>
+                </td>
+                <td class="text-center">
+                  <button class="btn btn-sm btn-primary" 
+                          (click)="showBranchReturnDetails(confirmation)"
+                          title="View Details">
+                    <ng-icon name="tablerPencil"></ng-icon>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <app-pagination
+          [currentPage]="currentPage"
+          [pageSize]="pageSize"
+          [totalRecords]="totalRecords"
+          (pageChange)="onPageChange($event)">
+        </app-pagination>
+      </div>
+    </div>
+  </div>
+
+</div>

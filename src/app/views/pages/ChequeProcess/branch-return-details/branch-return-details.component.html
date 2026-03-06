@@ -1,0 +1,213 @@
+<div class="cheque-details-container">
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="text-center py-3">
+    <div class="spinner-border text-primary loading-spinner" role="status"></div>
+    <p class="mt-2 text-muted fw-semibold">Loading Branch Return Details...</p>
+  </div>
+
+  <!-- Branch Return Details Content -->
+  <div *ngIf="!isLoading && chequeDetails" class="details-content mt-2">
+
+    <!-- ================= Cheque Information ================= -->
+    <div class="card shadow-sm mb-2">
+      <div class="card-header py-1 bg-light d-flex align-items-start">
+        <button class="btn btn-sm btn-outline-secondary" (click)="goBack()">
+          <ng-icon name="tablerArrowLeft"></ng-icon>
+        </button>
+        <h6 class="mb-0 fw-semibold text-black ms-2">Branch Return Information</h6>
+      </div>
+
+      <div class="card-body py-2">
+        <div class="row g-2">
+
+          <div class="col-md-3">
+            <label class="form-label text-muted">Cheque Number</label>
+            <input type="text"
+                   class="form-control bg-light"
+                   [(ngModel)]="chequeDetails.chequeNumber"
+                   placeholder="Enter Cheque Number"
+                   readonly>
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label">Account Title</label>
+            <input type="text"
+                   class="form-control bg-light"
+                   [(ngModel)]="chequeDetails.accountNumber"
+                   placeholder="Enter Account Number"
+                   readonly>
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label text-muted">Amount</label>
+            <div class="form-control bg-light border-0" style="font-weight: 500;">
+              {{ chequeDetails.amount || 'N/A' }}
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label text-muted">Account Number</label>
+            <div class="form-control bg-light border-0" style="font-weight: 500;">
+              {{ chequeDetails.status || 'N/A' }}
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label text-muted">Account Balance</label>
+            <div class="form-control bg-light border-0" style="font-weight: 500;">
+              {{ chequeDetails.accountTitle || 'N/A' }}
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label text-muted">Status</label>
+            <div class="form-control bg-light border-0" style="font-weight: 500;">
+              {{ chequeDetails.accountBalance || 'N/A' }}
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label text-muted">Error Feilds Name</label>
+            <div class="form-control bg-light border-0" style="font-weight: 500;">
+              {{ chequeDetails.cycleCode || 'N/A' }}
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label text-muted">Reject Reason by CCU</label>
+            <div class="form-control bg-light border-0" style="font-weight: 500;">
+              {{ chequeDetails.cycleCode || 'N/A' }}
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label text-muted">Branch Remarks</label>
+            <input type="text"
+                   class="form-control"
+                   [(ngModel)]="chequeDetails.branchRemarks"
+                   placeholder="Enter branch remarks">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= Images Section ================= -->
+    <div class="row g-2 mb-2">
+
+      <!-- Cheque Images -->
+      <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+          <div class="card-header py-1 bg-light">
+            <h6 class="mb-0 fw-semibold text-black">Cheque Images</h6>
+          </div>
+          <div class="card-body p-1">
+
+            <div id="chequeCarousel" class="carousel slide" data-bs-ride="carousel">
+              <div class="carousel-inner bg-light">
+
+                <div class="carousel-item active">
+                  <img [src]="chequeDetails.frontImage || 'assets/images/placeholder.png'"
+                       class="w-100"
+                       alt="Front Image"
+                       (error)="onImageError($event)">
+                </div>
+
+                <div class="carousel-item">
+                  <img [src]="chequeDetails.backImage || 'assets/images/placeholder.png'"
+                       class="w-100"
+                       alt="Back Image"
+                       (error)="onImageError($event)">
+                </div>
+
+              </div>
+
+              <button class="carousel-control-prev" type="button"
+                      data-bs-target="#chequeCarousel"
+                      data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+              </button>
+
+              <button class="carousel-control-next" type="button"
+                      data-bs-target="#chequeCarousel"
+                      data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Signature Images -->
+      <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+          <div class="card-header py-1 bg-light">
+            <h6 class="mb-0 fw-semibold text-black">Signature Images</h6>
+          </div>
+          <div class="card-body p-1">
+
+            <div id="signatureCarousel" class="carousel slide" data-bs-ride="carousel">
+              <div class="carousel-inner bg-light">
+
+                <div class="carousel-item active">
+                  <img [src]="chequeDetails.signatureImage || 'assets/images/signature-placeholder.png'"
+                       class="w-100"
+                       alt="Signature Image"
+                       (error)="onImageError($event)">
+                </div>
+
+                <div class="carousel-item">
+                  <img [src]="chequeDetails.additionalSignatureImage || 'assets/images/signature-placeholder.png'"
+                       class="w-100"
+                       alt="Additional Signature"
+                       (error)="onImageError($event)">
+                </div>
+
+              </div>
+
+              <button class="carousel-control-prev" type="button"
+                      data-bs-target="#signatureCarousel"
+                      data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+              </button>
+
+              <button class="carousel-control-next" type="button"
+                      data-bs-target="#signatureCarousel"
+                      data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ================= Actions ================= -->
+    <div class="card shadow py-1">
+      <div class="card-body py-1">
+        <div class="row g-3 align-items-end">
+
+          <div class="col-md-6">
+            <div class="d-flex gap-3 action-container">
+
+              <button class="btn btn-success action-btn"
+                      (click)="confirmReturn()">
+                <ng-icon name="tablerCheck" class="me-1"></ng-icon>
+                Pay
+              </button>
+
+              <button class="btn btn-primary action-btn"
+                      (click)="getAccountDetails()">
+                <ng-icon name="tablerUser" class="me-1"></ng-icon>
+                No Pay
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

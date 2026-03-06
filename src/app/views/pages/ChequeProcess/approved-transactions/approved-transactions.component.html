@@ -1,0 +1,200 @@
+<div class="mt-1">
+ 
+  <div class="card mb-1">
+    <div class="card-header">
+      <div class="d-flex justify-content-between align-items-center">
+          <h6 class="card-title mb-0">
+            <ng-icon name="tablerSearch" class="me-2"></ng-icon>
+            Filters
+          </h6>
+          <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-outline-primary">
+              <ng-icon name="tablerRefresh" class="me-1"></ng-icon>
+              Reversal
+            </button>
+          </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="row g-1">
+        <div class="col-md-3">
+          <label class="form-label mb-0">Branch</label>
+          <select class="form-select" [(ngModel)]="selectedBranch">
+            <option value="">All Branches</option>
+            <option *ngFor="let branch of branches" [value]="branch.value">
+              {{ branch.label }}
+            </option>
+          </select>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label mb-0">Account Number</label>
+          <input type="text" 
+                 class="form-control" 
+                 [(ngModel)]="accountNumber" 
+                 placeholder="16 digits"
+                 maxlength="16">
+        </div>
+
+        <!-- Cheque Number -->
+        <div class="col-md-3">
+          <label class="form-label mb-0">Cheque Number</label>
+          <input type="text" 
+                 class="form-control" 
+                 [(ngModel)]="chequeNumber" 
+                 placeholder="8 digits"
+                 maxlength="8">
+        </div>
+
+        <!-- Hub Dropdown -->
+        <div class="col-md-3">
+          <label class="form-label mb-0">Hub</label>
+          <select class="form-select" [(ngModel)]="selectedHub">
+            <option value="">All Hubs</option>
+            <option *ngFor="let hub of hubs" [value]="hub.value">
+              {{ hub.label }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Res(Core) Dropdown -->
+        <div class="col-md-3">
+          <label class="form-label mb-0">Res(Core)</label>
+          <select class="form-select" [(ngModel)]="selectedResCore">
+            <option value="">All</option>
+            <option *ngFor="let option of resCoreOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Status Dropdown -->
+        <div class="col-md-3">
+          <label class="form-label mb-0">Status</label>
+          <select class="form-select" [(ngModel)]="selectedStatus">
+            <option value="">All Status</option>
+            <option *ngFor="let option of statusOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Instrument Dropdown -->
+        <div class="col-md-3">
+          <label class="form-label mb-0">Instrument</label>
+          <select class="form-select" [(ngModel)]="selectedInstrument">
+            <option value="">All Instruments</option>
+            <option *ngFor="let option of instrumentOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Cycle Dropdown -->
+        <div class="col-md-3">
+          <label class="form-label mb-0">Cycle</label>
+          <select class="form-select" [(ngModel)]="selectedCycle">
+            <option value="">All Cycles</option>
+            <option *ngFor="let option of cycleOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Approved Transactions Table -->
+  <div class="card">
+    <div class="card-body">
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2 text-muted">Loading approved transactions...</p>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="!isLoading && filteredApprovedTransactions.length === 0" class="text-center py-5">
+        <ng-icon name="tablerCheck" size="64" class="text-muted"></ng-icon>
+        <h5 class="mt-3 text-muted">No Approved Transactions Found</h5>
+      </div>
+
+      <!-- Table -->
+      <div *ngIf="!isLoading && filteredApprovedTransactions.length > 0">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead class="table-light">
+              <tr>
+                <th width="40">
+                  <input type="checkbox" class="form-check-input" (change)="toggleSelectAll($event)">
+                </th>
+                <th>Branch</th>
+                <th>Clearing cycle</th>
+                <th>Instrument</th>
+                <th>Cheque Number</th>
+                <th>Account Number</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Account Title</th>
+                <th>Account Balance</th>
+              </tr>
+            </thead>
+            <tbody class="table-group-divider">
+              <tr *ngFor="let transaction of filteredApprovedTransactions">
+                <td>
+                  <input type="checkbox" class="form-check-input" 
+                         [checked]="transaction.selected" 
+                         (change)="toggleTransactionSelection(transaction, $event)">
+                </td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <span>{{ transaction.receiverBranchCode }}</span>
+                  </div>
+                </td>
+                <td>
+                  <span class="">{{ transaction.cycleCode }}</span>
+                </td>
+                <td>
+                  <span>{{ transaction.instrumentNo }}</span>
+                </td>
+                <td>
+                  <span>{{ transaction.chequeNumber }}</span>
+                </td>
+                <td>
+                  <small class="text-monospace">{{ transaction.accountNumber }}</small>
+                </td>
+                <td>
+                  <strong class="text-success">{{ transaction.amount }}</strong>
+                </td>
+                <td>
+                  <span>
+                    {{ transaction.status }}
+                  </span>
+                </td>
+                <td>
+                  <span class="text-center" >
+                    <span>{{ transaction.accountTitle || '-' }}</span>
+                  </span>
+                </td>
+                <td>
+                  <span>{{ transaction.accountBalance || '0.00' }}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <app-pagination
+          [currentPage]="currentPage"
+          [pageSize]="pageSize"
+          [totalRecords]="totalRecords"
+          (pageChange)="onPageChange($event)">
+        </app-pagination>
+      </div>
+    </div>
+  </div>
+
+</div>

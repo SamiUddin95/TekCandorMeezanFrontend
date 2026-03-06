@@ -1,0 +1,126 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { CallbackChequeService } from '../../../../services/callback-cheque.service';
+import {
+  tablerArrowLeft,
+  tablerRefresh
+} from '@ng-icons/tabler-icons';
+
+@Component({
+  selector: 'app-callback-cheque-details',
+  templateUrl: './callback-cheque-details.component.html',
+  styleUrls: ['./callback-cheque-details.component.scss'],
+  standalone: true,
+  imports: [CommonModule, FormsModule, NgIcon],
+  providers: [provideIcons({ tablerArrowLeft, tablerRefresh })]
+})
+export class CallbackChequeDetailsComponent implements OnInit {
+
+  chequeDetails: any = null;
+  isLoading: boolean = false;
+  chequeId: number = 0;
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private callbackChequeService: CallbackChequeService
+  ) { }
+
+  ngOnInit(): void {
+    this.route.params.subscribe(params => {
+      this.chequeId = +params['id'];
+      if (this.chequeId) {
+        this.loadChequeDetails();
+      }
+    });
+  }
+
+  loadChequeDetails(): void {
+    this.isLoading = true;
+    
+    this.callbackChequeService.getCallbackChequeDetails(this.chequeId).subscribe({
+      next: (response) => {
+        this.chequeDetails = response;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading cheque details:', error);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  goBack(): void {
+    this.router.navigate(['/pages/ChequeProcess/callbackcheques']);
+  }
+
+  updateCallbackCheque(): void {
+    if (!this.chequeDetails) return;
+
+    // Prepare update data
+    const updateData = {
+      chequeNumber: this.chequeDetails.chequeNumber,
+      accountNumber: this.chequeDetails.accountNumber,
+      cbcStatus: this.chequeDetails.cbcStatus
+    };
+
+    this.callbackChequeService.updateCallbackCheque(this.chequeId, updateData).subscribe({
+      next: (response) => {
+        alert('Callback cheque updated successfully!');
+        this.goBack();
+      },
+      error: (error) => {
+        console.error('Error updating callback cheque:', error);
+        alert('Error updating callback cheque. Please try again.');
+      }
+    });
+  }
+
+  onImageError(event: any): void {
+    // Handle image loading errors
+    event.target.src = 'assets/images/placeholder.png';
+  }
+
+  // Validation methods
+  validateChequeNumber(): void {
+    if (this.chequeDetails?.chequeNumber && this.chequeDetails.chequeNumber.length !== 8) {
+      // Show validation error
+      console.warn('Cheque number must be 8 digits');
+    }
+  }
+
+  validateAccountNumber(): void {
+    if (this.chequeDetails?.accountNumber && this.chequeDetails.accountNumber.length !== 16) {
+      // Show validation error
+      console.warn('Account number must be 16 digits');
+    }
+  }
+
+  // Format amount for display
+  formatAmount(amount: string): string {
+    if (!amount) return '0.00';
+    return parseFloat(amount).toLocaleString('en-PK', {
+      style: 'currency',
+      currency: 'PKR'
+    });
+  }
+
+  // Get status badge class
+  getStatusClass(status: string): string {
+    switch (status?.toLowerCase()) {
+      case 'pending':
+        return 'badge bg-warning';
+      case 'processing':
+        return 'badge bg-info';
+      case 'completed':
+        return 'badge bg-success';
+      case 'rejected':
+        return 'badge bg-danger';
+      default:
+        return 'badge bg-secondary';
+    }
+  }
+}

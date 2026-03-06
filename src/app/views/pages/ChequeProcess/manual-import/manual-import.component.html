@@ -1,16 +1,5 @@
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-12 mt-2">
-      <div class="d-flex justify-content-between align-items-center mb-2">
-        <h4 class="mb-0">
-          <ng-icon name="tablerFileUpload" class="me-2"></ng-icon>
-          Manual Cheque Import
-        </h4>
-      </div>
-    </div>
-  </div>
-
-  <div class="row">
+<div class="mt-1">
+  <div class="row ">
     <!-- Left Sidebar - Upload Options -->
     <div class="col-lg-3">
       <div class="card">
@@ -54,7 +43,7 @@
           </div>
 
           <!-- File Upload -->
-          <div class="mb-4">
+          <div class="mb-3">
             <label class="form-label fw-semibold">
               <ng-icon name="tablerFileText" class="me-1"></ng-icon>
               File Upload
@@ -95,7 +84,7 @@
             </button>
           </div>
 
-          <div class="mb-4">
+          <div class="mb-2">
             <button class="btn btn-success w-100" 
                     (click)="importFile()">
               <ng-icon name="tablerFileImport" class="me-2"></ng-icon>
@@ -104,7 +93,7 @@
           </div>
 
           <!-- Service Options -->
-          <div class="border-top pt-3">
+          <div class="border-top pt-2">
             <label class="form-label fw-semibold">
               <ng-icon name="tablerSettings" class="me-1"></ng-icon>
               Services
@@ -136,15 +125,17 @@
     <div class="col-lg-9">
       <div class="card">
         <div class="card-header">
-          <div class="d-flex justify-content-between align-items-center">
-            <h5 class="card-title">
-              <ng-icon name="tablerList"></ng-icon>
-              Import History                
-            </h5>
+          <div class="row col-12 mb-lg-n2 mt-lg-n2 align-items-center">
+            <div class="col-4">
+              <h5 class="card-title mb-0">
+                <!-- <ng-icon name="tablerList"></ng-icon> -->
+                Import History                
+              </h5>
+            </div>
             
-            <!-- Search Filter -->
-            <div class="d-flex gap-2 me-2">
-              <div class="input-group" style="width: 250px;">
+            <div class="col-8 text-end">
+              <!-- Search Filter -->
+              <div class="input-group" style="width: 250px; display: inline-flex;">
                 <span class="input-group-text">
                   <ng-icon name="tablerCalendar"></ng-icon>
                 </span>
@@ -179,15 +170,15 @@
                 <thead class="table-light">
                   <tr>
                     <th>File Name</th>
-                    <th>Import Date</th>
-                    <th>Total Records</th>
-                    <th>Successful Records</th>
-                    <th>Failure Records</th>
+                    <th>Date</th>
+                    <th>Total</th>
+                    <th>Success</th>
+                    <th>Failure</th>
                     <th>Status</th>
                     <th width="80">Actions</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody class = "table-group-divider">
                   <tr *ngFor="let import of filteredImports">
                     <td>
                       <div class="d-flex align-items-center">
@@ -195,22 +186,22 @@
                         <span>{{ import.fileName }}</span>
                       </div>
                     </td>
-                    <td>{{ import.date | date:'dd MMM yyyy, HH:mm' }}</td>
-                    <td>
+                    <td>{{ import.date | date:'dd MMM yyyy' }}</td>
+                    <td class="text-center">
                       <span class="badge bg-secondary">{{ import.totalRecords }}</span>
                     </td>
-                    <td>
+                    <td class="text-center">
                       <span>{{ import.successfullRecords }}</span>
                     </td>
-                    <td>
+                    <td class="text-center">
                       <span>{{ import.failureRecords }}</span>
                     </td>
-                    <td>
+                    <td class="text-center">
                       <span>
                         Completed
                       </span>
                     </td>
-                    <td>
+                    <td class="text-center">
                       <button class="btn btn-sm btn-outline-primary" 
                               (click)="showImportDetails(import)"
                               title="View Details">
@@ -223,7 +214,7 @@
             </div>
             
             <!-- Pagination Component -->
-            <div class="mt-3">
+            <div class="mt-0">
               <app-pagination 
                 [currentPage]="currentPage"
                 [pageSize]="pageSize"

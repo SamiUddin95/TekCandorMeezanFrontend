@@ -70,7 +70,7 @@ export const menuItems: MenuItemType[] = [
             { 
                 label: 'Upload File', 
                 icon: 'tablerFileUpload', 
-                url: '/pages/ChequeProcess/manual-import',
+                url: '/pages/ChequeProcess/upload-file',
                 requiredPermissions: ['chequeProcess.UplaodFile']
             },
             { 
@@ -94,7 +94,7 @@ export const menuItems: MenuItemType[] = [
             { 
                 label: 'Branch return confirmations', 
                 icon: 'tablerCheck', 
-                url: '/pages/ChequeProcess/manual-import',
+                url: '/pages/ChequeProcess/branch-return-confirmations',
                 requiredPermissions: ['chequeProcess.ReturnTransactions']
             },
             { 

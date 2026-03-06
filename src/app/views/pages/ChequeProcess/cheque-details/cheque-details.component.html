@@ -1,0 +1,221 @@
+<div class="cheque-details-container">
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="text-center py-3">
+    <div class="spinner-border text-primary loading-spinner" role="status"></div>
+    <p class="mt-2 text-muted fw-semibold">Loading Cheque Details...</p>
+  </div>
+
+  <!-- Cheque Details Content -->
+  <div *ngIf="!isLoading && chequeDetails" class="details-content mt-2">
+
+    <!-- ================= Cheque Information ================= -->
+    <div class="card shadow-sm mb-2">
+      <div class="card-header py-1 bg-light d-flex align-items-start">
+        <button class="btn btn-sm btn-outline-secondary" (click)="goBack()">
+          <ng-icon name="tablerArrowLeft"></ng-icon>
+        </button>
+        <h6 class="mb-0 fw-semibold text-black ms-2">Cheque Information</h6>
+      </div>
+
+      <div class="card-body py-2">
+        <div class="row g-2">
+
+          <div class="col-md-3">
+            <label class="form-label">Cheque Number</label>
+            <input type="text"
+                   class="form-control"
+                   [(ngModel)]="chequeDetails.chequeNumber"
+                   placeholder="Enter Cheque Number">
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label">Account Number</label>
+            <input type="text"
+                   class="form-control"
+                   [(ngModel)]="chequeDetails.accountNumber"
+                   placeholder="Enter Account Number">
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label text-muted">Amount</label>
+            <div class="form-control bg-light border-0" style="font-weight: 500;">
+              {{ chequeDetails.amount || 'N/A' }}
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label text-muted">Status</label>
+            <div class="form-control bg-light border-0" style="font-weight: 500;">
+              {{ chequeDetails.statusText || chequeDetails.status || 'N/A' }}
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label text-muted">Account Title</label>
+            <div class="form-control bg-light border-0" style="font-weight: 500;">
+              {{ chequeDetails.accountTitle || chequeDetails.customerName || 'N/A' }}
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label text-muted">Account Balance</label>
+            <div class="form-control bg-light border-0" style="font-weight: 500;">
+              {{ chequeDetails.accountBalance || 'N/A' }}
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label text-muted">Error Field Name</label>
+            <div class="form-control bg-light border-0" style="font-weight: 500; min-height: 38px;">
+              {{ chequeDetails.errorInFields || chequeDetails.errorFieldName || 'No errors' }}
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= Images Section ================= -->
+    <div class="row g-2 mb-2">
+
+      <!-- Cheque Images -->
+      <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+          <div class="card-header py-1 bg-light">
+            <h6 class="mb-0 fw-semibold text-black">Cheque Images</h6>
+          </div>
+          <div class="card-body p-1">
+
+            <div id="chequeCarousel" class="carousel slide" data-bs-ride="carousel">
+              <div class="carousel-inner bg-light">
+
+                <div class="carousel-item active">
+                  <img [src]="'https://localhost:44367/api/ChequeDeposit/image/' + (chequeDetails.imgF || '')"
+                       class="w-100"
+                       alt=""
+                       (error)="onImageError($event)">
+                </div>
+
+                <div class="carousel-item">
+                  <img [src]="'https://localhost:44367/api/ChequeDeposit/image/' + (chequeDetails.imgR || '')"
+                       class="w-100"
+                       alt=""
+                       (error)="onImageError($event)">
+                </div>
+
+              </div>
+
+              <button class="carousel-control-prev" type="button"
+                      data-bs-target="#chequeCarousel"
+                      data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+              </button>
+
+              <button class="carousel-control-next" type="button"
+                      data-bs-target="#chequeCarousel"
+                      data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Signature Images -->
+      <div class="col-md-6">
+        <div class="card shadow-sm h-100  ">
+          <div class="card-header py-1 bg-light">
+            <h6 class="mb-0 fw-semibold text-black">Signature Images</h6>
+          </div>
+          <div class="card-body p-1">
+
+            <div id="signatureCarousel" class="carousel slide" data-bs-ride="carousel">
+              <div class="carousel-inner bg-light">
+
+                <div class="carousel-item active">
+                  <img src="data:image/png;base64,...."
+                       class="w-100"
+                       alt="">
+                </div>
+
+                <div class="carousel-item">
+                  <img src="data:image/jpeg;base64,...."
+                       class="w-100"
+                       alt="">
+                </div>  
+
+              </div>
+
+              <button class="carousel-control-prev" type="button"
+                      data-bs-target="#signatureCarousel"
+                      data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+              </button>
+
+              <button class="carousel-control-next" type="button"
+                      data-bs-target="#signatureCarousel"
+                      data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ================= Actions ================= -->
+    <div class="card shadow py-1">
+       
+
+      <div class="card-body py-1">
+        <div class="row g-3 align-items-end">
+
+          <div class="col-md-6">
+            <label class="form-label">Return Reason</label>
+            <select class="form-select"
+                    [(ngModel)]="selectedReturnReason">
+              <option value="">Select Return Reason</option>
+              <option value="insufficient_funds">Insufficient Funds</option>
+              <option value="signature_mismatch">Signature Mismatch</option>
+              <option value="account_closed">Account Closed</option>
+              <option value="stop_payment">Stop Payment</option>
+              <option value="post_dated">Post Dated Cheque</option>
+              <option value="alteration">Alteration in Cheque</option>
+              <option value="expiry">Cheque Expired</option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <div class="d-flex gap-3 action-container">
+
+              <button class="btn btn-success action-btn"
+                      (click)="approveCheque()">
+                <ng-icon name="tablerCheck" class="me-1"></ng-icon>
+                Approve
+              </button>
+
+              <button class="btn btn-primary action-btn"
+                      (click)="getAccountDetails()">
+                <ng-icon name="tablerUser" class="me-1"></ng-icon>
+                Get Account Detail
+              </button>
+
+              <button class="btn btn-danger action-btn"
+                      (click)="sendToRejection()">
+                <ng-icon name="tablerX" class="me-1"></ng-icon>
+                Reject
+              </button>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

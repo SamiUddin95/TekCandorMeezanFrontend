@@ -1,0 +1,176 @@
+<div class="mt-1">
+  <div class="row">
+    <!-- Full Width Content - Table -->
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0 me-2">
+            Import History
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row mb-2">
+            <div class="col-6">
+              <div class="d-flex align-items-center gap-3 me-2">
+                <!-- Date Filter -->
+                <div class="input-group" style="width: 250px;">
+                  <span class="input-group-text">
+                    <ng-icon name="tablerCalendar"></ng-icon>
+                  </span>
+                  <input type="date" class="form-control" [(ngModel)]="filterDate" (change)="filterImports()">
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Section: Service Buttons -->
+            <div class="col-6">
+              <div class="d-flex gap-2 justify-content-end">
+                <button class="btn btn-sm btn-outline-primary" (click)="importData()">
+                  Import
+                </button>
+                <button class="btn btn-sm btn-outline-secondary" (click)="startService()">
+                  Start Service
+                </button>
+                <button class="btn btn-sm btn-outline-info" (click)="ssCardService()">
+                  SS Card Service
+                </button>
+                <button class="btn btn-sm btn-outline-success" (click)="sftpImageUpload()">
+                  SFTP Image Upload
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- Loading State -->
+          <div *ngIf="isLoading" class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2 text-muted">Loading import history...</p>
+          </div>
+
+          <!-- Empty State -->
+          <div *ngIf="!isLoading && filteredImports.length === 0" class="text-center py-5">
+            <ng-icon name="tablerInbox" class="text-muted" style="font-size: 3rem;"></ng-icon>
+            <h5 class="text-muted mt-3">No Import Records Found</h5>
+            <p class="text-muted">Start by uploading a file to see import history.</p>
+          </div>
+
+          <!-- Import History Table -->
+          <div *ngIf="!isLoading && filteredImports.length > 0">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead class="table-light">
+                  <tr>
+                    <th>File Name</th>
+                    <th>Import Date</th>
+                    <th class="text-center">Total </th>
+                    <th class="text-center">Successful</th>
+                    <th class="text-center">Failure</th>
+                    <th width="80">Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="table-group-divider">
+                  <tr *ngFor="let import of filteredImports">
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <ng-icon name="tablerFileText" class="me-2 text-muted"></ng-icon>
+                        <span>{{ import.fileName }}</span>
+                      </div>
+                    </td>
+                    <td>{{ import.date | date:'dd MMM yyyy' }}</td>
+                    <td class="text-center">
+                      <span class="badge bg-secondary">{{ import.totalRecords }}</span>
+                    </td>
+                    <td class="text-center">
+                      <span>{{ import.successfullRecords }}</span>
+                    </td>
+                    <td class="text-center">
+                      <span>{{ import.failureRecords }}</span>
+                    </td>
+                    <td>
+                      <button class="btn btn-sm btn-outline-primary" (click)="showImportDetails(import)"
+                        title="View Details">
+                        <ng-icon name="tablerEye"></ng-icon>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Pagination Component -->
+            <div class="mt-3">
+              <app-pagination [currentPage]="currentPage" [pageSize]="pageSize" [totalRecords]="totalRecords"
+                (pageChange)="onPageChange($event)">
+              </app-pagination>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Import Details Modal -->
+<div class="modal fade" #detailsModal tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <ng-icon name="tablerFileDescription" class="me-2"></ng-icon>
+          Import Details
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" *ngIf="selectedImport">
+        <!-- Details Display Section -->
+        <div *ngIf="selectedImport && selectedImport.details && selectedImport.details.length > 0" class="mt-4">
+          <div class="alert alert-info d-flex align-items-center" role="alert">
+            <ng-icon name="tablerInfoCircle" class="me-2"></ng-icon>
+            <strong>Import Details Found:</strong> {{ selectedImport?.details?.length || 0 }} records
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead class="table-light">
+                <tr>
+                  <th>Data</th>
+                  <th width="150">Date</th>
+                  <th width="100">Error</th>
+                  <th>Error Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let detail of selectedImport?.details || []">
+                  <td>
+                    <small class="text-monospace">{{ detail.data }}</small>
+                  </td>
+                  <td>{{ detail.date | date:'dd MMM yyyy, HH:mm:ss' }}</td>
+                  <td>
+                    <span class="badge {{ detail.error ? 'bg-danger' : 'bg-success' }}">
+                      {{ detail.error ? 'true' : 'false' }}
+                    </span>
+                  </td>
+                  <td>{{ detail.errorDescription }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- No Details Message -->
+        <div *ngIf="!selectedImport?.details || selectedImport?.details?.length === 0" class="text-center py-4">
+          <div class="alert alert-success" role="alert">
+            <ng-icon name="tablerCircleCheck" class="me-2" style="font-size: 1.5rem;"></ng-icon>
+            <strong>Success!</strong> Import completed with no errors to display.
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

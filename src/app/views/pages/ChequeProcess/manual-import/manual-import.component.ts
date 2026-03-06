@@ -46,7 +46,7 @@ export class ManualImportComponent implements OnInit {
   loadImportHistory() {
     this.isLoading = true;
     
-    this.chequeDepositService.getImportHistory(this.currentPage, this.pageSize).subscribe({
+    this.chequeDepositService.getManualImportHistory(this.currentPage, this.pageSize).subscribe({
       next: (response) => {
         if (response.status === 'success' && response.data) {
           this.importHistory = response.data.items;

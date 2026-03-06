@@ -16,12 +16,12 @@ export interface ImportDetail {
 export interface ImportRecord {
   id: number;
   fileName: string;
-  date: string;  // Changed from importDate to date
+  date: string;  
   totalRecords: number;
-  successfullRecords: number;  // Changed from successfulRecords to successfullRecords (with double 'l')
+  successfullRecords: number; 
   failureRecords: number;
   status: string;
-  details?: ImportDetail[];  // Optional details from API
+  details?: ImportDetail[]; 
 }
 
 export interface ChequeDepositResponse {
@@ -87,28 +87,49 @@ uploadFile(file: File): Observable<any> {
   const formData = new FormData();
   formData.append('file', file);
 
-  console.log('Upload attempt:', {
-    fileName: file.name,
-    fileSize: file.size,
-    fileType: file.type,
-    url: `${this.apiUrl}/ChequeDeposit/upload`,
-    token: sessionStorage.getItem('access_token') ? 'Token exists' : 'No token'
-  });
+    console.log('Upload attempt:', {
+      fileName: file.name,
+      fileSize: file.size,
+      fileType: file.type,
+      url: `${this.apiUrl}/ChequeDeposit/upload`,
+      token: sessionStorage.getItem('access_token') ? 'Token exists' : 'No token'
+    });
 
-  return this.http.post(
-    `${this.apiUrl}/ChequeDeposit/upload`,
-    formData
-  );
-}
- 
-  importFile(): Observable<any> {
-    return this.http.post(`${this.apiUrl}/ChequeDeposit/manual-import`, { 
+    return this.http.post(
+      `${this.apiUrl}/ChequeDeposit/upload`,
+      formData
+    );
+  }
+
+  importFile(services?: { import?: boolean; startService?: boolean; ssCardService?: boolean; sftpImageUpload?: boolean }): Observable<any> {
+    const payload = {
+      import: services?.import || false,
+      startService: services?.startService || false,
+      ssCardService: services?.ssCardService || false,
+      sftpImageUpload: services?.sftpImageUpload || false,
+      importedBy: this.getCurrentUserName()
+    };
+    return this.http.post(`${this.apiUrl}/ChequeDeposit/manual-import`, payload, { 
       headers: this.getAuthHeaders() 
     });
   }
 
-  // Get import history API
+  // Import data API
+  importData(): Observable<any> {
+    return this.http.post(`${this.apiUrl}/ChequeDeposit/import`, {}, { 
+      headers: this.getAuthHeaders() 
+    });
+  }
+
+  // Get import history API (for upload-file component)
   getImportHistory(pageNumber: number = 1, pageSize: number = 10): Observable<any> {
+    return this.http.get(`${this.apiUrl}/ChequeDeposit/import-history?pageNumber=${pageNumber}&pageSize=${pageSize}`, { 
+      headers: this.getAuthHeaders() 
+    });
+  }
+
+  // Get manual import history API (for manual-import component)
+  getManualImportHistory(pageNumber: number = 1, pageSize: number = 10): Observable<any> {
     return this.http.get(`${this.apiUrl}/ChequeDeposit/manual-import-history?pageNumber=${pageNumber}&pageSize=${pageSize}`, { 
       headers: this.getAuthHeaders() 
     });
@@ -121,20 +142,15 @@ uploadFile(file: File): Observable<any> {
     });
   }
 
-  // Retry import API
-  retryImport(id: number): Observable<ChequeDepositResponse> {
-    const retryData = {
-      retriedBy: this.getCurrentUserName(),
-      retriedOn: new Date().toISOString()
-    };
-
-    console.log('Retrying import with data:', {
-      importId: id,
-      retriedBy: this.getCurrentUserName(),
-      retriedOn: new Date().toISOString()
+  // Get cheque details API
+  getChequeDetails(id: number): Observable<any> {
+    console.log('Fetching cheque details:', {
+      chequeId: id,
+      url: `${this.apiUrl}/ChequeDeposit/${id}`,
+      token: sessionStorage.getItem('access_token') ? 'Token exists' : 'No token'
     });
 
-    return this.http.post<ChequeDepositResponse>(`${this.apiUrl}/ChequeDeposit/${id}/retry`, retryData, { 
+    return this.http.get(`${this.apiUrl}/ChequeDeposit/${id}`, { 
       headers: this.getAuthHeaders() 
     });
   }
