@@ -7,6 +7,8 @@ export interface HubItem {
   id: number;
   isDeleted: boolean;
   code: string;
+
+  
   name: string;
   createdBy: string;
   updatedBy: string;

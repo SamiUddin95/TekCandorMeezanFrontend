@@ -3,7 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PaginationComponent } from '@app/components/pagination/pagination.component';
 import Swal from 'sweetalert2';
-
+import { Userservice } from '@/app/services/user.service';
+import { OnInit } from '@angular/core';
+import { HubListResponse } from '@/app/services/hub.service';
+import { BranchListResponse } from '@/app/services/branch.service';
 export interface UserItem {
   id: number;
   name: string;
@@ -34,262 +37,36 @@ export interface UserItem {
   templateUrl: './user-management.html',
   styleUrl: './user-management.scss'
 })
-export class UserManagement {
-  users: UserItem[] = [
-    {
-      id: 1,
-      name: 'John Doe',
-      email: 'john.doe@example.com',
-      loginName: 'johndoe',
-      phone: '+1234567890',
-      lastLoginTime: '2024-01-24 10:30 AM',
-      branchOrHub: 'hubWise',
-      hubId: 1,
-      branchId: 0,
-      group: 'admin',
-      active: true,
-      loginPassword: 'password123',
-      role: 'admin',
-      avatar: '/assets/images/users/user-2.jpg',
-      status: true,
-      verified: true,
-      joinedOn: '2024-01-15',
-      lastActive: '2024-01-24',
-      reports: 0
-    },
-    {
-      id: 2,
-      name: 'Jane Smith',
-      email: 'jane.smith@example.com',
-      loginName: 'janesmith',
-      phone: '+1234567891',
-      lastLoginTime: '2024-01-23 2:15 PM',
-      branchOrHub: 'branchWise',
-      hubId: 0,
-      branchId: 1,
-      group: 'operator',
-      active: true,
-      loginPassword: 'password123',
-      role: 'user',
-      avatar: '/assets/images/users/user-2.jpg',
-      status: true,
-      verified: true,
-      joinedOn: '2024-01-10',
-      lastActive: '2024-01-23',
-      reports: 1
-    },
-    {
-      id: 3,
-      name: 'Mike Johnson',
-      email: 'mike.johnson@example.com',
-      loginName: 'mikejohnson',
-      phone: '+1234567892',
-      lastLoginTime: '2024-01-20 4:45 PM',
-      branchOrHub: 'hubWise',
-      hubId: 2,
-      branchId: 0,
-      group: 'supervisor',
-      active: false,
-      loginPassword: 'password123',
-      role: 'moderator',
-      avatar: '/assets/images/users/user-2.jpg',
-      status: false,
-      verified: false,
-      joinedOn: '2024-01-05',
-      lastActive: '2024-01-20',
-      reports: 3
-    },
-    {
-      id: 4,
-      name: 'Sarah Williams',
-      email: 'sarah.williams@example.com',
-      loginName: 'sarahwilliams',
-      phone: '+1234567893',
-      lastLoginTime: '2024-01-24 9:00 AM',
-      branchOrHub: 'branchWise',
-      hubId: 0,
-      branchId: 2,
-      group: 'viewer',
-      active: true,
-      loginPassword: 'password123',
-      role: 'user',
-      avatar: '/assets/images/users/user-2.jpg',
-      status: true,
-      verified: true,
-      joinedOn: '2023-12-28',
-      lastActive: '2024-01-24',
-      reports: 0
-    },
-    {
-      id: 5,
-      name: 'David Brown',
-      email: 'david.brown@example.com',
-      loginName: 'davidbrown',
-      phone: '+1234567894',
-      lastLoginTime: '2024-01-22 3:30 PM',
-      branchOrHub: 'hubWise',
-      hubId: 3,
-      branchId: 0,
-      group: 'admin',
-      active: false,
-      loginPassword: 'password123',
-      role: 'admin',
-      avatar: '/assets/images/users/user-2.jpg',
-      status: false,
-      verified: true,
-      joinedOn: '2023-12-20',
-      lastActive: '2024-01-22',
-      reports: 2
-    },
-    {
-      id: 6,
-      name: 'Emily Davis',
-      email: 'emily.davis@example.com',
-      loginName: 'emilydavis',
-      phone: '+1234567895',
-      lastLoginTime: '2024-01-21 11:45 AM',
-      branchOrHub: 'branchWise',
-      hubId: 0,
-      branchId: 3,
-      group: 'operator',
-      active: true,
-      loginPassword: 'password123',
-      role: 'user',
-      avatar: '/assets/images/users/user-2.jpg',
-      status: true,
-      verified: false,
-      joinedOn: '2023-12-15',
-      lastActive: '2024-01-21',
-      reports: 1
-    },
-    {
-      id: 7,
-      name: 'Chris Wilson',
-      email: 'chris.wilson@example.com',
-      loginName: 'chriswilson',
-      phone: '+1234567896',
-      lastLoginTime: '2024-01-24 1:15 PM',
-      branchOrHub: 'hubWise',
-      hubId: 4,
-      branchId: 0,
-      group: 'supervisor',
-      active: true,
-      loginPassword: 'password123',
-      role: 'moderator',
-      avatar: '/assets/images/users/user-2.jpg',
-      status: true,
-      verified: true,
-      joinedOn: '2023-12-10',
-      lastActive: '2024-01-24',
-      reports: 0
-    },
-    {
-      id: 8,
-      name: 'Lisa Anderson',
-      email: 'lisa.anderson@example.com',
-      loginName: 'lisaanderson',
-      phone: '+1234567897',
-      lastLoginTime: '2024-01-18 2:00 PM',
-      branchOrHub: 'branchWise',
-      hubId: 0,
-      branchId: 4,
-      group: 'viewer',
-      active: false,
-      loginPassword: 'password123',
-      role: 'user',
-      avatar: '/assets/images/users/user-2.jpg',
-      status: false,
-      verified: false,
-      joinedOn: '2023-12-05',
-      lastActive: '2024-01-18',
-      reports: 4
-    },
-    {
-      id: 9,
-      name: 'Tom Martinez',
-      email: 'tom.martinez@example.com',
-      loginName: 'tommartinez',
-      phone: '+1234567898',
-      lastLoginTime: '2024-01-23 10:45 AM',
-      branchOrHub: 'hubWise',
-      hubId: 1,
-      branchId: 0,
-      group: 'operator',
-      active: true,
-      loginPassword: 'password123',
-      role: 'user',
-      avatar: '/assets/images/users/user-2.jpg',
-      status: true,
-      verified: true,
-      joinedOn: '2023-11-28',
-      lastActive: '2024-01-23',
-      reports: 0
-    },
-    {
-      id: 10,
-      name: 'Amy Taylor',
-      email: 'amy.taylor@example.com',
-      loginName: 'amytaylor',
-      phone: '+1234567899',
-      lastLoginTime: '2024-01-24 4:30 PM',
-      branchOrHub: 'hubWise',
-      hubId: 2,
-      branchId: 0,
-      group: 'admin',
-      active: true,
-      loginPassword: 'password123',
-      role: 'admin',
-      avatar: '/assets/images/users/user-2.jpg',
-      status: true,
-      verified: true,
-      joinedOn: '2023-11-20',
-      lastActive: '2024-01-24',
-      reports: 1
-    },
-    {
-      id: 11,
-      name: 'Robert Garcia',
-      email: 'robert.garcia@example.com',
-      loginName: 'robertgarcia',
-      phone: '+1234567900',
-      lastLoginTime: '2024-01-19 1:00 PM',
-      branchOrHub: 'branchWise',
-      hubId: 0,
-      branchId: 1,
-      group: 'viewer',
-      active: false,
-      loginPassword: 'password123',
-      role: 'user',
-      avatar: '/assets/images/users/user-2.jpg',
-      status: false,
-      verified: false,
-      joinedOn: '2023-11-15',
-      lastActive: '2024-01-19',
-      reports: 2
-    },
-    {
-      id: 12,
-      name: 'Michelle Lee',
-      email: 'michelle.lee@example.com',
-      loginName: 'michellelee',
-      phone: '+1234567901',
-      lastLoginTime: '2024-01-24 11:00 AM',
-      branchOrHub: 'hubWise',
-      hubId: 3,
-      branchId: 0,
-      group: 'supervisor',
-      active: true,
-      loginPassword: 'password123',
-      role: 'moderator',
-      avatar: '/assets/images/users/user-2.jpg',
-      status: true,
-      verified: true,
-      joinedOn: '2023-11-10',
-      lastActive: '2024-01-24',
-      reports: 0
-    }
-  ];
+export class UserManagement implements OnInit{
 
+  
+  users: UserItem[] = [
+   
+  ];
+  isSelectingGroup: boolean = false;
+
+selectedSecurityGroups: any[] = [];
+allSecurityGroups: any[] = []; 
+tempSelectedGroups: any[] = [];
+//   selectedSecurityGroups: any[] = [];
+// allSecurityGroups: any[] = [];
+// tempSelectedGroups: any[] = [];
+  hubs: any;
+  isLoading: boolean | undefined;
+  subscriptions: any;
+  totalPages: number | undefined;
+  branches: any;
+  // hubs: any;
+    ngOnInit(): void {
+    this.loadUsers();
+    this.loadBranches();
+    this.loadHubs();
+    
+  }
+  
+currentGroupPage: number = 1;
+groupPageSize: number = 10;
+totalGroupRecords: number = 0;
   currentPage: number = 1;
   pageSize: number = 10;
   totalRecords: number = 0;
@@ -314,9 +91,10 @@ export class UserManagement {
     return this.users.reduce((sum, u) => sum + u.reports, 0);
   }
 
-  constructor() {
+  constructor(private userService: Userservice) {
     this.totalRecords = this.users.length;
   }
+ 
 
   get paginatedUsers(): UserItem[] {
     if (!this.users || this.users.length === 0) {
@@ -326,10 +104,43 @@ export class UserManagement {
     const endIndex = startIndex + this.pageSize;
     return this.users.slice(startIndex, endIndex);
   }
+//   openSecurityModal() {
+//   const modal = new bootstrap.Modal(document.getElementById('securityGroupModal')!);
+//   modal.show();
+// }
+
+
+
+onGroupSelect(event: any, group: any) {
+  if (event.target.checked) {
+    this.tempSelectedGroups.push(group);
+  } else {
+    this.tempSelectedGroups = this.tempSelectedGroups.filter(g => g.id !== group.id);
+  }
+}
+
+saveSelectedGroups() {
+
+  // Duplicate prevent
+  this.tempSelectedGroups.forEach(group => {
+    const exists = this.selectedSecurityGroups.find(g => g.id === group.id);
+    if (!exists) {
+      this.selectedSecurityGroups.push(group);
+    }
+  });
+
+  this.tempSelectedGroups = [];
+  this.closeModal();
+}
+
+removeGroup(index: number) {
+  this.selectedSecurityGroups.splice(index, 1);
+}
 
   onPageChange(event: { page: number; pageSize: number }) {
     this.currentPage = event.page;
     this.pageSize = event.pageSize;
+    this.loadUsers();  
   }
 
   onAddNew() {
@@ -344,30 +155,65 @@ export class UserManagement {
     this.openModal();
   }
 
+  // onDelete(user: UserItem, index: number) {
+  //   Swal.fire({
+  //     title: 'Are you sure?',
+  //     text: `Do you want to delete ${user.name}? This action cannot be undone.`,
+  //     icon: 'warning',
+  //     showCancelButton: true,
+  //     confirmButtonColor: '#d33',
+  //     cancelButtonColor: '#3085d6',
+  //     confirmButtonText: 'Yes, delete it!',
+  //     cancelButtonText: 'Cancel'
+  //   }).then((result: any) => {
+  //     if (result.isConfirmed) {
+  //       // Find the actual index based on user ID to avoid pagination issues
+  //       const actualIndex = this.users.findIndex(u => u.id === user.id);
+  //       if (actualIndex !== -1) {
+  //         this.users.splice(actualIndex, 1);
+  //         this.totalRecords = this.users.length;
+          
+  //         // Adjust current page if necessary
+  //         const totalPages = Math.ceil(this.totalRecords / this.pageSize);
+  //         if (this.currentPage > totalPages && totalPages > 0) {
+  //           this.currentPage = totalPages;
+  //         }
+          
+  //         Swal.fire({
+  //           title: 'Deleted!',
+  //           text: `${user.name} has been deleted successfully.`,
+  //           icon: 'success',
+  //           timer: 2000,
+  //           showConfirmButton: false
+  //         });
+  //       }
+  //     }
+  //   });
+  // }
   onDelete(user: UserItem, index: number) {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: `Do you want to delete ${user.name}? This action cannot be undone.`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'Cancel'
-    }).then((result: any) => {
-      if (result.isConfirmed) {
-        // Find the actual index based on user ID to avoid pagination issues
-        const actualIndex = this.users.findIndex(u => u.id === user.id);
-        if (actualIndex !== -1) {
-          this.users.splice(actualIndex, 1);
-          this.totalRecords = this.users.length;
-          
-          // Adjust current page if necessary
-          const totalPages = Math.ceil(this.totalRecords / this.pageSize);
-          if (this.currentPage > totalPages && totalPages > 0) {
-            this.currentPage = totalPages;
+  Swal.fire({
+    title: 'Are you sure?',
+    text: `Do you want to delete ${user.name}? This action cannot be undone.`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Yes, delete it!',
+    cancelButtonText: 'Cancel'
+  }).then((result: any) => {
+
+    if (result.isConfirmed) {
+
+      this.userService.deleteUser(user.id).subscribe({
+        next: () => {
+
+          const actualIndex = this.users.findIndex(u => u.id === user.id);
+
+          if (actualIndex !== -1) {
+            this.users.splice(actualIndex, 1);
+            this.totalRecords = this.users.length;
           }
-          
+
           Swal.fire({
             title: 'Deleted!',
             text: `${user.name} has been deleted successfully.`,
@@ -375,73 +221,152 @@ export class UserManagement {
             timer: 2000,
             showConfirmButton: false
           });
+
+        },
+        error: () => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to delete user'
+          });
         }
-      }
-    });
-  }
+      });
+
+    }
+
+  });
+}
 
   onStatusChange(user: UserItem) {
     console.log(`Status changed for ${user.name}: ${user.status}`);
   }
 
-  onSaveUser() {
-    if (!this.selectedUser.name || !this.selectedUser.email) {
-      Swal.fire({
-        title: 'Error!',
-        text: 'Please fill in all required fields',
-        icon: 'error',
-        confirmButtonText: 'OK'
-      });
-      return;
-    }
 
-    if (this.isEditMode) {
-      // Update existing user
-      const index = this.users.findIndex(u => u.id === this.selectedUser.id);
-      if (index !== -1) {
-        this.users[index] = { ...this.selectedUser };
+ loadHubs() {
+    this.isLoading = true;
+    const subscription = this.userService.getHubs(this.currentPage, this.pageSize).subscribe({
+      next: (response: HubListResponse) => {
+        if (response.status === 'success') {
+          this.hubs = response.data.items;
+          this.totalRecords = response.data.totalCount;
+          this.totalPages = response.data.totalPages;
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: response.errorMessage || 'Failed to load hubs'
+          });
+        }
+        this.isLoading = false;
+      },
+      error: (error:any) => {
+        console.error('Error loading hubs:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to load hubs. Please try again.'
+        });
+        this.isLoading = false;
       }
-    } else {
-      // Add new user
-      const newId = Math.max(...this.users.map(u => u.id)) + 1;
-      const newUser: UserItem = {
-        ...this.selectedUser,
-        id: newId,
-        status: true
-      };
-      this.users.push(newUser);
-      this.totalRecords = this.users.length;
-      
-      // Go to last page to show the new item
-      const totalPages = Math.ceil(this.totalRecords / this.pageSize);
-      this.currentPage = totalPages;
+    });
+    this.subscriptions.push(subscription);
+  }
+   loadBranches() {
+    debugger
+      this.isLoading = true;
+      const subscription = this.userService.getBranches(this.currentPage, this.pageSize).subscribe({
+        next: (response: BranchListResponse) => {
+          if (response.status === 'success') {
+            this.branches = response.data.items;
+            console.log("Branches loaded:", this.branches);
+            this.totalRecords = response.data.totalCount;
+            this.totalPages = response.data.totalPages;
+          } else {
+      this.subscriptions.push(subscription);
     }
 
-    this.closeModal();
+  }})};
+
+loadUsers() {
+  this.userService.getAllUsers(this.currentPage, this.pageSize)
+    .subscribe({
+      next: (res: any) => {
+        console.log("API Response:", res);
+
+        
+        this.users = res.data.items;   
+        console.log("Users loaded waleed:", this.users);   
+        this.totalRecords = res.data.totalCount; 
+
+        
+      },
+      error: (err) => {
+        console.error(err);
+        Swal.fire('Error', 'Failed to load users', 'error');
+      }
+    });
+}
+  
+onSaveUser() {
+  // Validation
+  if (!this.selectedUser.name || !this.selectedUser.email) {
+    Swal.fire({
+      title: 'Error!',
+      text: 'Please fill in all required fields',
+      icon: 'error',
+      confirmButtonText: 'OK'
+    });
+    return;
   }
 
-  showImagePreview(avatarUrl: string) {
-    this.previewImage = avatarUrl;
-    const modalElement = document.getElementById('imagePreviewModal');
-    const modal = new (window as any).bootstrap.Modal(modalElement);
-    modal.show();
-  }
+  if (this.isEditMode) {
+    // Update existing user via API
+    this.userService.updateUser(this.selectedUser.id!, this.selectedUser).subscribe({
+      next: (res) => {
+        Swal.fire('Success', 'User updated successfully', 'success');
+        // Update local array
+        const index = this.users.findIndex(u => u.id === this.selectedUser.id);
+        if (index !== -1) this.users[index] = { ...this.selectedUser };
+        this.closeModal();
+      },
+      error: (err) => Swal.fire('Error', 'Failed to update user', 'error')
+    });
+  } else {
+    // Add new user via API
+    this.userService.addUser(this.selectedUser).subscribe({
+      next: (res) => {
+        Swal.fire('Success', 'User added successfully', 'success');
+        // Add new user to local array with id from backend
+        const newUser = { ...this.selectedUser, id: res.data?.id || Math.max(...this.users.map(u => u.id)) + 1 };
+        this.users.push(newUser);
+        this.totalRecords = this.users.length;
 
-  onAvatarUpload(event: any) {
-    const file = event.target.files[0];
-    if (file && file.type.startsWith('image/')) {
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.selectedUser.avatar = e.target.result;
-        this.selectedUser.uploadedAvatar = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
+        // Go to last page to show new item
+        this.currentPage = Math.ceil(this.totalRecords / this.pageSize);
+        this.closeModal();
+      },
+      error: (err) => Swal.fire('Error', 'Failed to add user', 'error')
+    });
   }
+}
+loadSecurityGroups() {
+  this.userService.getAllGroups(this.currentGroupPage, this.groupPageSize)
+    .subscribe({
+      next: (res: any) => {
 
-  triggerAvatarUpload() {
-    document.getElementById('avatarUpload')?.click();
-  }
+        console.log("Group API Response:", res);
+
+        this.allSecurityGroups = res.data.items;
+        this.totalGroupRecords = res.data.totalCount;
+
+      },
+      error: (err) => {
+        console.error(err);
+        Swal.fire('Error', 'Failed to load security groups', 'error');
+      }
+    });
+}
+  
 
   private getEmptyUser(): UserItem {
     return {
@@ -477,11 +402,17 @@ export class UserManagement {
     });
   }
 
-  private openModal() {
+   openModal() {
     const modalElement = document.getElementById('userModal');
     const modal = new (window as any).bootstrap.Modal(modalElement);
     modal.show();
   }
+
+  openSecurityModal() {
+  const modalElement = document.getElementById('securityGroupModal');
+  const modal = new (window as any).bootstrap.Modal(modalElement);
+  modal.show();
+}
 
   private closeModal() {
     const modalElement = document.getElementById('userModal');
@@ -490,4 +421,42 @@ export class UserManagement {
       modal.hide();
     }
   }
+
+
+  showGroupSelection() {
+  this.isSelectingGroup = true;
+    this.loadSecurityGroups();
+
 }
+
+
+cancelSelection() {
+  this.isSelectingGroup = false;
+  this.tempSelectedGroups = [];
+}
+
+addSelectedGroups() {
+
+  this.tempSelectedGroups.forEach(group => {
+    const exists = this.selectedSecurityGroups.find(g => g.id === group.id);
+    if (!exists) {
+      this.selectedSecurityGroups.push(group);
+    }
+  });
+
+  this.isSelectingGroup = false;
+  this.tempSelectedGroups = [];
+}
+
+onCheckboxChange(event: any, group: any) {
+  if (event.target.checked) {
+    this.tempSelectedGroups.push(group);
+  } else {
+    this.tempSelectedGroups =
+      this.tempSelectedGroups.filter(g => g.id !== group.id);
+  }
+}
+
+
+}
+
