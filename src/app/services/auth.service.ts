@@ -5,6 +5,12 @@ import { environment } from '../../environments/environment';
 import { JwtDecoderService } from './jwt-decoder.service';
 
 export interface User {
+branchOrHub: any;
+email: any;
+phone: any;
+active: any;
+branchId: any;
+hubId: any;
   userid: number;
   name: string;
   loginName: string;
