@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { Router } from '@angular/router';
-import { ReturnTransactionService } from '../../../../services/return-transaction.service';
+import { ReturnTransactionService, ReturnTransaction } from '../../../../services/return-transaction.service';
+import { FilterService } from '../../../../services/filter.service';
 import { PaginationComponent } from '../../../../components/pagination/pagination.component';
 import {
   tablerSearch,
@@ -52,8 +53,9 @@ export class ReturnTransactionComponent implements OnInit {
   returnReasonOptions: any[] = [];
 
   constructor(
-    private router: Router,
-    private returnTransactionService: ReturnTransactionService
+    private returnTransactionService: ReturnTransactionService,
+    private filterService: FilterService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -62,12 +64,19 @@ export class ReturnTransactionComponent implements OnInit {
   }
 
   loadDropdownData(): void {
-    // Load branches, hubs, and other dropdown data
-    this.returnTransactionService.getBranches().subscribe({
-      next: (data) => {
-        this.branches = data;
+    // Load branches
+    this.filterService.getBranches().subscribe({
+      next: (response: any) => {
+        if (response.status === 'success' && response.data && response.data.branches) {
+          this.branches = response.data.branches.map((branch: any) => ({
+            value: branch.code,
+            label: branch.name
+          }));
+        } else {
+          this.branches = [];
+        }
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error loading branches:', error);
         // Fallback data
         this.branches = [
@@ -78,71 +87,84 @@ export class ReturnTransactionComponent implements OnInit {
       }
     });
 
-    this.returnTransactionService.getHubs().subscribe({
-      next: (data) => {
-        this.hubs = data;
+    // Load hubs
+    this.filterService.getHubs().subscribe({
+      next: (response: any) => {
+        if (response.status === 'success' && response.data && response.data.hubs) {
+          this.hubs = response.data.hubs.map((hub: any) => ({
+            value: hub.code,
+            label: hub.name
+          }));
+        } else {
+          this.hubs = [];
+        }
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error loading hubs:', error);
         // Fallback data
         this.hubs = [
-          { value: 'KARACHI-10', label: 'Karachi 10' },
-          { value: 'LAHORE-5', label: 'Lahore 5' },
-          { value: 'ISLAMABAD-3', label: 'Islamabad 3' }
+          { value: '10', label: 'KARACHI-10' },
+          { value: '40', label: 'RAWALPINDI-40' },
+          { value: '20', label: 'LAHORE-20' }
         ];
       }
     });
 
-    this.returnTransactionService.getStatusOptions().subscribe({
-      next: (data) => {
-        this.statusOptions = data;
+    this.filterService.getStatusOptions().subscribe({
+      next: (response: any) => {
+        if (response.status === 'success' && response.data && response.data.statuses) {
+          this.statusOptions = response.data.statuses.map((status: any) => ({
+            value: status.value,
+            label: status.text
+          }));
+        } else {
+          this.statusOptions = [];
+        }
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error loading status options:', error);
-        // Fallback data
-        this.statusOptions = [
-          { value: 'Return', label: 'Return' },
-          { value: 'Processing', label: 'Processing' },
-          { value: 'Completed', label: 'Completed' }
-        ];
+        this.statusOptions = [];
       }
     });
 
-    this.returnTransactionService.getInstrumentOptions().subscribe({
-      next: (data) => {
-        this.instrumentOptions = data;
+    this.filterService.getInstrumentOptions().subscribe({
+      next: (response: any) => {
+        if (response.status === 'success' && response.data && response.data.instruments) {
+          this.instrumentOptions = response.data.instruments.map((instrument: any) => ({
+            value: instrument.value,
+            label: instrument.text
+          }));
+        } else {
+          this.instrumentOptions = [];
+        }
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error loading instrument options:', error);
-        // Fallback data
-        this.instrumentOptions = [
-          { value: 'Cheque', label: 'Cheque' },
-          { value: 'Pay order', label: 'Pay Order' },
-          { value: 'DD', label: 'Demand Draft' }
-        ];
+        this.instrumentOptions = [];
       }
     });
 
-    this.returnTransactionService.getCycleOptions().subscribe({
-      next: (data) => {
-        this.cycleOptions = data;
+    this.filterService.getCycleOptions().subscribe({
+      next: (response: any) => {
+        if (response.status === 'success' && response.data && response.data.cycles) {
+          this.cycleOptions = response.data.cycles.map((cycle: any) => ({
+            value: cycle.value,
+            label: cycle.text
+          }));
+        } else {
+          this.cycleOptions = [];
+        }
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error loading cycle options:', error);
-        // Fallback data
-        this.cycleOptions = [
-          { value: 'Normal', label: 'Normal' },
-          { value: 'Express', label: 'Express' },
-          { value: 'Same Day', label: 'Same Day' }
-        ];
+        this.cycleOptions = [];
       }
     });
 
     // Load res core options
     this.resCoreOptions = [
-      { value: 'core1', label: 'Core 1' },
-      { value: 'core2', label: 'Core 2' },
-      { value: 'core3', label: 'Core 3' }
+      { value: 'true', label: 'True' },
+      { value: 'false', label: 'False' }
     ];
 
     // Load return reason options

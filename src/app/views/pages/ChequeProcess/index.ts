@@ -10,3 +10,7 @@ export { BranchReturnDetailsComponent } from './branch-return-details/branch-ret
 export { ApprovedTransactionsComponent } from './approved-transactions/approved-transactions.component';
 export { UnauthorizeTransactionsComponent } from './unauthorize-transactions/unauthorize-transactions.component';
 export { UnauthorizeTransactionsDetailsComponent } from './unauthorize-transactions-details/unauthorize-transactions-details.component';
+export { SystemRejectedChequesComponent } from './system-rejected-cheques/system-rejected-cheques.component';
+export { SystemRejectedChequesDetailsComponent } from './system-rejected-cheques-details/system-rejected-cheques-details.component';
+export { InProcessChequesComponent } from './in-process-cheques/in-process-cheques.component';
+export { InProcessChequesDetailsComponent } from './in-process-cheques-details/in-process-cheques-details.component';

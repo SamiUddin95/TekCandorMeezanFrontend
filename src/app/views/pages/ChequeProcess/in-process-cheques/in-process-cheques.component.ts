@@ -3,26 +3,37 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { Router } from '@angular/router';
-import { BranchReturnService, BranchReturnConfirmation } from '../../../../services/branch-return.service';
+import { InProcessChequesService, InProcessCheque } from '../../../../services/in-process-cheques.service';
 import { FilterService } from '../../../../services/filter.service';
 import { PaginationComponent } from '../../../../components/pagination/pagination.component';
 import {
   tablerSearch,
-  tablerCe,
-  tablerPencil
+  tablerFilter,
+  tablerRefresh,
+  tablerEye,
+  tablerCheck,
+  tablerX,
+  tablerLoader
 } from '@ng-icons/tabler-icons';
 
 @Component({
-  selector: 'app-branch-return-confirmations',
-  templateUrl: './branch-return-confirmations.component.html',
-  styleUrls: ['./branch-return-confirmations.component.scss'],
+  selector: 'app-in-process-cheques',
+  templateUrl: './in-process-cheques.component.html',
+  styleUrls: ['./in-process-cheques.component.scss'],
   standalone: true,
   imports: [CommonModule, FormsModule, NgIcon, PaginationComponent],
-  providers: [provideIcons({ tablerSearch, tablerCe, tablerPencil })]
+  providers: [provideIcons({ tablerSearch, tablerFilter, tablerRefresh, tablerEye, tablerCheck, tablerX, tablerLoader })]
 })
-export class BranchReturnConfirmationsComponent implements OnInit {
+export class InProcessChequesComponent implements OnInit {
 
-  // Filter variables
+  // Component properties
+  branches: any[] = [];
+  hubs: any[] = [];
+  inProcessCheques: InProcessCheque[] = [];
+  filteredCheques: InProcessCheque[] = [];
+  allSelected: boolean = false;
+
+  // Filter properties
   selectedBranch: string = '';
   accountNumber: string = '';
   chequeNumber: string = '';
@@ -32,35 +43,50 @@ export class BranchReturnConfirmationsComponent implements OnInit {
   selectedInstrument: string = '';
   selectedCycle: string = '';
 
-  // Data variables
-  branchReturnConfirmations: BranchReturnConfirmation[] = [];
-  isLoading: boolean = false;
-
-  // Pagination variables
+  // Pagination properties
   currentPage: number = 1;
-  pageSize: number = 10;
+  pageSize: number = 20;
   totalRecords: number = 0;
+  totalPages: number = 0;
 
-  // Dropdown data
-  branches: any[] = [];
-  hubs: any[] = [];
+  // Loading states
+  isLoading: boolean = false;
+  isFiltering: boolean = false;
+
+  // Dropdown options
+  resCoreOptions = [
+    { value: 'true', label: 'True' },
+    { value: 'false', label: 'False' }
+  ];
+
   statusOptions: any[] = [];
   instrumentOptions: any[] = [];
   cycleOptions: any[] = [];
-  resCoreOptions: any[] = [];
-  postingRestrictionOptions: any[] = [];
+
+  cbcStatusOptions = [
+    { value: 'pending', label: 'Pending' },
+    { value: 'approved', label: 'Approved' },
+    { value: 'rejected', label: 'Rejected' }
+  ];
+
+  branchStatusOptions = [
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' },
+    { value: 'suspended', label: 'Suspended' }
+  ];
 
   constructor(
-    private branchReturnService: BranchReturnService,
+    private inProcessChequesService: InProcessChequesService,
     private filterService: FilterService,
     private router: Router
   ) { }
 
   ngOnInit(): void {
     this.loadDropdownData();
-    this.loadBranchReturnConfirmations();
+    this.loadInProcessCheques();
   }
 
+  // Load dropdown data
   loadDropdownData(): void {
     // Load branches
     this.filterService.getBranches().subscribe({
@@ -108,6 +134,7 @@ export class BranchReturnConfirmationsComponent implements OnInit {
       }
     });
 
+    // Load status options
     this.filterService.getStatusOptions().subscribe({
       next: (response: any) => {
         if (response.status === 'success' && response.data && response.data.statuses) {
@@ -125,6 +152,7 @@ export class BranchReturnConfirmationsComponent implements OnInit {
       }
     });
 
+    // Load instrument options
     this.filterService.getInstrumentOptions().subscribe({
       next: (response: any) => {
         if (response.status === 'success' && response.data && response.data.instruments) {
@@ -142,6 +170,7 @@ export class BranchReturnConfirmationsComponent implements OnInit {
       }
     });
 
+    // Load cycle options
     this.filterService.getCycleOptions().subscribe({
       next: (response: any) => {
         if (response.status === 'success' && response.data && response.data.cycles) {
@@ -158,34 +187,13 @@ export class BranchReturnConfirmationsComponent implements OnInit {
         this.cycleOptions = [];
       }
     });
-
-    // Load res core options
-    this.resCoreOptions = [
-      { value: 'true', label: 'True' },
-      { value: 'false', label: 'False' }
-    ];
-
-    // Load posting restriction options
-    this.branchReturnService.getPostingRestrictionOptions().subscribe({
-      next: (data) => {
-        this.postingRestrictionOptions = data;
-      },
-      error: (error) => {
-        console.error('Error loading posting restriction options:', error);
-        // Fallback data
-        this.postingRestrictionOptions = [
-          { value: 'No Restriction', label: 'No Restriction' },
-          { value: 'Account Frozen', label: 'Account Frozen' },
-          { value: 'Limit Exceeded', label: 'Limit Exceeded' }
-        ];
-      }
-    });
   }
 
-  loadBranchReturnConfirmations(): void {
+  // Load in process cheques
+  loadInProcessCheques(): void {
     this.isLoading = true;
     
-    this.branchReturnService.getBranchReturnConfirmations({
+    const filters = {
       branch: this.selectedBranch,
       accountNumber: this.accountNumber,
       chequeNumber: this.chequeNumber,
@@ -196,46 +204,112 @@ export class BranchReturnConfirmationsComponent implements OnInit {
       cycle: this.selectedCycle,
       page: this.currentPage,
       pageSize: this.pageSize
-    }).subscribe({
-      next: (response) => {
-        this.branchReturnConfirmations = response.items || [];
+    };
+
+    this.inProcessChequesService.getInProcessCheques(filters).subscribe({
+      next: (response: any) => {
+        this.inProcessCheques = response.items || [];
         this.totalRecords = response.totalCount || 0;
+        this.totalPages = response.totalPages || 0;
         this.isLoading = false;
       },
-      error: (error) => {
-        console.error('Error loading branch return confirmations:', error);
+      error: (error: any) => {
+        console.error('Error loading in process cheques:', error);
         this.isLoading = false;
+        // Fallback data
+        this.inProcessCheques = [
+          {
+            id: 949444,
+            date: '2026-03-06T00:00:00',
+            senderBankCode: 'HABIB METROPOLITAN BANK LTD.',
+            receiverBranchCode: '0005',
+            chequeNumber: '02066693',
+            accountNumber: '0099340204346125',
+            transactionCode: '020',
+            status: 'In Process',
+            amount: 130560,
+            accountBalance: '.00',
+            accountTitle: 'John Doe',
+            accountStatus: 'Normal',
+            currency: null,
+            hubCode: 'KARACHI-10',
+            cycleCode: 'Normal',
+            instrumentNo: 'Pay order',
+            branchStatus: 'Active',
+            cbcStatus: 'Pending',
+            error: false,
+            export: true,
+            returnReason: null,
+            postRestriction: null
+          }
+        ];
+        this.totalRecords = this.inProcessCheques.length;
+        this.totalPages = 1;
       }
     });
   }
 
-  validateAccountNumber(): void {
-    // Account number validation logic
-    if (this.accountNumber && this.accountNumber.length !== 16) {
-      // Show validation error
-    }
+  // Toggle select all
+  toggleSelectAll(event: any): void {
+    const isChecked = event.target.checked;
+    this.allSelected = isChecked;
+    this.inProcessCheques.forEach(cheque => {
+      cheque.selected = isChecked;
+    });
   }
 
-  validateChequeNumber(): void {
-    // Cheque number validation logic
-    if (this.chequeNumber && this.chequeNumber.length !== 8) {
-      // Show validation error
-    }
+  // Toggle cheque selection
+  toggleChequeSelection(cheque: InProcessCheque, event: any): void {
+    cheque.selected = event.target.checked;
+    this.updateSelectAllState();
   }
 
-  showBranchReturnDetails(confirmation: any): void {
-    // Navigate to branch return details component
-    this.router.navigate(['/pages/ChequeProcess/branch-return-details', confirmation.id]);
+  // Update select all state
+  updateSelectAllState(): void {
+    const totalCheques = this.inProcessCheques.length;
+    const selectedCheques = this.inProcessCheques.filter(c => c.selected).length;
+    this.allSelected = totalCheques > 0 && selectedCheques === totalCheques;
   }
 
+  // Get selected cheques
+  getSelectedCheques(): InProcessCheque[] {
+    return this.inProcessCheques.filter(cheque => cheque.selected);
+  }
+
+  // Show cheque details
+  showChequeDetails(cheque: InProcessCheque): void {
+    this.router.navigate(['/pages/ChequeProcess/in-process-cheques-details', cheque.id]);
+  }
+
+  // Apply filters
+  applyFilters(): void {
+    this.currentPage = 1; // Reset to first page
+    this.loadInProcessCheques();
+  }
+
+  // Reset filters
+  resetFilters(): void {
+    this.selectedBranch = '';
+    this.accountNumber = '';
+    this.chequeNumber = '';
+    this.selectedHub = '';
+    this.selectedResCore = '';
+    this.selectedStatus = '';
+    this.selectedInstrument = '';
+    this.selectedCycle = '';
+    this.currentPage = 1;
+    this.loadInProcessCheques();
+  }
+
+  // Pagination change
   onPageChange(event: { page: number; pageSize: number }): void {
     this.currentPage = event.page;
     this.pageSize = event.pageSize;
-    this.loadBranchReturnConfirmations();
+    this.loadInProcessCheques();
   }
 
-  // Computed property for filtered confirmations
-  get filteredConfirmations(): any[] {
-    return this.branchReturnConfirmations;
+  // Computed property for filtered cheques
+  get filteredInProcessCheques(): InProcessCheque[] {
+    return this.inProcessCheques;
   }
 }

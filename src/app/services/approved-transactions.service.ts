@@ -76,31 +76,7 @@ export class ApprovedTransactionsService {
     });
   }
 
-  // Get branches
-  getBranches(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/branches`);
-  }
-
-  // Get hubs
-  getHubs(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/hubs`);
-  }
-
-  // Get status options
-  getStatusOptions(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/status-options`);
-  }
-
-  // Get instrument options
-  getInstrumentOptions(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/instrument-options`);
-  }
-
-  // Get cycle options
-  getCycleOptions(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/cycle-options`);
-  }
-
+  
   // Get res core options
   getResCoreOptions(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/res-core-options`);

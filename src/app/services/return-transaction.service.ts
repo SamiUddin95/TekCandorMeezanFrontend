@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '@/environments/environment';
 
 export interface ReturnTransaction {
   id: number;
@@ -38,8 +39,7 @@ export interface ReturnTransactionResponse {
 })
 export class ReturnTransactionService {
 
-  private baseUrl = 'https://localhost:44367/api/ChequeDeposit';
-
+  private apiUrl = environment.apiUrl;
   constructor(private http: HttpClient) { }
 
   // Get all return transactions
@@ -57,37 +57,13 @@ export class ReturnTransactionService {
     if (filters.page) params = params.set('page', filters.page);
     if (filters.pageSize) params = params.set('pageSize', filters.pageSize);
 
-    return this.http.get<ReturnTransactionResponse>(`${this.baseUrl}/ReturnList`, { params });
+    return this.http.get<ReturnTransactionResponse>(`${this.apiUrl}/ChequeDeposit/ReturnList`, { params });
   }
 
-  // Get branches
-  getBranches(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/branches`);
-  }
-
-  // Get hubs
-  getHubs(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/hubs`);
-  }
-
-  // Get status options
-  getStatusOptions(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/status-options`);
-  }
-
-  // Get instrument options
-  getInstrumentOptions(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/instrument-options`);
-  }
-
-  // Get cycle options
-  getCycleOptions(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/cycle-options`);
-  }
-
+  
   // Get return reason options
   getReturnReasonOptions(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/return-reason-options`);
+    return this.http.get<any[]>(`${this.apiUrl}/return-reason-options`);
   }
 
   // Export data
@@ -103,12 +79,12 @@ export class ReturnTransactionService {
     if (filters.instrument) params = params.set('instrument', filters.instrument);
     if (filters.cycle) params = params.set('cycle', filters.cycle);
 
-    return this.http.get(`${this.baseUrl}/export-returns`, { params, responseType: 'blob' });
+    return this.http.get(`${this.apiUrl}/export-returns`, { params, responseType: 'blob' });
   }
 
   // Reversal function
   reversalTransaction(id: number): Observable<any> {
-    return this.http.post(`${this.baseUrl}/reversal/${id}`, {});
+    return this.http.post(`${this.apiUrl}/reversal/${id}`, {});
   }
 
   // Download file
@@ -124,6 +100,6 @@ export class ReturnTransactionService {
     if (filters.instrument) params = params.set('instrument', filters.instrument);
     if (filters.cycle) params = params.set('cycle', filters.cycle);
 
-    return this.http.get(`${this.baseUrl}/download-returns`, { params, responseType: 'blob' });
+    return this.http.get(`${this.apiUrl}/download-returns`, { params, responseType: 'blob' });
   }
 }

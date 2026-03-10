@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { Router } from '@angular/router';
-import { UnauthorizeTransactionsService, UnauthorizeTransaction } from '../../../../services/unauthorize-transactions.service';
+import { SystemRejectedChequesService, SystemRejectedCheque } from '../../../../services/system-rejected-cheques.service';
 import { FilterService } from '../../../../services/filter.service';
 import { PaginationComponent } from '../../../../components/pagination/pagination.component';
 import {
@@ -17,20 +17,20 @@ import {
 } from '@ng-icons/tabler-icons';
 
 @Component({
-  selector: 'app-unauthorize-transactions',
-  templateUrl: './unauthorize-transactions.component.html',
-  styleUrls: ['./unauthorize-transactions.component.scss'],
+  selector: 'app-system-rejected-cheques',
+  templateUrl: './system-rejected-cheques.component.html',
+  styleUrls: ['./system-rejected-cheques.component.scss'],
   standalone: true,
   imports: [CommonModule, FormsModule, NgIcon, PaginationComponent],
   providers: [provideIcons({ tablerSearch, tablerFilter, tablerRefresh, tablerEye, tablerCheck, tablerX, tablerAlertTriangle })]
 })
-export class UnauthorizeTransactionsComponent implements OnInit {
+export class SystemRejectedChequesComponent implements OnInit {
 
   // Component properties
   branches: any[] = [];
   hubs: any[] = [];
-  unauthorizeTransactions: UnauthorizeTransaction[] = [];
-  filteredTransactions: UnauthorizeTransaction[] = [];
+  systemRejectedCheques: SystemRejectedCheque[] = [];
+  filteredCheques: SystemRejectedCheque[] = [];
   allSelected: boolean = false;
 
   // Filter properties
@@ -63,10 +63,11 @@ export class UnauthorizeTransactionsComponent implements OnInit {
   instrumentOptions: any[] = [];
   cycleOptions: any[] = [];
 
-  cbcStatusOptions = [
-    { value: 'pending', label: 'Pending' },
-    { value: 'approved', label: 'Approved' },
-    { value: 'rejected', label: 'Rejected' }
+  postingRestrictionOptions = [
+    { value: '', label: 'No Restriction' },
+    { value: 'Account Inactive', label: 'Account Inactive' },
+    { value: 'Account Frozen', label: 'Account Frozen' },
+    { value: 'Account Closed', label: 'Account Closed' }
   ];
 
   branchStatusOptions = [
@@ -76,14 +77,14 @@ export class UnauthorizeTransactionsComponent implements OnInit {
   ];
 
   constructor(
-    private unauthorizeTransactionsService: UnauthorizeTransactionsService,
+    private systemRejectedChequesService: SystemRejectedChequesService,
     private filterService: FilterService,
     private router: Router
   ) { }
 
   ngOnInit(): void {
     this.loadDropdownData();
-    this.loadUnauthorizeTransactions();
+    this.loadSystemRejectedCheques();
   }
 
   // Load dropdown data
@@ -189,8 +190,8 @@ export class UnauthorizeTransactionsComponent implements OnInit {
     });
   }
 
-  // Load unauthorize transactions
-  loadUnauthorizeTransactions(): void {
+  // Load system rejected cheques
+  loadSystemRejectedCheques(): void {
     this.isLoading = true;
     
     const filters = {
@@ -206,44 +207,92 @@ export class UnauthorizeTransactionsComponent implements OnInit {
       pageSize: this.pageSize
     };
 
-    this.unauthorizeTransactionsService.getUnauthorizeTransactions(filters).subscribe({
+    this.systemRejectedChequesService.getSystemRejectedCheques(filters).subscribe({
       next: (response: any) => {
-        this.unauthorizeTransactions = response.items || [];
+        this.systemRejectedCheques = response.items || [];
         this.totalRecords = response.totalCount || 0;
         this.totalPages = response.totalPages || 0;
         this.isLoading = false;
       },
       error: (error: any) => {
-        console.error('Error loading unauthorize transactions:', error);
+        console.error('Error loading system rejected cheques:', error);
         this.isLoading = false;
-        // Fallback data
-        this.unauthorizeTransactions = [
+        // Fallback data matching real API response
+        this.systemRejectedCheques = [
           {
-            id: 949444,
-            date: '2026-03-06T00:00:00',
+            id: 949398,
+            date: '2026-03-09T00:00:00',
+            senderBankCode: 'HABIB METROPOLITAN BANK LTD.',
+            receiverBranchCode: '0005',
+            chequeNumber: '11296558',
+            accountNumber: '0099340204346125',
+            transactionCode: '000',
+            status: 'Rejected',
+            amount: 5220,
+            accountBalance: '.00',
+            accountTitle: '',
+            accountStatus: 'Normal',
+            currency: null,
+            hubCode: 'KARACHI-10',
+            cycleCode: 'Normal',
+            instrumentNo: 'Cheque',
+            branchStatus: null,
+            cbcStatus: null,
+            error: true,
+            export: true,
+            returnReason: null,
+            postRestriction: null
+          },
+          {
+            id: 949399,
+            date: '2026-03-09T00:00:00',
+            senderBankCode: 'HABIB METROPOLITAN BANK LTD.',
+            receiverBranchCode: '0005',
+            chequeNumber: '22741383',
+            accountNumber: '0099340204346125',
+            transactionCode: '000',
+            status: 'Rejected',
+            amount: 960000,
+            accountBalance: '.00',
+            accountTitle: '',
+            accountStatus: 'Normal',
+            currency: null,
+            hubCode: 'KARACHI-10',
+            cycleCode: 'Normal',
+            instrumentNo: 'Cheque',
+            branchStatus: null,
+            cbcStatus: null,
+            error: true,
+            export: true,
+            returnReason: '101-Amount in words and figures differs',
+            postRestriction: 'Account Inactive'
+          },
+          {
+            id: 949394,
+            date: '2026-03-09T00:00:00',
             senderBankCode: 'HABIB METROPOLITAN BANK LTD.',
             receiverBranchCode: '0005',
             chequeNumber: '02066693',
             accountNumber: '0099340204346125',
             transactionCode: '020',
-            status: 'Unauthorized',
+            status: 'Rejected',
             amount: 130560,
             accountBalance: '.00',
-            accountTitle: 'John Doe',
+            accountTitle: '',
             accountStatus: 'Normal',
             currency: null,
             hubCode: 'KARACHI-10',
             cycleCode: 'Normal',
             instrumentNo: 'Pay order',
-            branchStatus: 'Active',
-            cbcStatus: 'Pending',
+            branchStatus: null,
+            cbcStatus: null,
             error: true,
             export: true,
-            returnReason: 'Unauthorized transaction',
+            returnReason: null,
             postRestriction: null
           }
         ];
-        this.totalRecords = this.unauthorizeTransactions.length;
+        this.totalRecords = this.systemRejectedCheques.length;
         this.totalPages = 1;
       }
     });
@@ -253,38 +302,38 @@ export class UnauthorizeTransactionsComponent implements OnInit {
   toggleSelectAll(event: any): void {
     const isChecked = event.target.checked;
     this.allSelected = isChecked;
-    this.unauthorizeTransactions.forEach(transaction => {
-      transaction.selected = isChecked;
+    this.systemRejectedCheques.forEach(cheque => {
+      cheque.selected = isChecked;
     });
   }
 
-  // Toggle transaction selection
-  toggleTransactionSelection(transaction: UnauthorizeTransaction, event: any): void {
-    transaction.selected = event.target.checked;
+  // Toggle cheque selection
+  toggleChequeSelection(cheque: SystemRejectedCheque, event: any): void {
+    cheque.selected = event.target.checked;
     this.updateSelectAllState();
   }
 
   // Update select all state
   updateSelectAllState(): void {
-    const totalTransactions = this.unauthorizeTransactions.length;
-    const selectedTransactions = this.unauthorizeTransactions.filter(t => t.selected).length;
-    this.allSelected = totalTransactions > 0 && selectedTransactions === totalTransactions;
+    const totalCheques = this.systemRejectedCheques.length;
+    const selectedCheques = this.systemRejectedCheques.filter(c => c.selected).length;
+    this.allSelected = totalCheques > 0 && selectedCheques === totalCheques;
   }
 
-  // Get selected transactions
-  getSelectedTransactions(): UnauthorizeTransaction[] {
-    return this.unauthorizeTransactions.filter(transaction => transaction.selected);
+  // Get selected cheques
+  getSelectedCheques(): SystemRejectedCheque[] {
+    return this.systemRejectedCheques.filter(cheque => cheque.selected);
   }
 
-  // Show transaction details
-  showTransactionDetails(transaction: UnauthorizeTransaction): void {
-    this.router.navigate(['/pages/ChequeProcess/unauthorize-transactions-details', transaction.id]);
+  // Show cheque details
+  showChequeDetails(cheque: SystemRejectedCheque): void {
+    this.router.navigate(['/pages/ChequeProcess/system-rejected-cheques-details', cheque.id]);
   }
 
   // Apply filters
   applyFilters(): void {
     this.currentPage = 1; // Reset to first page
-    this.loadUnauthorizeTransactions();
+    this.loadSystemRejectedCheques();
   }
 
   // Reset filters
@@ -298,18 +347,18 @@ export class UnauthorizeTransactionsComponent implements OnInit {
     this.selectedInstrument = '';
     this.selectedCycle = '';
     this.currentPage = 1;
-    this.loadUnauthorizeTransactions();
+    this.loadSystemRejectedCheques();
   }
 
   // Pagination change
   onPageChange(event: { page: number; pageSize: number }): void {
     this.currentPage = event.page;
     this.pageSize = event.pageSize;
-    this.loadUnauthorizeTransactions();
+    this.loadSystemRejectedCheques();
   }
 
-  // Computed property for filtered transactions
-  get filteredUnauthorizeTransactions(): UnauthorizeTransaction[] {
-    return this.unauthorizeTransactions;
+  // Computed property for filtered cheques
+  get filteredSystemRejectedCheques(): SystemRejectedCheque[] {
+    return this.systemRejectedCheques;
   }
 }

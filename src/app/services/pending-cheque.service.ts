@@ -20,20 +20,7 @@ export class PendingChequeService {
     });
   }
 
-  // Get branches API
-  getBranches(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/ChequeDeposit/branches`, { 
-      headers: this.getAuthHeaders() 
-    });
-  }
-
-  // Get hubs API
-  getHubs(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/ChequeDeposit/hubs`, { 
-      headers: this.getAuthHeaders() 
-    });
-  }
-
+  
   // Get pending cheques API
   getPendingCheques(filters: any): Observable<any> {
     const queryParams = new URLSearchParams();

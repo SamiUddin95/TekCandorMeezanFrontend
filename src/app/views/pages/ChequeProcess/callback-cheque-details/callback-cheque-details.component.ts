@@ -42,12 +42,18 @@ export class CallbackChequeDetailsComponent implements OnInit {
     this.isLoading = true;
     
     this.callbackChequeService.getCallbackChequeDetails(this.chequeId).subscribe({
-      next: (response) => {
-        this.chequeDetails = response;
+      next: (response: any) => {
+        if (response.status === 'success' && response.data) {
+          this.chequeDetails = response.data;
+        } else {
+          console.error('Failed to load cheque details:', response.errorMessage);
+          alert('Failed to load cheque details');
+        }
         this.isLoading = false;
       },
       error: (error) => {
         console.error('Error loading cheque details:', error);
+        alert('Error loading cheque details. Please try again.');
         this.isLoading = false;
       }
     });
@@ -80,8 +86,17 @@ export class CallbackChequeDetailsComponent implements OnInit {
   }
 
   onImageError(event: any): void {
-    // Handle image loading errors
-    event.target.src = 'assets/images/placeholder.png';
+    // Handle image loading errors - show no image found message instead of trying to load placeholder
+    event.target.style.display = 'none';
+    
+    // Create or update a "No Image" message
+    const container = event.target.parentElement;
+    if (container && !container.querySelector('.no-image-message')) {
+      const noImageDiv = document.createElement('div');
+      noImageDiv.className = 'no-image-message text-center p-4 bg-light';
+      noImageDiv.innerHTML = '<p class="text-muted mb-0">No Image Available</p>';
+      container.appendChild(noImageDiv);
+    }
   }
 
   // Validation methods

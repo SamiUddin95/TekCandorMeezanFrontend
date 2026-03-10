@@ -66,31 +66,7 @@ export class BranchReturnService {
     return this.http.get(`${this.apiUrl}/branch-return-details/${id}`);
   }
 
-  // Get branches
-  getBranches(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/branches`);
-  }
-
-  // Get hubs
-  getHubs(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/hubs`);
-  }
-
-  // Get status options
-  getStatusOptions(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/status-options`);
-  }
-
-  // Get instrument options
-  getInstrumentOptions(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/instrument-options`);
-  }
-
-  // Get cycle options
-  getCycleOptions(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/cycle-options`);
-  }
-
+  
   // Get posting restriction options
   getPostingRestrictionOptions(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/posting-restriction-options`);

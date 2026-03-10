@@ -114,6 +114,26 @@ export const PAGES_ROUTES: Routes = [
                         path: 'unauthorize-transactions-details/:id',
                         loadComponent: () => import('./ChequeProcess/unauthorize-transactions-details/unauthorize-transactions-details.component').then(mod => mod.UnauthorizeTransactionsDetailsComponent),
                         data: {title: 'Un-Authorize Transaction Details'}
+                    },
+                    {
+                        path: 'system-rejected-cheques',
+                        loadComponent: () => import('./ChequeProcess/system-rejected-cheques/system-rejected-cheques.component').then(mod => mod.SystemRejectedChequesComponent),
+                        data: {title: 'System Rejected Cheques'}
+                    },
+                    {
+                        path: 'system-rejected-cheques-details/:id',
+                        loadComponent: () => import('./ChequeProcess/system-rejected-cheques-details/system-rejected-cheques-details.component').then(mod => mod.SystemRejectedChequesDetailsComponent),
+                        data: {title: 'System Rejected Cheques Details'}
+                    },
+                    {
+                        path: 'in-process-cheques',
+                        loadComponent: () => import('./ChequeProcess/in-process-cheques/in-process-cheques.component').then(mod => mod.InProcessChequesComponent),
+                        data: {title: 'In Process Cheques'}
+                    },
+                    {
+                        path: 'in-process-cheques-details/:id',
+                        loadComponent: () => import('./ChequeProcess/in-process-cheques-details/in-process-cheques-details.component').then(mod => mod.InProcessChequesDetailsComponent),
+                        data: {title: 'In Process Cheques Details'}
                     }
                 ]
             },

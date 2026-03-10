@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '@/environments/environment';
 
 export interface CallbackCheque {
   id: number;
@@ -37,8 +38,9 @@ export interface CallbackChequeResponse {
 })
 export class CallbackChequeService {
 
-  private baseUrl = 'https://localhost:44367/api/ChequeDeposit';
+  // private baseUrl = 'https://localhost:44367/api/ChequeDeposit';
 
+  private apiUrl = environment.apiUrl;
   constructor(private http: HttpClient) { }
 
   // Get all callback cheques with filters
@@ -56,47 +58,23 @@ export class CallbackChequeService {
     if (filters.page) params = params.set('page', filters.page);
     if (filters.pageSize) params = params.set('pageSize', filters.pageSize);
 
-    return this.http.get<CallbackChequeResponse>(`${this.baseUrl}/callbackList`, { params });
+    return this.http.get<CallbackChequeResponse>(`${this.apiUrl}/ChequeDeposit/callbackList`, { params });
   }
 
   // Get callback cheque details by ID
   getCallbackChequeDetails(id: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/${id}`);
+    return this.http.get(`${this.apiUrl}/ChequeDeposit/${id}/callback-edit`);
   }
 
   // Update callback cheque
   updateCallbackCheque(id: number, data: any): Observable<any> {
-    return this.http.put(`${this.baseUrl}/${id}`, data);
+    return this.http.put(`${this.apiUrl}/ChequeDeposit/${id}/callback-edit`, data);
   }
 
-  // Get branches
-  getBranches(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/branches`);
-  }
-
-  // Get hubs
-  getHubs(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/hubs`);
-  }
-
-  // Get status options
-  getStatusOptions(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/status-options`);
-  }
-
-  // Get instrument options
-  getInstrumentOptions(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/instrument-options`);
-  }
-
-  // Get cycle options
-  getCycleOptions(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/cycle-options`);
-  }
-
+  
   // Get CBC status options
   getCbcStatusOptions(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/cbc-status-options`);
+    return this.http.get<any[]>(`${this.apiUrl}/cbc-status-options`);
   }
 
   // Hardcoded methods for now (will be replaced with actual API calls)

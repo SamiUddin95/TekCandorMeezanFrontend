@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { Router } from '@angular/router';
 import { ApprovedTransactionsService, ApprovedTransaction } from '../../../../services/approved-transactions.service';
+import { FilterService } from '../../../../services/filter.service';
 import { PaginationComponent } from '../../../../components/pagination/pagination.component';
 import {
   tablerSearch,
@@ -58,26 +59,16 @@ export class ApprovedTransactionsComponent implements OnInit {
     { value: 'false', label: 'False' }
   ];
 
-  statusOptions = [
-    { value: 'approved', label: 'Approved' },
-    { value: 'reversed', label: 'Reversed' }
-  ];
-
-  instrumentOptions = [
-    { value: 'cheque', label: 'Cheque' },
-    { value: 'pay_order', label: 'Pay Order' }
-  ];
-
-  cycleOptions = [
-    { value: 'normal', label: 'Normal' },
-    { value: 'express', label: 'Express' }
-  ];
+  statusOptions: any[] = [];
+  instrumentOptions: any[] = [];
+  cycleOptions: any[] = [];
 
   // Reversal reason
   reversalReason: string = '';
 
   constructor(
     private approvedTransactionsService: ApprovedTransactionsService,
+    private filterService: FilterService,
     private router: Router
   ) { }
 
@@ -89,9 +80,16 @@ export class ApprovedTransactionsComponent implements OnInit {
   // Load dropdown data
   loadDropdownData(): void {
     // Load branches
-    this.approvedTransactionsService.getBranches().subscribe({
+    this.filterService.getBranches().subscribe({
       next: (response: any) => {
-        this.branches = response.data || [];
+        if (response.status === 'success' && response.data && response.data.branches) {
+          this.branches = response.data.branches.map((branch: any) => ({
+            value: branch.code,
+            label: branch.name
+          }));
+        } else {
+          this.branches = [];
+        }
       },
       error: (error: any) => {
         console.error('Error loading branches:', error);
@@ -105,18 +103,79 @@ export class ApprovedTransactionsComponent implements OnInit {
     });
 
     // Load hubs
-    this.approvedTransactionsService.getHubs().subscribe({
+    this.filterService.getHubs().subscribe({
       next: (response: any) => {
-        this.hubs = response.data || [];
+        if (response.status === 'success' && response.data && response.data.hubs) {
+          this.hubs = response.data.hubs.map((hub: any) => ({
+            value: hub.code,
+            label: hub.name
+          }));
+        } else {
+          this.hubs = [];
+        }
       },
       error: (error: any) => {
         console.error('Error loading hubs:', error);
         // Fallback data
         this.hubs = [
-          { value: 'KARACHI-10', label: 'KARACHI-10' },
-          { value: 'RAWALPINDI-40', label: 'RAWALPINDI-40' },
-          { value: 'LAHORE-20', label: 'LAHORE-20' }
+          { value: '10', label: 'KARACHI-10' },
+          { value: '40', label: 'RAWALPINDI-40' },
+          { value: '20', label: 'LAHORE-20' }
         ];
+      }
+    });
+
+    // Load status options
+    this.filterService.getStatusOptions().subscribe({
+      next: (response: any) => {
+        if (response.status === 'success' && response.data && response.data.statuses) {
+          this.statusOptions = response.data.statuses.map((status: any) => ({
+            value: status.value,
+            label: status.text
+          }));
+        } else {
+          this.statusOptions = [];
+        }
+      },
+      error: (error: any) => {
+        console.error('Error loading status options:', error);
+        this.statusOptions = [];
+      }
+    });
+
+    // Load instrument options
+    this.filterService.getInstrumentOptions().subscribe({
+      next: (response: any) => {
+        if (response.status === 'success' && response.data && response.data.instruments) {
+          this.instrumentOptions = response.data.instruments.map((instrument: any) => ({
+            value: instrument.value,
+            label: instrument.text
+          }));
+        } else {
+          this.instrumentOptions = [];
+        }
+      },
+      error: (error: any) => {
+        console.error('Error loading instrument options:', error);
+        this.instrumentOptions = [];
+      }
+    });
+
+    // Load cycle options
+    this.filterService.getCycleOptions().subscribe({
+      next: (response: any) => {
+        if (response.status === 'success' && response.data && response.data.cycles) {
+          this.cycleOptions = response.data.cycles.map((cycle: any) => ({
+            value: cycle.value,
+            label: cycle.text
+          }));
+        } else {
+          this.cycleOptions = [];
+        }
+      },
+      error: (error: any) => {
+        console.error('Error loading cycle options:', error);
+        this.cycleOptions = [];
       }
     });
   }

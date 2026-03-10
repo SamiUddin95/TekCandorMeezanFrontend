@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
-export interface UnauthorizeTransaction {
+export interface SystemRejectedCheque {
   id: number;
   date: string;
   senderBankCode: string;
@@ -29,8 +29,8 @@ export interface UnauthorizeTransaction {
   selected?: boolean;
 }
 
-export interface UnauthorizeTransactionResponse {
-  items: UnauthorizeTransaction[];
+export interface SystemRejectedChequeResponse {
+  items: SystemRejectedCheque[];
   totalCount: number;
   pageNumber: number;
   pageSize: number;
@@ -40,13 +40,13 @@ export interface UnauthorizeTransactionResponse {
 @Injectable({
   providedIn: 'root'
 })
-export class UnauthorizeTransactionsService {
+export class SystemRejectedChequesService {
   private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) { }
 
-  // Get unauthorize transactions list
-  getUnauthorizeTransactions(filters: any): Observable<UnauthorizeTransactionResponse> {
+  // Get system rejected cheques list
+  getSystemRejectedCheques(filters: any): Observable<SystemRejectedChequeResponse> {
     let params = new HttpParams();
     
     if (filters.branch) params = params.set('branch', filters.branch);
@@ -60,12 +60,12 @@ export class UnauthorizeTransactionsService {
     if (filters.page) params = params.set('page', filters.page);
     if (filters.pageSize) params = params.set('pageSize', filters.pageSize);
 
-    return this.http.get<UnauthorizeTransactionResponse>(`${this.apiUrl}/ChequeDeposit/UnAuthorizeList`, { params });
+    return this.http.get<SystemRejectedChequeResponse>(`${this.apiUrl}/ChequeDeposit/RejectList`, { params });
   }
 
-  // Get unauthorize transaction details by ID
-  getUnauthorizeTransactionDetails(id: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/unauthorize-transactions/${id}`);
+  // Get system rejected cheque details by ID
+  getSystemRejectedChequeDetails(id: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/system-rejected-cheques/${id}`);
   }
 
   
@@ -74,9 +74,9 @@ export class UnauthorizeTransactionsService {
     return this.http.get<any[]>(`${this.apiUrl}/res-core-options`);
   }
 
-  // Get CBC status options
-  getCbcStatusOptions(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/cbc-status-options`);
+  // Get posting restriction options
+  getPostingRestrictionOptions(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/posting-restriction-options`);
   }
 
   // Get branch status options

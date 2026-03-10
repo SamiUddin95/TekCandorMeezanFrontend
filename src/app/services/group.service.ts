@@ -6,13 +6,15 @@ import { environment } from '../../environments/environment';
 // Group interfaces based on API response
 export interface GroupItem {
   id: number;
-  name: string;
-  description: string;
+  name: string | null;
+  description: string | null;
+  version: number;
+  isNew: boolean;
   isDeleted: boolean;
   createdBy: string;
-  updatedBy: string | null;
+  updatedBy: string;
   createdOn: string;
-  updatedOn: string | null;
+  updatedOn: string;
 }
 
 export interface GroupCreateRequest {

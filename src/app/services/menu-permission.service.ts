@@ -118,15 +118,15 @@ export class MenuPermissionService {
             requiredPermissions: ['chequeProcess.ReturnTransactions']
           },
           { 
-            label: 'System Rejected Transactions', 
+            label: 'System Rejected Cheques', 
             icon: 'tablerXboxX', 
-            url: '/pages/ChequeProcess/manual-import',
+            url: '/pages/ChequeProcess/system-rejected-cheques',
             requiredPermissions: ['chequeProcess.ReturnTransactions']
           },
           { 
             label: 'In Process Cheques ', 
             icon: 'tablerLoader', 
-            url: '/pages/ChequeProcess/manual-import',
+            url: '/pages/ChequeProcess/in-process-cheques',
             requiredPermissions: ['chequeProcess.ReturnTransactions']
           },
         ]

@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
-export interface UnauthorizeTransaction {
+export interface InProcessCheque {
   id: number;
   date: string;
   senderBankCode: string;
@@ -29,8 +29,8 @@ export interface UnauthorizeTransaction {
   selected?: boolean;
 }
 
-export interface UnauthorizeTransactionResponse {
-  items: UnauthorizeTransaction[];
+export interface InProcessChequeResponse {
+  items: InProcessCheque[];
   totalCount: number;
   pageNumber: number;
   pageSize: number;
@@ -40,13 +40,13 @@ export interface UnauthorizeTransactionResponse {
 @Injectable({
   providedIn: 'root'
 })
-export class UnauthorizeTransactionsService {
+export class InProcessChequesService {
   private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) { }
 
-  // Get unauthorize transactions list
-  getUnauthorizeTransactions(filters: any): Observable<UnauthorizeTransactionResponse> {
+  // Get in process cheques list
+  getInProcessCheques(filters: any): Observable<InProcessChequeResponse> {
     let params = new HttpParams();
     
     if (filters.branch) params = params.set('branch', filters.branch);
@@ -60,12 +60,12 @@ export class UnauthorizeTransactionsService {
     if (filters.page) params = params.set('page', filters.page);
     if (filters.pageSize) params = params.set('pageSize', filters.pageSize);
 
-    return this.http.get<UnauthorizeTransactionResponse>(`${this.apiUrl}/ChequeDeposit/UnAuthorizeList`, { params });
+    return this.http.get<InProcessChequeResponse>(`${this.apiUrl}/ChequeDeposit/InProcessList`, { params });
   }
 
-  // Get unauthorize transaction details by ID
-  getUnauthorizeTransactionDetails(id: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/unauthorize-transactions/${id}`);
+  // Get in process cheque details by ID
+  getInProcessChequeDetails(id: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/in-process-cheques/${id}`);
   }
 
   

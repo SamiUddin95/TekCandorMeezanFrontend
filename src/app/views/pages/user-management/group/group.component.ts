@@ -127,7 +127,7 @@ export class GroupComponent implements OnInit {
   }
 
   get adminGroups(): number {
-    return this.groups.filter(g => g.name.toLowerCase().includes('admin')).length;
+    return this.groups.filter(g => g.name && g.name.toLowerCase().includes('admin')).length;
   }
 
   getEnabledPermissionsCount(group: GroupItem): number {
@@ -144,8 +144,8 @@ export class GroupComponent implements OnInit {
     const q = this.searchName.trim().toLowerCase();
     if (!q) return this.groups;
     return this.groups.filter((group) => 
-      group.name.toLowerCase().includes(q) || 
-      group.description.toLowerCase().includes(q)
+      (group.name && group.name.toLowerCase().includes(q)) || 
+      (group.description && group.description.toLowerCase().includes(q))
     );
   }
 
@@ -179,9 +179,10 @@ export class GroupComponent implements OnInit {
   }
 
   onDelete(group: GroupItem) {
+    const groupName = group.name || 'this group';
     Swal.fire({
       title: 'Are you sure?',
-      text: `Do you want to delete ${group.name}? This action cannot be undone.`,
+      text: `Do you want to delete ${groupName}? This action cannot be undone.`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
@@ -192,9 +193,10 @@ export class GroupComponent implements OnInit {
       if (result.isConfirmed) {
         this.groupService.deleteGroup(group.id).subscribe({
           next: () => {
+            const groupName = group.name || 'Group';
             Swal.fire({
               title: 'Deleted!',
-              text: `${group.name} has been deleted successfully.`,
+              text: `${groupName} has been deleted successfully.`,
               icon: 'success',
               timer: 2000,
               showConfirmButton: false
@@ -299,43 +301,6 @@ export class GroupComponent implements OnInit {
     }
   }
 
-  onManagePermissions(group: GroupItem) {
-    this.selectedGroup = { ...group };
-    
-    // Ensure permissions are loaded before opening modal
-    if (this.allPermissions.length === 0) {
-      this.isPermissionsLoading = true;
-      this.groupService.getPermissions(1, 50).subscribe({
-        next: (response: any) => {
-          if (response.status === 'success') {
-            this.allPermissions = response.data.items;
-            this.selectedPermissions = this.getDefaultPermissions();
-            this.openPermissionModal();
-          } else {
-            console.error('Failed to load permissions:', response.errorMessage);
-            Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: 'Failed to load permissions. Please try again.',
-            });
-          }
-          this.isPermissionsLoading = false;
-        },
-        error: (error: any) => {
-          console.error('Error loading permissions:', error);
-          this.isPermissionsLoading = false;
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Failed to load permissions. Please try again.',
-          });
-        }
-      });
-    } else {
-      this.selectedPermissions = this.getDefaultPermissions();
-      this.openPermissionModal();
-    }
-  }
 
   onSavePermissions() {
     // Ensure selectedPermissions is an array
@@ -396,11 +361,13 @@ export class GroupComponent implements OnInit {
       id: 0, 
       name: '', 
       description: '',
+      version: 0,
+      isNew: false,
       isDeleted: false,
       createdBy: '',
-      updatedBy: null,
+      updatedBy: '',
       createdOn: '',
-      updatedOn: null
+      updatedOn: ''
     };
   }
 

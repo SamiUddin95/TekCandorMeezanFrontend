@@ -3,8 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { Router } from '@angular/router';
-import { CallbackChequeService } from '../../../../services/callback-cheque.service';
+import { CallbackChequeService, CallbackCheque } from '../../../../services/callback-cheque.service';
+import { FilterService } from '../../../../services/filter.service';
 import { PaginationComponent } from '../../../../components/pagination/pagination.component';
+import Swal from 'sweetalert2';
 import {
   tablerSearch,
   tablerCe,
@@ -49,8 +51,9 @@ export class CallbackChequesComponent implements OnInit {
   resCoreOptions: any[] = [];
 
   constructor(
-    private router: Router,
-    private callbackChequeService: CallbackChequeService
+    private callbackChequeService: CallbackChequeService,
+    private filterService: FilterService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -59,87 +62,84 @@ export class CallbackChequesComponent implements OnInit {
   }
 
   loadDropdownData(): void {
-    // Load branches, hubs, and other dropdown data
-    this.callbackChequeService.getBranches().subscribe({
-      next: (data) => {
-        this.branches = data;
+    // Load branches
+    this.filterService.getBranches().subscribe({
+      next: (response: any) => {
+        if (response.status === 'success' && response.data && response.data.branches) {
+          this.branches = response.data.branches;
+        } else {
+          this.branches = [];
+        }
       },
-      error: (error) => {
-        console.error('Error loading branches:', error);
-        // Fallback data
-        this.branches = [
-          { value: '0001', label: 'Branch 0001' },
-          { value: '0002', label: 'Branch 0002' },
-          { value: '0005', label: 'Branch 0005' }
-        ];
+      error: (error: any) => {
       }
     });
 
-    this.callbackChequeService.getHubs().subscribe({
-      next: (data) => {
-        this.hubs = data;
+    // Load hubs
+    this.filterService.getHubs().subscribe({
+      next: (response: any) => {
+        if (response.status === 'success' && response.data && response.data.hubs) {
+          this.hubs = response.data.hubs;
+        } else {
+          this.hubs = [];
+        }
       },
-      error: (error) => {
-        console.error('Error loading hubs:', error);
-        // Fallback data
-        this.hubs = [
-          { value: 'KARACHI-10', label: 'Karachi 10' },
-          { value: 'LAHORE-5', label: 'Lahore 5' },
-          { value: 'ISLAMABAD-3', label: 'Islamabad 3' }
-        ];
+      error: (error: any) => {
       }
     });
 
-    this.callbackChequeService.getStatusOptions().subscribe({
-      next: (data) => {
-        this.statusOptions = data;
+    this.filterService.getStatusOptions().subscribe({
+      next: (response: any) => {
+        if (response.status === 'success' && response.data && response.data.statuses) {
+          this.statusOptions = response.data.statuses.map((status: any) => ({
+            value: status.value,
+            label: status.text
+          }));
+        } else {
+          this.statusOptions = [];
+        }
       },
-      error: (error) => {
-        console.error('Error loading status options:', error);
-        // Fallback data
-        this.statusOptions = [
-          { value: 'Pending', label: 'Pending' },
-          { value: 'Processing', label: 'Processing' },
-          { value: 'Completed', label: 'Completed' }
-        ];
+      error: (error: any) => {
+        this.statusOptions = [];
       }
     });
 
-    this.callbackChequeService.getInstrumentOptions().subscribe({
-      next: (data) => {
-        this.instrumentOptions = data;
+    this.filterService.getInstrumentOptions().subscribe({
+      next: (response: any) => {
+        if (response.status === 'success' && response.data && response.data.instruments) {
+          this.instrumentOptions = response.data.instruments.map((instrument: any) => ({
+            value: instrument.value,
+            label: instrument.text
+          }));
+        } else {
+          this.instrumentOptions = [];
+        }
       },
-      error: (error) => {
-        console.error('Error loading instrument options:', error);
-        // Fallback data
-        this.instrumentOptions = [
-          { value: 'Cheque', label: 'Cheque' },
-          { value: 'Pay order', label: 'Pay Order' },
-          { value: 'DD', label: 'Demand Draft' }
-        ];
+      error: (error: any) => {
+        this.instrumentOptions = [];
       }
     });
 
-    this.callbackChequeService.getCycleOptions().subscribe({
-      next: (data) => {
-        this.cycleOptions = data;
+    this.filterService.getCycleOptions().subscribe({
+      next: (response: any) => {
+        if (response.status === 'success' && response.data && response.data.cycles) {
+          this.cycleOptions = response.data.cycles.map((cycle: any) => ({
+            value: cycle.value,
+            label: cycle.text
+          }));
+        } else {
+          this.cycleOptions = [];
+        }
       },
-      error: (error) => {
-        console.error('Error loading cycle options:', error);
-        // Fallback data
-        this.cycleOptions = [
-          { value: 'Normal', label: 'Normal' },
-          { value: 'Express', label: 'Express' },
-          { value: 'Same Day', label: 'Same Day' }
-        ];
+      error: (error: any) => {
+        this.cycleOptions = [];
       }
     });
 
     // Load res core options
     this.resCoreOptions = [
-      { value: 'core1', label: 'Core 1' },
-      { value: 'core2', label: 'Core 2' },
-      { value: 'core3', label: 'Core 3' }
+      { value: 'true', label: 'True' },
+      { value: 'false', label: 'False' }
     ];
   }
 

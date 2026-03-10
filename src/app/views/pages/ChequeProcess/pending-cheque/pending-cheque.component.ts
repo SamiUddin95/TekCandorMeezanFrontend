@@ -4,6 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { PendingChequeService, PendingChequeRecord, Branch, Hub } from '../../../../services/pending-cheque.service';
+import { FilterService } from '../../../../services/filter.service';
+import { ChequeDepositService } from '../../../../services/cheque-deposit.service';
+import { PaginationComponent } from '../../../../components/pagination/pagination.component';
 import {
   tablerSearch,
   tablerFilter,
@@ -20,9 +24,6 @@ import {
   tablerX,
   tablerAlertTriangle
 } from '@ng-icons/tabler-icons';
-import { PaginationComponent } from '../../../../components/pagination/pagination.component';
-import { PendingChequeService, PendingChequeRecord, Branch, Hub } from '../../../../services/pending-cheque.service';
-import { ChequeDepositService } from '../../../../services/cheque-deposit.service';
 import Swal from 'sweetalert2';
 declare var bootstrap: any;
 
@@ -94,28 +95,13 @@ export class PendingChequeComponent implements OnInit {
     { value: 'false', label: 'False' }
   ];
 
-  statusOptions = [
-    { value: 'pending', label: 'Pending' },
-    { value: 'approved_reversed', label: 'Approved Reversed' },
-    { value: 'manual_approved_reverse', label: 'Manual Approved Reverse' }
-  ];
-
-  instrumentOptions = [
-    { value: 'cheque', label: 'Cheque' },
-    { value: 'pay_order', label: 'Pay Order' },
-    { value: 'non_standard', label: 'Non Standard' },
-    { value: 'cdr', label: 'CDR' }
-  ];
-
-  cycleOptions = [
-    { value: 'same_day', label: 'Same Day' },
-    { value: 'same_day_return', label: 'Same Day Return' },
-    { value: 'normal', label: 'Normal' },
-    { value: 'normal_return', label: 'Normal Return' }
-  ];
+  statusOptions: any[] = [];
+  instrumentOptions: any[] = [];
+  cycleOptions: any[] = [];
 
   constructor(
     private pendingChequeService: PendingChequeService,
+    private filterService: FilterService,
     private router: Router,
     private http: HttpClient,
     private chequeDepositService: ChequeDepositService
@@ -129,26 +115,82 @@ export class PendingChequeComponent implements OnInit {
   // Load dropdown data
   loadDropdownData(): void {
     // Load branches
-    this.pendingChequeService.getBranches().subscribe({
+    this.filterService.getBranches().subscribe({
       next: (response: any) => {
-        if (response?.status === 'success') {
-          this.branches = response.data || [];
+        if (response.status === 'success' && response.data && response.data.branches) {
+          this.branches = response.data.branches;
+        } else {
+          this.branches = [];
         }
       },
       error: (error: any) => {
-        console.error('Error loading branches:', error);
       }
     });
 
     // Load hubs
-    this.pendingChequeService.getHubs().subscribe({
+    this.filterService.getHubs().subscribe({
       next: (response: any) => {
-        if (response?.status === 'success') {
-          this.hubs = response.data || [];
+        if (response.status === 'success' && response.data && response.data.hubs) {
+          this.hubs = response.data.hubs;
+        } else {
+          this.hubs = [];
         }
       },
       error: (error: any) => {
-        console.error('Error loading hubs:', error);
+      }
+    });
+
+    // Load status options
+    this.filterService.getStatusOptions().subscribe({
+      next: (response: any) => {
+        if (response.status === 'success' && response.data && response.data.statuses) {
+          this.statusOptions = response.data.statuses.map((status: any) => ({
+            value: status.value,
+            label: status.text
+          }));
+        } else {
+          this.statusOptions = [];
+        }
+      },
+      error: (error: any) => {
+        console.error('Error loading status options:', error);
+        this.statusOptions = [];
+      }
+    });
+
+    // Load instrument options
+    this.filterService.getInstrumentOptions().subscribe({
+      next: (response: any) => {
+        if (response.status === 'success' && response.data && response.data.instruments) {
+          this.instrumentOptions = response.data.instruments.map((instrument: any) => ({
+            value: instrument.value,
+            label: instrument.text
+          }));
+        } else {
+          this.instrumentOptions = [];
+        }
+      },
+      error: (error: any) => {
+        console.error('Error loading instrument options:', error);
+        this.instrumentOptions = [];
+      }
+    });
+
+    // Load cycle options
+    this.filterService.getCycleOptions().subscribe({
+      next: (response: any) => {
+        if (response.status === 'success' && response.data && response.data.cycles) {
+          this.cycleOptions = response.data.cycles.map((cycle: any) => ({
+            value: cycle.value,
+            label: cycle.text
+          }));
+        } else {
+          this.cycleOptions = [];
+        }
+      },
+      error: (error: any) => {
+        console.error('Error loading cycle options:', error);
+        this.cycleOptions = [];
       }
     });
   }

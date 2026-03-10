@@ -78,7 +78,7 @@
           <label class="form-label mb-0">Error Field Name</label>
           <textarea class="form-control" 
                     rows="1" 
-                    readonly>{{ chequeDetails.errorInFields || chequeDetails.errorFieldName || '' }}</textarea>
+                    readonly>{{ chequeDetails.errorFieldsName || '' }}</textarea>
         </div>
       </div>
     </div>
@@ -96,15 +96,21 @@
           <div id="chequeCarousel" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner">
               <div class="carousel-item active">
-                <img [src]="'https://localhost:44367/api/ChequeDeposit/image/' + (chequeDetails.imgF || '')"
+                <img [src]="chequeDetails.imagePath + '/' + (chequeDetails.imgF || '')"
                      class="d-block w-100"
                      alt="Cheque Front"
                      (error)="onImageError($event)">
               </div>
               <div class="carousel-item">
-                <img [src]="'https://localhost:44367/api/ChequeDeposit/image/' + (chequeDetails.imgR || '')"
+                <img [src]="chequeDetails.imagePath + '/' + (chequeDetails.imgR || '')"
                      class="d-block w-100"
                      alt="Cheque Back"
+                     (error)="onImageError($event)">
+              </div>
+              <div class="carousel-item" *ngIf="chequeDetails.imgU">
+                <img [src]="chequeDetails.imagePath + '/' + chequeDetails.imgU"
+                     class="d-block w-100"
+                     alt="Cheque UV"
                      (error)="onImageError($event)">
               </div>
             </div>
@@ -132,15 +138,22 @@
         <div class="card-body p-2">
           <div id="signatureCarousel" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner">
-              <div class="carousel-item active">
-                <img src="data:image/png;base64,...."
+              <div class="carousel-item active" *ngIf="chequeDetails.signature && chequeDetails.signature.length > 0">
+                <img [src]="chequeDetails.imagePath + '/' + chequeDetails.signature[0]"
                      class="d-block w-100"
-                     alt="Customer Signature">
+                     alt="Signature 1"
+                     (error)="onImageError($event)">
               </div>
-              <div class="carousel-item">
-                <img src="data:image/jpeg;base64,...."
+              <div class="carousel-item" *ngIf="chequeDetails.signature && chequeDetails.signature.length > 1">
+                <img [src]="chequeDetails.imagePath + '/' + chequeDetails.signature[1]"
                      class="d-block w-100"
-                     alt="Bank Signature">
+                     alt="Signature 2"
+                     (error)="onImageError($event)">
+              </div>
+              <div class="carousel-item active" *ngIf="!chequeDetails.signature || chequeDetails.signature.length === 0">
+                <div class="text-center p-4">
+                  <p class="text-muted">No signatures available</p>
+                </div>
               </div>
             </div>
             <button class="carousel-control-prev" type="button"

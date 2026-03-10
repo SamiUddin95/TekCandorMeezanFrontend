@@ -3,19 +3,19 @@
   <!-- Loading State -->
   <div *ngIf="isLoading" class="text-center py-3">
     <div class="spinner-border text-primary loading-spinner" role="status"></div>
-    <p class="mt-2 text-muted fw-semibold">Loading Un-Authorize Transaction Details...</p>
+    <p class="mt-2 text-muted fw-semibold">Loading System Rejected Cheque Details...</p>
   </div>
 
-  <!-- Un-Authorize Transaction Details Content -->
-  <div *ngIf="!isLoading && transactionDetails" class="details-content mt-2">
+  <!-- System Rejected Cheque Details Content -->
+  <div *ngIf="!isLoading && chequeDetails" class="details-content mt-2">
 
-    <!-- ================= Transaction Information ================= -->
+    <!-- ================= Cheque Information ================= -->
     <div class="card shadow-sm mb-2">
       <div class="card-header py-1 bg-light d-flex align-items-start">
         <button class="btn btn-sm btn-outline-secondary" (click)="goBack()">
           <ng-icon name="tablerArrowLeft"></ng-icon>
         </button>
-        <h6 class="mb-0 fw-semibold text-black ms-2">Un-Authorize Transaction Information</h6>
+        <h6 class="mb-0 fw-semibold text-black ms-2">System Rejected Cheque Information</h6>
       </div>
 
       <div class="card-body py-2">
@@ -25,7 +25,7 @@
             <label class="form-label">Cheque Number</label>
             <input type="text"
                    class="form-control"
-                   [(ngModel)]="transactionDetails.chequeNumber"
+                   [(ngModel)]="chequeDetails.chequeNumber"
                    placeholder="Enter Cheque Number"
                    readonly>
           </div>
@@ -34,7 +34,7 @@
             <label class="form-label">Account Title</label>
             <input type="text"
                    class="form-control"
-                   [(ngModel)]="transactionDetails.accountNumber"
+                   [(ngModel)]="chequeDetails.accountNumber"
                    placeholder="Enter Account Number"
                    readonly>
           </div>
@@ -42,42 +42,35 @@
           <div class="col-md-3">
             <label class="form-label text-muted">Amount</label>
             <div class="form-control bg-light border-0" style="font-weight: 500;">
-              {{ transactionDetails.amount || 'N/A' }}
+              {{ chequeDetails.amount || 'N/A' }}
             </div>
           </div>
 
           <div class="col-md-3">
             <label class="form-label text-muted">Account Number</label>
             <div class="form-control bg-light border-0" style="font-weight: 500;">
-              {{ transactionDetails.status || 'N/A' }}
+              {{ chequeDetails.status || 'N/A' }}
             </div>
           </div>
 
           <div class="col-md-3">
             <label class="form-label text-muted">Status</label>
             <div class="form-control bg-light border-0" style="font-weight: 500;">
-              {{ transactionDetails.accountTitle || 'N/A' }}
+              {{ chequeDetails.accountTitle || 'N/A' }}
             </div>
           </div>
 
           <div class="col-md-3">
             <label class="form-label text-muted">Account Balance</label>
             <div class="form-control bg-light border-0" style="font-weight: 500;">
-              {{ transactionDetails.accountBalance || 'N/A' }}
+              {{ chequeDetails.accountBalance || 'N/A' }}
             </div>
           </div>
 
           <div class="col-md-3">
-            <label class="form-label text-muted">Error Feilds Name</label>
+            <label class="form-label text-muted">Error Feild</label>
             <div class="form-control bg-light border-0" style="font-weight: 500; min-height: 38px;">
-              {{ transactionDetails.postingRestriction || 'No restrictions' }}
-            </div>
-          </div>
-
-          <div class="col-md-3">
-            <label class="form-label text-muted">Remarks</label>
-            <div class="form-control bg-light border-0" style="font-weight: 500;">
-              {{ transactionDetails.cycleCode || 'N/A' }}
+              {{ chequeDetails.postingRestriction || 'No restrictions' }}
             </div>
           </div>
         </div>
@@ -99,14 +92,14 @@
               <div class="carousel-inner bg-light">
 
                 <div class="carousel-item active">
-                  <img [src]="transactionDetails.frontImage || 'assets/images/placeholder.png'"
+                  <img [src]="chequeDetails.frontImage || 'assets/images/placeholder.png'"
                        class="w-100"
                        alt="Front Image"
                        (error)="onImageError($event)">
                 </div>
 
                 <div class="carousel-item">
-                  <img [src]="transactionDetails.backImage || 'assets/images/placeholder.png'"
+                  <img [src]="chequeDetails.backImage || 'assets/images/placeholder.png'"
                        class="w-100"
                        alt="Back Image"
                        (error)="onImageError($event)">
@@ -143,14 +136,14 @@
               <div class="carousel-inner bg-light">
 
                 <div class="carousel-item active">
-                  <img [src]="transactionDetails.signatureImage || 'assets/images/signature-placeholder.png'"
+                  <img [src]="chequeDetails.signatureImage || 'assets/images/signature-placeholder.png'"
                        class="w-100"
                        alt="Signature Image"
                        (error)="onImageError($event)">
                 </div>
 
                 <div class="carousel-item">
-                  <img [src]="transactionDetails.additionalSignatureImage || 'assets/images/signature-placeholder.png'"
+                  <img [src]="chequeDetails.additionalSignatureImage || 'assets/images/signature-placeholder.png'"
                        class="w-100"
                        alt="Additional Signature"
                        (error)="onImageError($event)">
@@ -187,10 +180,16 @@
             <select class="form-select"
                     [(ngModel)]="selectedActionReason">
               <option value="">Select Action Reason</option>
-              <option value="verified">Transaction Verified</option>
-              <option value="authorized">Ready to Authorize</option>
-              <option value="pending_review">Pending Review</option>
-              <option value="additional_docs">Additional Documents Required</option>
+              <option value="101">101-Amount in words and figures differs</option>
+              <option value="102">102-Insufficient funds Drawer's Account</option>
+              <option value="103">103-Account Closed</option>
+              <option value="104">104-Account Frozen</option>
+              <option value="105">105-Account Inactive</option>
+              <option value="106">106-Stale Cheque</option>
+              <option value="107">107-Post Dated Cheque</option>
+              <option value="108">108-Stop Payment</option>
+              <option value="109">109-Invalid Signature</option>
+              <option value="110">110-Material Alteration</option>
             </select>
           </div>
 
@@ -198,14 +197,20 @@
             <div class="d-flex gap-3 action-container">
 
               <button class="btn btn-success action-btn"
-                      (click)="authorizeTransaction()">
+                      (click)="processCheque()">
                 <ng-icon name="tablerCheck" class="me-1"></ng-icon>
-                Approve
+                Return
               </button>
 
               <button class="btn btn-primary action-btn"
                       (click)="getAccountDetails()">
                 <ng-icon name="tablerUser" class="me-1"></ng-icon>
+                Get Account Detail
+              </button>
+
+              <button class="btn btn-danger action-btn"
+                      (click)="rejectCheque()">
+                <ng-icon name="tablerX" class="me-1"></ng-icon>
                 Revert
               </button>
             </div>
