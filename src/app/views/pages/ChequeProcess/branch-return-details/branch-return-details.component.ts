@@ -47,39 +47,22 @@ export class BranchReturnDetailsComponent implements OnInit {
   loadChequeDetails(): void {
     this.isLoading = true;
     
-    // Hardcoded data for now - will be replaced with real API later
-    const mockData = {
-      id: this.chequeId,
-      chequeNumber: '02066693',
-      accountNumber: '0099340204346125',
-      amount: 130560,
-      status: 'Rejected',
-      accountTitle: 'John Doe',
-      accountBalance: '.00',
-      postingRestriction: 'No Restriction',
-      senderBankCode: 'HABIB METROPOLITAN BANK LTD.',
-      receiverBranchCode: '0005',
-      hubCode: 'KARACHI-10',
-      cycleCode: 'Normal',
-      instrumentNo: 'Pay order',
-      transactionCode: '020',
-      date: '2026-03-06T00:00:00',
-      accountStatus: 'Normal',
-      currency: null,
-      branchStatus: null,
-      cbcStatus: null,
-      error: true,
-      export: true,
-      branchRemarks: '',
-      frontImage: 'assets/images/cheque-front.jpg',
-      backImage: 'assets/images/cheque-back.jpg',
-      signatureImage: 'assets/images/signature.jpg'
-    };
-    
-    setTimeout(() => {
-      this.chequeDetails = mockData;
-      this.isLoading = false;
-    }, 1000);
+    this.branchReturnService.getBranchReturnConfirmationDetails(this.chequeId).subscribe({
+      next: (response: any) => {
+        if (response.status === 'success' && response.data) {
+          this.chequeDetails = response.data;
+        } else {
+          console.error('Failed to load branch return details:', response.errorMessage);
+          alert('Failed to load branch return details');
+        }
+        this.isLoading = false;
+      },
+      error: (error: any) => {
+        console.error('Error loading branch return details:', error);
+        alert('Error loading branch return details. Please try again.');
+        this.isLoading = false;
+      }
+    });
   }
 
   goBack(): void {
@@ -103,8 +86,17 @@ export class BranchReturnDetailsComponent implements OnInit {
   }
 
   onImageError(event: any): void {
-    // Handle image loading errors
-    event.target.src = 'assets/images/placeholder.png';
+    // Handle image loading errors - show no image found message instead of trying to load placeholder
+    event.target.style.display = 'none';
+    
+    // Create or update a "No Image" message
+    const container = event.target.parentElement;
+    if (container && !container.querySelector('.no-image-message')) {
+      const noImageDiv = document.createElement('div');
+      noImageDiv.className = 'no-image-message text-center p-4 bg-light';
+      noImageDiv.innerHTML = '<p class="text-muted mb-0">No Image Available</p>';
+      container.appendChild(noImageDiv);
+    }
   }
 
   // Validation methods

@@ -102,7 +102,9 @@
             <div class="form-check form-switch mb-2">
               <input class="form-check-input" 
                      type="checkbox" 
-                     id="startService">
+                     id="startService"
+                     [checked]="startServiceChecked"
+                     (click)="toggleStartService()">
               <label class="form-check-label" for="startService">
                 Start Service
               </label>
@@ -111,7 +113,8 @@
             <div class="form-check form-switch mb-2">
               <input class="form-check-input" 
                      type="checkbox" 
-                     id="ssCardService">
+                     id="ssCardService"
+                     (change)="toggleSSCardService($event)">
               <label class="form-check-label" for="ssCardService">
                 SS Card Service
               </label>

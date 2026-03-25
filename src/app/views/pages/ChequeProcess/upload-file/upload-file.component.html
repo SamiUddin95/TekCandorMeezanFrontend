@@ -25,17 +25,21 @@
             <!-- Right Section: Service Buttons -->
             <div class="col-6">
               <div class="d-flex gap-2 justify-content-end">
-                <button class="btn btn-sm btn-outline-primary" (click)="importData()">
-                  Import
+                <button class="action-btn import-btn" (click)="importData()">
+                  <ng-icon name="tablerUpload" size="16"/>
+                  <span>Import</span>
                 </button>
-                <button class="btn btn-sm btn-outline-secondary" (click)="startService()">
-                  Start Service
+                <button class="action-btn service-btn" (click)="startService()">
+                  <ng-icon name="tablerPlayerPlay" size="16"/>
+                  <span>Start Service</span>
                 </button>
-                <button class="btn btn-sm btn-outline-info" (click)="ssCardService()">
-                  SS Card Service
+                <button class="action-btn ss-card-btn" (click)="ssCardService()">
+                  <ng-icon name="tablerCreditCard" size="16"/>
+                  <span>SS Card Service</span>
                 </button>
-                <button class="btn btn-sm btn-outline-success" (click)="sftpImageUpload()">
-                  SFTP Image Upload
+                <button class="action-btn sftp-btn" (click)="sftpImageUpload()">
+                  <ng-icon name="tablerCloudUpload" size="16"/>
+                  <span>SFTP Image Upload</span>
                 </button>
               </div>
             </div>

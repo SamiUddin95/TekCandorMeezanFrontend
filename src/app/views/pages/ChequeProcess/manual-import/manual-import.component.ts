@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { ChequeDepositService, ImportRecord, ImportDetail } from '../../../../services/cheque-deposit.service';
+import { UploadFileService } from '../../../../services/upload-file.service';
 import { PaginationComponent } from '@app/components/pagination/pagination.component';
 import { NgIcon } from '@ng-icons/core';
 declare var bootstrap: any;
@@ -30,8 +31,12 @@ export class ManualImportComponent implements OnInit {
   pageSize: number = 10;
   totalRecords: number = 0;
   totalPages: number = 0;
+  startServiceChecked: boolean = false;
 
-  constructor(private chequeDepositService: ChequeDepositService) { }
+  constructor(
+    private chequeDepositService: ChequeDepositService,
+    private uploadFileService: UploadFileService
+  ) { }
 
   ngOnInit(): void {
     this.loadImportHistory();
@@ -98,7 +103,6 @@ export class ManualImportComponent implements OnInit {
 
     this.chequeDepositService.uploadFile(this.selectedFile).subscribe({
       next: (response: any) => {
-        console.log('Upload response:', response);
         Swal.fire({
           icon: 'success',
           title: 'File Uploaded Successfully',
@@ -132,7 +136,6 @@ export class ManualImportComponent implements OnInit {
 
     this.chequeDepositService.importFile().subscribe({
       next: (response: any) => {
-        console.log('Import response:', response);
         Swal.fire({
           icon: 'success',
           title: 'Import Completed',
@@ -271,4 +274,107 @@ export class ManualImportComponent implements OnInit {
     });
   }
 
+  toggleStartService() {
+    // Toggle the value first
+    this.startServiceChecked = !this.startServiceChecked;
+    
+    Swal.fire({
+      title: 'Processing...',
+      text: 'Please wait while we process your request...',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+    
+    // Call the start service API
+    this.chequeDepositService.startManualService(this.startServiceChecked).subscribe({
+      next: (response: any) => {
+        if (response.status === 'success') {
+          Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: response.data || 'Service request processed successfully',
+            timer: 3000,
+            showConfirmButton: false
+          });
+        } else {
+          // Revert checkbox state on failure
+          this.startServiceChecked = !this.startServiceChecked;
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: response.errorMessage || 'Failed to process service request'
+          });
+        }
+      },
+      error: (error: any) => {
+        // Revert checkbox state on failure
+        this.startServiceChecked = !this.startServiceChecked;
+        console.error('Start service error occurred:', error);
+        console.error('Error details:', {
+          status: error.status,
+          statusText: error.statusText,
+          message: error.message,
+          error: error.error
+        });
+        
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: error.error?.message || error.message || 'Failed to process service request. Please try again.'
+        });
+      }
+    });
+  }
+
+  // Toggle SS Card Service
+  toggleSSCardService(event: any): void {
+    const isChecked = event.target.checked;
+    
+    if (!isChecked) {
+      // If unchecked, just show a message that service is disabled
+      Swal.fire({
+        icon: 'info',
+        title: 'SS Card Service Disabled',
+        text: 'SS Card service has been disabled',
+        timer: 2000,
+        showConfirmButton: false
+      });
+      return;
+    }
+
+    // Show loading modal
+    Swal.fire({
+      title: 'Processing SS Card Service',
+      text: 'Please wait while we process the SS Card service...',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
+    // Call the new get-signatures API
+    this.uploadFileService.getSignatures().subscribe({
+      next: (response: any) => {
+        Swal.fire({
+          icon: 'success',
+          title: 'SS Card Service Completed',
+          text: response.data || 'Signatures retrieved successfully',
+          timer: 3000,
+          showConfirmButton: false
+        });
+      },
+      error: (error: any) => {
+        // Revert checkbox state on error
+        event.target.checked = false;
+        
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: error.error?.message || error.message || 'Failed to process SS Card service. Please try again.'
+        });
+      }
+    });
+  }
 }

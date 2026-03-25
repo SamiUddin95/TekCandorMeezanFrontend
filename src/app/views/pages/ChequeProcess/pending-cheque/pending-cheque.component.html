@@ -2,11 +2,19 @@
  
   <div class="card mb-1">
     <div class="card-header">
-      <div class="d-flex align-items-center">
-          <h6 class="card-title mb-0">
-            <ng-icon name="tablerSearch" class="me-2"></ng-icon>
-            Filters
-          </h6>
+      <h6 class="card-title mb-0">
+        <ng-icon name="tablerSearch" class="me-2"></ng-icon>
+        Filters
+      </h6>
+      <div class="header-buttons">
+        <button class="action-btn inprocess-btn" (click)="sendToInProcess()">
+          <ng-icon name="tablerRefresh" size="16"></ng-icon>
+          <span>Send to In-Process</span>
+        </button>
+        <button class="action-btn approve-btn" (click)="approveSelected()">
+          <ng-icon name="tablerFileExport" size="16"></ng-icon>
+          <span>Approve</span>
+        </button>
       </div>
     </div>
     <div class="card-body">
@@ -95,6 +103,22 @@
               {{ option.label }}
             </option>
           </select>
+        </div>
+      </div>
+
+      <!-- Action Buttons Row -->
+      <div class="row mt-3">
+        <div class="col-md-12">
+          <div class="d-flex gap-2 justify-content-end">
+            <button class="btn btn-outline-secondary px-4" (click)="resetFilters()">
+              <ng-icon name="tablerRefresh" class="me-2"></ng-icon>
+              Reset Filters
+            </button>
+            <button class="btn btn-primary px-4" (click)="applyFilters()">
+              <ng-icon name="tablerSearch" class="me-2"></ng-icon>
+              Search
+            </button>
+          </div>
         </div>
       </div>
     </div>

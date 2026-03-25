@@ -47,38 +47,22 @@ export class UnauthorizeTransactionsDetailsComponent implements OnInit {
   loadTransactionDetails(): void {
     this.isLoading = true;
     
-    // Hardcoded data for now - will be replaced with real API later
-    const mockData = {
-      id: this.transactionId,
-      chequeNumber: '02066693',
-      accountNumber: '0099340204346125',
-      amount: 130560,
-      status: 'Unauthorized',
-      accountTitle: 'John Doe',
-      accountBalance: '.00',
-      postingRestriction: 'No Restriction',
-      senderBankCode: 'HABIB METROPOLITAN BANK LTD.',
-      receiverBranchCode: '0005',
-      hubCode: 'KARACHI-10',
-      cycleCode: 'Normal',
-      instrumentNo: 'Pay order',
-      transactionCode: '020',
-      date: '2026-03-06T00:00:00',
-      accountStatus: 'Normal',
-      currency: null,
-      branchStatus: 'Active',
-      cbcStatus: 'Pending',
-      error: true,
-      export: true,
-      frontImage: 'assets/images/cheque-front.jpg',
-      backImage: 'assets/images/cheque-back.jpg',
-      signatureImage: 'assets/images/signature.jpg'
-    };
-    
-    setTimeout(() => {
-      this.transactionDetails = mockData;
-      this.isLoading = false;
-    }, 1000);
+    this.unauthorizeTransactionsService.getUnauthorizeTransactionDetails(this.transactionId).subscribe({
+      next: (response: any) => {
+        if (response.status === 'success' && response.data) {
+          this.transactionDetails = response.data;
+        } else {
+          console.error('Failed to load transaction details:', response.errorMessage);
+          alert('Failed to load transaction details');
+        }
+        this.isLoading = false;
+      },
+      error: (error: any) => {
+        console.error('Error loading transaction details:', error);
+        alert('Error loading transaction details. Please try again.');
+        this.isLoading = false;
+      }
+    });
   }
 
   goBack(): void {
@@ -110,8 +94,17 @@ export class UnauthorizeTransactionsDetailsComponent implements OnInit {
   }
 
   onImageError(event: any): void {
-    // Handle image loading errors
-    event.target.src = 'assets/images/placeholder.png';
+    // Handle image loading errors - show no image found message instead of trying to load placeholder
+    event.target.style.display = 'none';
+    
+    // Create or update a "No Image" message
+    const container = event.target.parentElement;
+    if (container && !container.querySelector('.no-image-message')) {
+      const noImageDiv = document.createElement('div');
+      noImageDiv.className = 'no-image-message text-center p-4 bg-light';
+      noImageDiv.innerHTML = '<p class="text-muted mb-0">No Image Available</p>';
+      container.appendChild(noImageDiv);
+    }
   }
 
   // Validation methods

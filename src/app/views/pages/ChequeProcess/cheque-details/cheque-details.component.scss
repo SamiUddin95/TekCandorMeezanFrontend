@@ -126,6 +126,40 @@
   }
 }
 
+/* ================= Image Icon ================= */
+.image-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background-color: rgba(25, 135, 84, 0.1);
+  border: 1px solid rgba(25, 135, 84, 0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: rgba(25, 135, 84, 0.2);
+    border-color: rgba(25, 135, 84, 0.4);
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  .image-icon {
+    color: #198754;
+    font-size: 18px;
+    transition: color 0.3s ease;
+  }
+
+  &:hover .image-icon {
+    color: #146c43;
+  }
+}
+
 .action-container {
   gap: 0.5rem !important;
 }

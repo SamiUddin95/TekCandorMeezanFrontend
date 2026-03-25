@@ -8,6 +8,16 @@
             Filters
           </h6>
       </div>
+       <div class="header-buttons">
+        <button class="action-btn inprocess-btn">
+          <ng-icon name="tablerRefresh" size="16"></ng-icon>
+          <span>Send to Approve</span>
+        </button>
+        <button class="action-btn approve-btn">
+          <ng-icon name="tablerFileExport" size="16"></ng-icon>
+          <span>Approve</span>
+        </button>
+      </div>
     </div>
     <div class="card-body">
       <div class="row g-1">
@@ -186,7 +196,7 @@
                   <button class="btn btn-sm btn-primary" 
                           (click)="showChequeDetails(cheque)"
                           title="View Details">
-                    <ng-icon name="tablerEye"></ng-icon>
+                    <ng-icon name="tablerPencil"></ng-icon>
                   </button>
                 </td>
               </tr>

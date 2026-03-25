@@ -2,23 +2,23 @@
  
   <div class="card mb-1">
     <div class="card-header">
-      <div class="d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center">
           <h6 class="card-title mb-0">
             <ng-icon name="tablerSearch" class="me-2"></ng-icon>
             Filters
           </h6>
-          <div class="d-flex gap-2">
-            <button class="btn btn-sm btn-outline-primary" (click)="reversalTransaction()">
-              <ng-icon name="tablerRefresh" class="me-1"></ng-icon>
-              Reversal
+          <div class="button-container">
+            <button class="btn btn-outline-primary action-btn reversal-btn" (click)="reversalTransaction()">
+              <ng-icon name="tablerRefresh" size="16"/>
+              <span>Reversal</span>
             </button>
-            <button class="btn btn-sm btn-outline-success" (click)="exportData()">
-              <ng-icon name="tablerFileExport" class="me-1"></ng-icon>
-              Export
+            <button class="btn btn-outline-success action-btn export-btn" (click)="exportData()">
+              <ng-icon name="tablerFileExport" size="16"/>
+              <span>Export</span>
             </button>
-            <button class="btn btn-sm btn-outline-info" (click)="downloadFile()">
-              <ng-icon name="tablerDownload" class="me-1"></ng-icon>
-              Download File
+            <button class="btn btn-outline-info action-btn download-btn" (click)="downloadFile()">
+              <ng-icon name="tablerDownload" size="16"/>
+              <span>Download File</span>
             </button>
           </div>
       </div>

@@ -1,5 +1,53 @@
+<!-- Search Area -->
+<div class="side-nav-search">
+  <div class="search-input-wrapper">
+    <ng-icon name="tablerSearch" class="search-icon"></ng-icon>
+    <input 
+      type="text" 
+      class="search-input" 
+      placeholder="Search menu..."
+      [(ngModel)]="searchQuery"
+      (input)="filterMenu()"
+      (keyup.enter)="navigateToFirstMatch()"
+    >
+    @if (searchQuery && filteredItems.length === 0) {
+      <div class="search-no-results">
+        <ng-icon name="tablerSearchOff" class="no-results-icon"></ng-icon>
+        <span class="no-results-text">No results found</span>
+      </div>
+    }
+  </div>
+  
+  @if (searchQuery && filteredItems.length > 0) {
+    <div class="search-results">
+      <div class="search-results-header">
+        <span class="results-count">{{ filteredItems.length }} results</span>
+        <button class="clear-search" (click)="clearSearch()">
+          <ng-icon name="tablerX"></ng-icon>
+        </button>
+      </div>
+      <ul class="search-results-list">
+        @for (item of filteredItems; track item.url) {
+          <li class="search-result-item" (click)="navigateToItem(item)">
+            <div class="result-item-content">
+              @if (item.icon) {
+                <ng-icon class="result-icon" [name]="item.icon"></ng-icon>
+              }
+              <span class="result-label">{{ item.label }}</span>
+              @if (item.parentLabel) {
+                <span class="result-parent">{{ item.parentLabel }}</span>
+              }
+            </div>
+            <ng-icon name="tablerChevronRight" class="result-arrow"></ng-icon>
+          </li>
+        }
+      </ul>
+    </div>
+  }
+</div>
+
 <ul class="side-nav">
-    @for (item of menuItems; track $index) {
+    @for (item of displayItems; track $index) {
 
         @if (item.isTitle) {
             <li class="side-nav-title">{{ item.label }}</li>

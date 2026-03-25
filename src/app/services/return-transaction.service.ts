@@ -61,11 +61,7 @@ export class ReturnTransactionService {
   }
 
   
-  // Get return reason options
-  getReturnReasonOptions(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/return-reason-options`);
-  }
-
+  
   // Export data
   exportData(filters: any): Observable<any> {
     let params = new HttpParams();

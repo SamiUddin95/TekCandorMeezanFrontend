@@ -140,11 +140,13 @@ export class AuthService {
 
   logout() {
     const headers = this.getAuthHeaders();
-    this.http.post(`${this.apiUrl}logout`, {}, { headers }).subscribe({
+    this.http.post(`${this.apiUrl}/Auth/logout`, {}, { headers }).subscribe({
       next: (response) => {
+        console.log('Logout successful:', response);
         this.clearSessionAndRedirect();
       },
       error: (error) => {
+        console.error('Logout error:', error);
         this.clearSessionAndRedirect();
       }
     });

@@ -58,7 +58,7 @@ export class CallbackChequesComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadDropdownData();
-    this.loadCallbackCheques();
+    // Don't load callback cheques automatically - wait for search button click
   }
 
   loadDropdownData(): void {
@@ -222,8 +222,10 @@ export class CallbackChequesComponent implements OnInit {
     this.selectedInstrument = '';
     this.selectedCycle = '';
     
-    // Reload data
-    this.loadCallbackCheques();
+    // Clear data without loading - user must click search
+    this.callbackCheques = [];
+    this.totalRecords = 0;
+    this.currentPage = 1;
   }
 
   exportData(): void {

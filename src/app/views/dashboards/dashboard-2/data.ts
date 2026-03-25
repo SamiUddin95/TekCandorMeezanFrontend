@@ -27,12 +27,10 @@ function generateRandomData() {
 
 export const statistics: StatisticsWidgetType[] = [
     {
-        title: 'Total Sales',
-        badge: {text: 'Monthly', variant: 'success'},
-        value: 250,
-        prefix: '$',
-        suffix: 'K',
-        description: 'Monthly Total Sales',
+        title: 'Approved',
+        badge: {text: 'Today', variant: 'success'},
+        value: 21,
+        description: 'No. of Cheques',
         chartOptions: () => ({
             tooltip: {show: false},
             series: [
@@ -42,25 +40,19 @@ export const statistics: StatisticsWidgetType[] = [
                     hoverAnimation: false,
                     label: {show: false},
                     labelLine: {show: false},
-                    data: generateRandomData().map((item, index) => ({
-                        value: item.value,
-                        itemStyle: {
-                            color: index === 0
-                                ? getColor('primary')
-                                : index === 1
-                                    ? getColor('secondary')
-                                    : '#bbcae14d'
-                        }
-                    }))
+                    data: [
+                        {value: 70, itemStyle: {color: '#22c55e'}},
+                        {value: 30, itemStyle: {color: '#22c55e40'}}
+                    ]
                 }
             ]
         })
     },
     {
-        title: 'Total Orders',
-        badge: {text: 'Monthly', variant: 'primary'},
-        value: 180,
-        description: 'Monthly Total Orders',
+        title: 'In Process', 
+        badge: {text: 'Today', variant: 'primary'},
+        value: 5,
+        description: 'No. of Cheques',
         chartOptions: () => ({
             tooltip: {show: false},
             series: [
@@ -70,25 +62,19 @@ export const statistics: StatisticsWidgetType[] = [
                     hoverAnimation: false,
                     label: {show: false},
                     labelLine: {show: false},
-                    data: generateRandomData().map((item, index) => ({
-                        value: item.value,
-                        itemStyle: {
-                            color: index === 0
-                                ? getColor('primary')
-                                : index === 1
-                                    ? getColor('secondary')
-                                    : '#bbcae14d'
-                        }
-                    }))
+                    data: [
+                        {value: 50, itemStyle: {color: '#3b82f6'}},
+                        {value: 50, itemStyle: {color: '#3b82f640'}}
+                    ]
                 }
             ]
         })
     },
     {
-        title: 'New Customers',
-        badge: {text: 'Monthly', variant: 'info'},
-        value: 50895,
-        description: 'Monthly New Customers',
+        title: 'Pending',
+        badge: {text: 'Today', variant: 'warning'},
+        value: 40,
+        description: 'No. of Cheques',
         chartOptions: () => ({
             tooltip: {show: false},
             series: [
@@ -98,27 +84,19 @@ export const statistics: StatisticsWidgetType[] = [
                     hoverAnimation: false,
                     label: {show: false},
                     labelLine: {show: false},
-                    data: generateRandomData().map((item, index) => ({
-                        value: item.value,
-                        itemStyle: {
-                            color: index === 0
-                                ? getColor('primary')
-                                : index === 1
-                                    ? getColor('secondary')
-                                    : '#bbcae14d'
-                        }
-                    }))
+                    data: [
+                        {value: 80, itemStyle: {color: '#f59e0b'}},
+                        {value: 20, itemStyle: {color: '#f59e0b40'}}
+                    ]
                 }
             ]
         })
     },
     {
-        title: 'Revenue',
-        badge: {text: 'Monthly', variant: 'warning'},
-        value: 50.33,
-        prefix: '$',
-        suffix: 'K',
-        description: 'Monthly Revenue',
+        title: 'Return',
+        badge: {text: 'Today', variant: 'info'},
+        value: 20,
+        description: 'No. of Cheques',
         chartOptions: () => ({
             tooltip: {show: false},
             series: [
@@ -128,16 +106,54 @@ export const statistics: StatisticsWidgetType[] = [
                     hoverAnimation: false,
                     label: {show: false},
                     labelLine: {show: false},
-                    data: generateRandomData().map((item, index) => ({
-                        value: item.value,
-                        itemStyle: {
-                            color: index === 0
-                                ? getColor('primary')
-                                : index === 1
-                                    ? getColor('secondary')
-                                    : '#bbcae14d'
-                        }
-                    }))
+                    data: [
+                        {value: 60, itemStyle: {color: '#06b6d4'}},
+                        {value: 40, itemStyle: {color: '#06b6d440'}}
+                    ]
+                }
+            ]
+        })
+    },
+    {
+        title: 'System Rejected',
+        badge: {text: 'Today', variant: 'danger'},
+        value: 26,
+        description: 'No. of Cheques',
+        chartOptions: () => ({
+            tooltip: {show: false},
+            series: [
+                {
+                    type: 'pie',
+                    radius: ['65%', '100%'],
+                    hoverAnimation: false,
+                    label: {show: false},
+                    labelLine: {show: false},
+                    data: [
+                        {value: 65, itemStyle: {color: '#ef4444'}},
+                        {value: 35, itemStyle: {color: '#ef444440'}}
+                    ]
+                }
+            ]
+        })
+    },
+    {
+        title: 'Un Authorized',
+        badge: {text: 'Today', variant: 'secondary'},
+        value: 15,
+        description: 'No. of Cheques',
+        chartOptions: () => ({
+            tooltip: {show: false},
+            series: [
+                {
+                    type: 'pie',
+                    radius: ['65%', '100%'],
+                    hoverAnimation: false,
+                    label: {show: false},
+                    labelLine: {show: false},
+                    data: [
+                        {value: 45, itemStyle: {color: '#6b7280'}},
+                        {value: 55, itemStyle: {color: '#6b728040'}}
+                    ]
                 }
             ]
         })

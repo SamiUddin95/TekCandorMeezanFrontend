@@ -168,20 +168,20 @@ export class ReturnTransactionComponent implements OnInit {
     ];
 
     // Load return reason options
-    this.returnTransactionService.getReturnReasonOptions().subscribe({
-      next: (data) => {
-        this.returnReasonOptions = data;
+    this.filterService.getReturnReasonOptions().subscribe({
+      next: (response: any) => {
+        if (response.status === 'success' && response.data && response.data.returnReasons) {
+          this.returnReasonOptions = response.data.returnReasons.map((reason: any) => ({
+            value: reason.value,
+            label: reason.text
+          }));
+        } else {
+          this.returnReasonOptions = [];
+        }
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error loading return reason options:', error);
-        // Fallback data
-        this.returnReasonOptions = [
-          { value: 'insufficient_funds', label: 'Insufficient Funds' },
-          { value: 'account_closed', label: 'Account Closed' },
-          { value: 'signature_mismatch', label: 'Signature Mismatch' },
-          { value: 'stop_payment', label: 'Stop Payment' },
-          { value: 'amount_exceeds_limit', label: 'Amount Exceeds Limit' }
-        ];
+        this.returnReasonOptions = [];
       }
     });
   }

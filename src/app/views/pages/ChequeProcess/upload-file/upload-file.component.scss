@@ -80,3 +80,113 @@
   word-wrap: break-word;
   word-break: break-word;
 }
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, rgb(112, 30, 125) 0%, rgb(140, 60, 155) 100%);
+  border: none;
+  color: white;
+  font-weight: 500;
+  font-size: 13px;
+  box-shadow: 0 2px 8px rgba(112, 30, 125, 0.3);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  min-height: 36px;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(112, 30, 125, 0.4);
+    background: linear-gradient(135deg, rgb(140, 60, 155) 0%, rgb(112, 30, 125) 100%);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(112, 30, 125, 0.3);
+  }
+
+  ng-icon {
+    transition: transform 0.2s ease;
+  }
+
+  &:hover ng-icon {
+    transform: translateX(2px);
+  }
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 1rem;
+  border: none;
+  color: white;
+  font-weight: 500;
+  font-size: 13px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  min-height: 36px;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  }
+
+  ng-icon {
+    transition: transform 0.2s ease;
+  }
+
+  &:hover ng-icon {
+    transform: translateX(2px);
+  }
+}
+
+.import-btn {
+  background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%);
+  box-shadow: 0 2px 8px rgba(13, 110, 253, 0.3);
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.4);
+    background: linear-gradient(135deg, #0056b3 0%, #0d6efd 100%);
+  }
+}
+
+.service-btn {
+  background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+    background: linear-gradient(135deg, #1e7e34 0%, #28a745 100%);
+  }
+}
+
+.ss-card-btn {
+  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+  box-shadow: 0 2px 8px rgba(23, 162, 184, 0.3);
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(23, 162, 184, 0.4);
+    background: linear-gradient(135deg, #138496 0%, #17a2b8 100%);
+  }
+}
+
+.sftp-btn {
+  background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+  box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+    background: linear-gradient(135deg, #e0a800 0%, #ffc107 100%);
+  }
+}
