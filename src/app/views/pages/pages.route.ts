@@ -137,6 +137,41 @@ export const PAGES_ROUTES: Routes = [
                     }
                 ]
             },
+            {
+                path: 'reports',
+                children: [
+                    {
+                        path: 'branchwise-report',
+                        loadComponent: () => import('./reports/cheque-deposit/branchwise-report/branchwise-report.component').then(mod => mod.BranchwiseReportComponent),
+                        data: {title: 'Branchwise Report'}
+                    },
+                    {
+                        path: 'cbc-report',
+                        loadComponent: () => import('./reports/cheque-deposit/cbc-report/cbc-report.component').then(mod => mod.CBCReportComponent),
+                        data: {title: 'CBC Report'}
+                    },
+                    {
+                        path: 'final-report',
+                        loadComponent: () => import('./reports/cheque-deposit/final-report/final-report.component').then(mod => mod.FinalReportComponent),
+                        data: {title: 'Final Report'}
+                    },
+                    {
+                        path: 'return-memo-report',
+                        loadComponent: () => import('./reports/cheque-deposit/return-memo-report/return-memo-report.component').then(mod => mod.ReturnMemoReportComponent),
+                        data: {title: 'Return Memo Report'}
+                    },
+                    {
+                        path: 'return-register',
+                        loadComponent: () => import('./reports/cheque-deposit/return-register/return-register.component').then(mod => mod.ReturnRegisterComponent),
+                        data: {title: 'Return Register'}
+                    },
+                    {
+                        path: 'clearing-log-report',
+                        loadComponent: () => import('./reports/cheque-deposit/clearing-log-report/clearing-log-report.component').then(mod => mod.ClearingLogReportComponent),
+                        data: {title: 'Clearing Log Report'}
+                    },
+                ]
+            },
         ]
     }
 ];

@@ -67,18 +67,11 @@ export class Hub implements OnInit {
   }
 
   get filteredHubs(): HubItem[] {
-    const q = this.searchName.trim().toLowerCase();
-    if (!q) return this.hubs;
-    return this.hubs.filter((h) => h.name.toLowerCase().includes(q));
+    return this.hubs;
   }
 
   get paginatedHubs(): HubItem[] {
-    if (!this.filteredHubs || this.filteredHubs.length === 0) {
-      return [];
-    }
-    const startIndex = (this.currentPage - 1) * this.pageSize;
-    const endIndex = startIndex + this.pageSize;
-    return this.filteredHubs.slice(startIndex, endIndex);
+     return this.hubs;
   }
 
   onPageChange(event: { page: number; pageSize: number }) {

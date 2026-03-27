@@ -67,18 +67,11 @@ export class ReturnReason implements OnInit {
   }
 
   get filteredReturnReasons(): ReturnReasonItem[] {
-    const q = this.searchName.trim().toLowerCase();
-    if (!q) return this.returnReasons;
-    return this.returnReasons.filter((rr) => rr.name.toLowerCase().includes(q));
+    return this.returnReasons;
   }
 
   get paginatedReturnReasons(): ReturnReasonItem[] {
-    if (!this.filteredReturnReasons || this.filteredReturnReasons.length === 0) {
-      return [];
-    }
-    const startIndex = (this.currentPage - 1) * this.pageSize;
-    const endIndex = startIndex + this.pageSize;
-    return this.filteredReturnReasons.slice(startIndex, endIndex);
+    return this.returnReasons;
   }
 
   onPageChange(event: { page: number; pageSize: number }) {

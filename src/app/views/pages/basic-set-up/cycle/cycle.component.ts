@@ -67,18 +67,11 @@ export class Cycle implements OnInit {
   }
 
   get filteredCycles(): CycleItem[] {
-    const q = this.searchName.trim().toLowerCase();
-    if (!q) return this.cycles;
-    return this.cycles.filter((c) => c.name.toLowerCase().includes(q));
+    return this.cycles;
   }
 
   get paginatedCycles(): CycleItem[] {
-    if (!this.filteredCycles || this.filteredCycles.length === 0) {
-      return [];
-    }
-    const startIndex = (this.currentPage - 1) * this.pageSize;
-    const endIndex = startIndex + this.pageSize;
-    return this.filteredCycles.slice(startIndex, endIndex);
+    return this.cycles;
   }
 
   onPageChange(event: { page: number; pageSize: number }) {

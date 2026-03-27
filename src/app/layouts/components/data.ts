@@ -127,49 +127,65 @@ export const menuItems: MenuItemType[] = [
         label: 'Reports',
         icon: 'tablerFileReport',
         isCollapsed: true,
-        requiredPermissions: ['reports.view'],
+        requiredPermissions: ['reports.Branchwise Report','reports.CBCReport','reports.FinalReport','reports.InwardClearingReport','reports.ReturnMemoReport','reports.ReturnRegisterReport','reports.ClearingLogReport'],
         children: [
-            { 
-                label: 'Branchwise Report', 
-                icon: 'tablerBuildingStore', 
-                url: '/pages/user-management',
-                requiredPermissions: ['reports.view']
+            {
+                label: 'ChequeDeposit',
+                icon: 'tablerFileReport',
+                isCollapsed: true,
+                requiredPermissions: ['reports.Branchwise Report','reports.CBCReport','reports.FinalReport','reports.InwardClearingReport','reports.ReturnMemoReport','reports.ReturnRegisterReport'],
+                children: [
+                    { 
+                        label: 'Branchwise Report', 
+                        icon: 'tablerBuildingStore', 
+                        url: '/pages/reports/cheque-deposit/branchwise-report',
+                        requiredPermissions: ['reports.Branchwise Report']
+                    },
+                    { 
+                        label: 'CBC Report', 
+                        icon: 'tablerFileText', 
+                        url: '/pages/reports/cbc-report',
+                        requiredPermissions: ['reports.CBCReport']
+                    },
+                    { 
+                        label: 'Final Report', 
+                        icon: 'tablerFileCheck', 
+                        url: '/pages/reports/final-report',
+                        requiredPermissions: ['reports.FinalReport']
+                    },
+                    { 
+                        label: 'Inward Clearing Report', 
+                        icon: 'tablerFileDownload', 
+                        url: '/pages/reports/inward-clearing-report',
+                        requiredPermissions: ['reports.InwardClearingReport']
+                    },
+                    { 
+                        label: 'Return Memo Report', 
+                        icon: 'tablerFileX', 
+                        url: '/pages/reports/return-memo-report',
+                        requiredPermissions: ['reports.ReturnMemoReport']
+                    },
+                    { 
+                        label: 'Return Register', 
+                        icon: 'tablerFileMinus', 
+                        url: '/pages/reports/return-register',
+                        requiredPermissions: ['reports.ReturnRegisterReport']
+                    },
+                ]
             },
-            { 
-                label: 'CBC Report', 
-                icon: 'tablerFileText', 
-                url: '/pages/user-management',
-                requiredPermissions: ['reports.view']
-            },
-            { 
-                label: 'Final Report', 
-                icon: 'tablerFileCheck', 
-                url: '/pages/user-management',
-                requiredPermissions: ['reports.view']
-            },
-            { 
-                label: 'Inward Clearing Report', 
-                icon: 'tablerArrowRight', 
-                url: '/pages/user-management',
-                requiredPermissions: ['reports.view']
-            },
-            { 
-                label: 'Return Memo Report', 
-                icon: 'tablerFileMinus', 
-                url: '/pages/user-management',
-                requiredPermissions: ['reports.view']
-            },
-            { 
-                label: 'Return Register Report', 
-                icon: 'tablerFileDatabase', 
-                url: '/pages/user-management',
-                requiredPermissions: ['reports.view']
-            },
-            { 
-                label: 'Clearing Log Report', 
-                icon: 'tablerClipboardList', 
-                url: '/pages/user-management',
-                requiredPermissions: ['reports.view']
+            {
+                label: 'Audit',
+                icon: 'tablerFileClock',
+                isCollapsed: true,
+                requiredPermissions: ['reports.Audit.ClearingLogReport'],
+                children: [
+                    { 
+                        label: 'Clearing Log Report', 
+                        icon: 'tablerFileClock', 
+                        url: '/pages/reports/clearing-log-report',
+                        requiredPermissions: ['reports.Audit.ClearingLogReport']
+                    },
+                ]
             },
         ]
     },

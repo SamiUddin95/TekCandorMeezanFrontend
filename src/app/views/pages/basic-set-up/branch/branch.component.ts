@@ -86,18 +86,11 @@ export class Branch implements OnInit {
   }
 
   get filteredBranches(): BranchItem[] {
-    const q = this.searchName.trim().toLowerCase();
-    if (!q) return this.branches;
-    return this.branches.filter((b) => b.name.toLowerCase().includes(q));
+    return this.branches;
   }
 
   get paginatedBranches(): BranchItem[] {
-    if (!this.filteredBranches || this.filteredBranches.length === 0) {
-      return [];
-    }
-    const startIndex = (this.currentPage - 1) * this.pageSize;
-    const endIndex = startIndex + this.pageSize;
-    return this.filteredBranches.slice(startIndex, endIndex);
+    return this.branches;
   }
 
   onPageChange(event: { page: number; pageSize: number }) {
