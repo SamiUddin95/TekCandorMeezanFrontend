@@ -7,6 +7,8 @@ import { Userservice } from '@/app/services/user.service';
 import { OnInit } from '@angular/core';
 import { HubListResponse } from '@/app/services/hub.service';
 import { BranchListResponse } from '@/app/services/branch.service';
+import { FilterService } from '@/app/services/filter.service';
+
 export interface UserItem {
   id: number;
   name: string;
@@ -37,36 +39,42 @@ export interface UserItem {
   templateUrl: './user-management.html',
   styleUrl: './user-management.scss'
 })
-export class UserManagement implements OnInit{
+export class UserManagement implements OnInit {
 
-  
+
   users: UserItem[] = [
-   
+
   ];
   isSelectingGroup: boolean = false;
 
-selectedSecurityGroups: any[] = [];
-allSecurityGroups: any[] = []; 
-tempSelectedGroups: any[] = [];
-//   selectedSecurityGroups: any[] = [];
-// allSecurityGroups: any[] = [];
-// tempSelectedGroups: any[] = [];
+  selectedSecurityGroups: any[] = [];
+  allSecurityGroups: any[] = [];
+  tempSelectedGroups: any[] = [];
+  //   selectedSecurityGroups: any[] = [];
+  // allSecurityGroups: any[] = [];
+  // tempSelectedGroups: any[] = [];
   hubs: any;
   isLoading: boolean | undefined;
   subscriptions: any;
   totalPages: number | undefined;
   branches: any;
+selectedHubId: any;
+highlightedIndex: any;
   // hubs: any;
-    ngOnInit(): void {
+
+
+
+
+  ngOnInit(): void {
     this.loadUsers();
     this.loadBranches();
     this.loadHubs();
-    
+
   }
-  
-currentGroupPage: number = 1;
-groupPageSize: number = 10;
-totalGroupRecords: number = 0;
+
+  currentGroupPage: number = 1;
+  groupPageSize: number = 10;
+  totalGroupRecords: number = 0;
   currentPage: number = 1;
   pageSize: number = 10;
   totalRecords: number = 0;
@@ -91,10 +99,10 @@ totalGroupRecords: number = 0;
     return this.users.reduce((sum, u) => sum + u.reports, 0);
   }
 
-  constructor(private userService: Userservice) {
+  constructor(private userService: Userservice, private filterService: FilterService) {
     this.totalRecords = this.users.length;
   }
- 
+
 
   get paginatedUsers(): UserItem[] {
     if (!this.users || this.users.length === 0) {
@@ -104,43 +112,43 @@ totalGroupRecords: number = 0;
     const endIndex = startIndex + this.pageSize;
     return this.users.slice(startIndex, endIndex);
   }
-//   openSecurityModal() {
-//   const modal = new bootstrap.Modal(document.getElementById('securityGroupModal')!);
-//   modal.show();
-// }
+  //   openSecurityModal() {
+  //   const modal = new bootstrap.Modal(document.getElementById('securityGroupModal')!);
+  //   modal.show();
+  // }
 
 
 
-onGroupSelect(event: any, group: any) {
-  if (event.target.checked) {
-    this.tempSelectedGroups.push(group);
-  } else {
-    this.tempSelectedGroups = this.tempSelectedGroups.filter(g => g.id !== group.id);
-  }
-}
-
-saveSelectedGroups() {
-
-  // Duplicate prevent
-  this.tempSelectedGroups.forEach(group => {
-    const exists = this.selectedSecurityGroups.find(g => g.id === group.id);
-    if (!exists) {
-      this.selectedSecurityGroups.push(group);
+  onGroupSelect(event: any, group: any) {
+    if (event.target.checked) {
+      this.tempSelectedGroups.push(group);
+    } else {
+      this.tempSelectedGroups = this.tempSelectedGroups.filter(g => g.id !== group.id);
     }
-  });
+  }
 
-  this.tempSelectedGroups = [];
-  this.closeModal();
-}
+  saveSelectedGroups() {
 
-removeGroup(index: number) {
-  this.selectedSecurityGroups.splice(index, 1);
-}
+    // Duplicate prevent
+    this.tempSelectedGroups.forEach(group => {
+      const exists = this.selectedSecurityGroups.find(g => g.id === group.id);
+      if (!exists) {
+        this.selectedSecurityGroups.push(group);
+      }
+    });
+
+    this.tempSelectedGroups = [];
+    this.closeModal();
+  }
+
+  removeGroup(index: number) {
+    this.selectedSecurityGroups.splice(index, 1);
+  }
 
   onPageChange(event: { page: number; pageSize: number }) {
     this.currentPage = event.page;
     this.pageSize = event.pageSize;
-    this.loadUsers();  
+    this.loadUsers();
   }
 
   onAddNew() {
@@ -172,13 +180,13 @@ removeGroup(index: number) {
   //       if (actualIndex !== -1) {
   //         this.users.splice(actualIndex, 1);
   //         this.totalRecords = this.users.length;
-          
+
   //         // Adjust current page if necessary
   //         const totalPages = Math.ceil(this.totalRecords / this.pageSize);
   //         if (this.currentPage > totalPages && totalPages > 0) {
   //           this.currentPage = totalPages;
   //         }
-          
+
   //         Swal.fire({
   //           title: 'Deleted!',
   //           text: `${user.name} has been deleted successfully.`,
@@ -191,58 +199,72 @@ removeGroup(index: number) {
   //   });
   // }
   onDelete(user: UserItem, index: number) {
-  Swal.fire({
-    title: 'Are you sure?',
-    text: `Do you want to delete ${user.name}? This action cannot be undone.`,
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#d33',
-    cancelButtonColor: '#3085d6',
-    confirmButtonText: 'Yes, delete it!',
-    cancelButtonText: 'Cancel'
-  }).then((result: any) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `Do you want to delete ${user.name}? This action cannot be undone.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel'
+    }).then((result: any) => {
 
-    if (result.isConfirmed) {
+      if (result.isConfirmed) {
 
-      this.userService.deleteUser(user.id).subscribe({
-        next: () => {
+        this.userService.deleteUser(user.id).subscribe({
+          next: () => {
 
-          const actualIndex = this.users.findIndex(u => u.id === user.id);
+            // Find actual index
+            const actualIndex = this.users.findIndex(u => u.id === user.id);
 
-          if (actualIndex !== -1) {
-            this.users.splice(actualIndex, 1);
-            this.totalRecords = this.users.length;
+            if (actualIndex !== -1) {
+              this.users.splice(actualIndex, 1);
+
+              // Update total records
+              this.totalRecords--;
+
+              // Calculate total pages
+              const totalPages = Math.ceil(this.totalRecords / this.pageSize);
+
+              // Adjust current page if last item of page deleted
+              if (this.currentPage > totalPages && totalPages > 0) {
+                this.currentPage = totalPages;
+              }
+
+              // Reload data for pagination
+              this.loadUsers();
+            }
+
+            Swal.fire({
+              title: 'Deleted!',
+              text: `${user.name} has been deleted successfully.`,
+              icon: 'success',
+              timer: 2000,
+              showConfirmButton: false
+            });
+
+          },
+          error: () => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Failed to delete user'
+            });
           }
+        });
 
-          Swal.fire({
-            title: 'Deleted!',
-            text: `${user.name} has been deleted successfully.`,
-            icon: 'success',
-            timer: 2000,
-            showConfirmButton: false
-          });
+      }
 
-        },
-        error: () => {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Failed to delete user'
-          });
-        }
-      });
-
-    }
-
-  });
-}
+    });
+  }
 
   onStatusChange(user: UserItem) {
     console.log(`Status changed for ${user.name}: ${user.status}`);
   }
 
 
- loadHubs() {
+  loadHubs() {
     this.isLoading = true;
     const subscription = this.userService.getHubs(this.currentPage, this.pageSize).subscribe({
       next: (response: HubListResponse) => {
@@ -259,7 +281,7 @@ removeGroup(index: number) {
         }
         this.isLoading = false;
       },
-      error: (error:any) => {
+      error: (error: any) => {
         console.error('Error loading hubs:', error);
         Swal.fire({
           icon: 'error',
@@ -271,102 +293,105 @@ removeGroup(index: number) {
     });
     this.subscriptions.push(subscription);
   }
-   loadBranches() {
+  loadBranches() {
     debugger
-      this.isLoading = true;
-      const subscription = this.userService.getBranches(this.currentPage, this.pageSize).subscribe({
-        next: (response: BranchListResponse) => {
-          if (response.status === 'success') {
-            this.branches = response.data.items;
-            console.log("Branches loaded:", this.branches);
-            this.totalRecords = response.data.totalCount;
-            this.totalPages = response.data.totalPages;
-          } else {
-      this.subscriptions.push(subscription);
+    this.isLoading = true;
+    const subscription = this.userService.getBranches(this.currentPage, this.pageSize).subscribe({
+      next: (response: BranchListResponse) => {
+        if (response.status === 'success') {
+          this.branches = response.data.items;
+          console.log("Branches loaded:", this.branches);
+          this.totalRecords = response.data.totalCount;
+          this.totalPages = response.data.totalPages;
+        } else {
+          this.subscriptions.push(subscription);
+        }
+
+      }
+    })
+  };
+  
+
+  loadUsers() {
+    this.userService.getAllUsers(this.currentPage, this.pageSize)
+      .subscribe({
+        next: (res: any) => {
+          console.log("API Response:", res);
+
+
+          this.users = res.data.items;
+          console.log("Users loaded waleed:", this.users);
+          this.totalRecords = res.data.totalCount;
+
+
+        },
+        error: (err) => {
+          console.error(err);
+          Swal.fire('Error', 'Failed to load users', 'error');
+        }
+      });
+  }
+
+  onSaveUser() {
+    // Validation
+    if (!this.selectedUser.name || !this.selectedUser.email) {
+      Swal.fire({
+        title: 'Error!',
+        text: 'Please fill in all required fields',
+        icon: 'error',
+        confirmButtonText: 'OK'
+      });
+      return;
     }
 
-  }})};
+    if (this.isEditMode) {
+      // Update existing user via API
+      this.userService.updateUser(this.selectedUser.id!, this.selectedUser).subscribe({
+        next: (res) => {
+          Swal.fire('Success', 'User updated successfully', 'success');
+          // Update local array
+          const index = this.users.findIndex(u => u.id === this.selectedUser.id);
+          if (index !== -1) this.users[index] = { ...this.selectedUser };
+          this.closeModal();
+        },
+        error: (err) => Swal.fire('Error', 'Failed to update user', 'error')
+      });
+    } else {
+      // Add new user via API
+      this.userService.addUser(this.selectedUser).subscribe({
+        next: (res) => {
+          Swal.fire('Success', 'User added successfully', 'success');
+          // Add new user to local array with id from backend
+          const newUser = { ...this.selectedUser, id: res.data?.id || Math.max(...this.users.map(u => u.id)) + 1 };
+          this.users.push(newUser);
+          this.totalRecords = this.users.length;
 
-loadUsers() {
-  this.userService.getAllUsers(this.currentPage, this.pageSize)
-    .subscribe({
-      next: (res: any) => {
-        console.log("API Response:", res);
+          // Go to last page to show new item
+          this.currentPage = Math.ceil(this.totalRecords / this.pageSize);
+          this.closeModal();
+        },
+        error: (err) => Swal.fire('Error', 'Failed to add user', 'error')
+      });
+    }
+  }
+  loadSecurityGroups() {
+    this.userService.getAllGroups(this.currentGroupPage, this.groupPageSize)
+      .subscribe({
+        next: (res: any) => {
 
-        
-        this.users = res.data.items;   
-        console.log("Users loaded waleed:", this.users);   
-        this.totalRecords = res.data.totalCount; 
+          console.log("Group API Response:", res);
 
-        
-      },
-      error: (err) => {
-        console.error(err);
-        Swal.fire('Error', 'Failed to load users', 'error');
-      }
-    });
-}
-  
-onSaveUser() {
-  // Validation
-  if (!this.selectedUser.name || !this.selectedUser.email) {
-    Swal.fire({
-      title: 'Error!',
-      text: 'Please fill in all required fields',
-      icon: 'error',
-      confirmButtonText: 'OK'
-    });
-    return;
+          this.allSecurityGroups = res.data.items;
+          this.totalGroupRecords = res.data.totalCount;
+
+        },
+        error: (err) => {
+          console.error(err);
+          Swal.fire('Error', 'Failed to load security groups', 'error');
+        }
+      });
   }
 
-  if (this.isEditMode) {
-    // Update existing user via API
-    this.userService.updateUser(this.selectedUser.id!, this.selectedUser).subscribe({
-      next: (res) => {
-        Swal.fire('Success', 'User updated successfully', 'success');
-        // Update local array
-        const index = this.users.findIndex(u => u.id === this.selectedUser.id);
-        if (index !== -1) this.users[index] = { ...this.selectedUser };
-        this.closeModal();
-      },
-      error: (err) => Swal.fire('Error', 'Failed to update user', 'error')
-    });
-  } else {
-    // Add new user via API
-    this.userService.addUser(this.selectedUser).subscribe({
-      next: (res) => {
-        Swal.fire('Success', 'User added successfully', 'success');
-        // Add new user to local array with id from backend
-        const newUser = { ...this.selectedUser, id: res.data?.id || Math.max(...this.users.map(u => u.id)) + 1 };
-        this.users.push(newUser);
-        this.totalRecords = this.users.length;
-
-        // Go to last page to show new item
-        this.currentPage = Math.ceil(this.totalRecords / this.pageSize);
-        this.closeModal();
-      },
-      error: (err) => Swal.fire('Error', 'Failed to add user', 'error')
-    });
-  }
-}
-loadSecurityGroups() {
-  this.userService.getAllGroups(this.currentGroupPage, this.groupPageSize)
-    .subscribe({
-      next: (res: any) => {
-
-        console.log("Group API Response:", res);
-
-        this.allSecurityGroups = res.data.items;
-        this.totalGroupRecords = res.data.totalCount;
-
-      },
-      error: (err) => {
-        console.error(err);
-        Swal.fire('Error', 'Failed to load security groups', 'error');
-      }
-    });
-}
-  
 
   private getEmptyUser(): UserItem {
     return {
@@ -402,17 +427,17 @@ loadSecurityGroups() {
     });
   }
 
-   openModal() {
+  openModal() {
     const modalElement = document.getElementById('userModal');
     const modal = new (window as any).bootstrap.Modal(modalElement);
     modal.show();
   }
 
   openSecurityModal() {
-  const modalElement = document.getElementById('securityGroupModal');
-  const modal = new (window as any).bootstrap.Modal(modalElement);
-  modal.show();
-}
+    const modalElement = document.getElementById('securityGroupModal');
+    const modal = new (window as any).bootstrap.Modal(modalElement);
+    modal.show();
+  }
 
   private closeModal() {
     const modalElement = document.getElementById('userModal');
@@ -424,38 +449,38 @@ loadSecurityGroups() {
 
 
   showGroupSelection() {
-  this.isSelectingGroup = true;
+    this.isSelectingGroup = true;
     this.loadSecurityGroups();
 
-}
-
-
-cancelSelection() {
-  this.isSelectingGroup = false;
-  this.tempSelectedGroups = [];
-}
-
-addSelectedGroups() {
-
-  this.tempSelectedGroups.forEach(group => {
-    const exists = this.selectedSecurityGroups.find(g => g.id === group.id);
-    if (!exists) {
-      this.selectedSecurityGroups.push(group);
-    }
-  });
-
-  this.isSelectingGroup = false;
-  this.tempSelectedGroups = [];
-}
-
-onCheckboxChange(event: any, group: any) {
-  if (event.target.checked) {
-    this.tempSelectedGroups.push(group);
-  } else {
-    this.tempSelectedGroups =
-      this.tempSelectedGroups.filter(g => g.id !== group.id);
   }
-}
+
+
+  cancelSelection() {
+    this.isSelectingGroup = false;
+    this.tempSelectedGroups = [];
+  }
+
+  addSelectedGroups() {
+
+    this.tempSelectedGroups.forEach(group => {
+      const exists = this.selectedSecurityGroups.find(g => g.id === group.id);
+      if (!exists) {
+        this.selectedSecurityGroups.push(group);
+      }
+    });
+
+    this.isSelectingGroup = false;
+    this.tempSelectedGroups = [];
+  }
+
+  onCheckboxChange(event: any, group: any) {
+    if (event.target.checked) {
+      this.tempSelectedGroups.push(group);
+    } else {
+      this.tempSelectedGroups =
+        this.tempSelectedGroups.filter(g => g.id !== group.id);
+    }
+  }
 
 
 }
