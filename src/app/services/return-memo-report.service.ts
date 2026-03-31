@@ -42,7 +42,7 @@ export class ReturnMemoReportService {
     fromDate?: string,
     toDate?: string,
     chequeNumber?: string,
-    branch?: number,
+    branch?: string,
     accountNumber?: string
   ): Observable<ReturnMemoReportListResponse> {
     let params = new HttpParams()
@@ -59,7 +59,7 @@ export class ReturnMemoReportService {
       params = params.set('chequeNumber', chequeNumber);
     }
     if (branch) {
-      params = params.set('branch', branch.toString());
+      params = params.set('branch', branch);
     }
     if (accountNumber) {
       params = params.set('accountNumber', accountNumber);

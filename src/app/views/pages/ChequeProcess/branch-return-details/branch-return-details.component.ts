@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
+import { SpinnerComponent } from '../../../../components/spinner/spinner.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BranchReturnService } from '../../../../services/branch-return.service';
 import {
@@ -19,7 +20,7 @@ import {
   templateUrl: './branch-return-details.component.html',
   styleUrls: ['./branch-return-details.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, NgIcon],
+  imports: [CommonModule, FormsModule, NgIcon, SpinnerComponent],
   providers: [provideIcons({ tablerArrowLeft, tablerFileText, tablerDownload, tablerPrinter, tablerCheck, tablerUser, tablerX }), DatePipe]
 })
 export class BranchReturnDetailsComponent implements OnInit {

@@ -2,15 +2,16 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PaginationComponent } from '@app/components/pagination/pagination.component';
+import { SpinnerComponent } from '@app/components/spinner/spinner.component';
 import Swal from 'sweetalert2';
 import { FinalReportService, FinalReportItem, FinalReportListResponse } from '../../../../../services/final-report.service';
-import { BranchService, BranchItem } from '../../../../../services/branch.service';
+import { BranchService, BranchItem, FilterBranchItem } from '../../../../../services/branch.service';
 import { CycleService, CycleItem } from '../../../../../services/cycle.service';
 import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-final-report',
-  imports: [CommonModule, FormsModule, PaginationComponent],
+  imports: [CommonModule, FormsModule, PaginationComponent, SpinnerComponent],
   templateUrl: './final-report.component.html',
   styleUrl: './final-report.component.scss'
 })
@@ -25,11 +26,11 @@ export class FinalReportComponent implements OnInit, OnDestroy {
   fromDate: string = '';
   toDate: string = '';
   selectedCycleId: number | null = null;
-  selectedBranchId: number | null = null;
+  selectedBranchId: string | null = null;
 
   // Data
   reportData: FinalReportItem[] = [];
-  branches: BranchItem[] = [];
+  branches: FilterBranchItem[] = [];
   cycles: CycleItem[] = [];
 
   private subscriptions: Subscription[] = [];
@@ -50,10 +51,10 @@ export class FinalReportComponent implements OnInit, OnDestroy {
   }
 
   loadBranches() {
-    const subscription = this.branchService.getBranches(1, 1000).subscribe({
+    const subscription = this.branchService.getFilterBranches().subscribe({
       next: (response) => {
         if (response.status === 'success') {
-          this.branches = response.data.items;
+          this.branches = response.data.branches;
         } else {
           console.error('Failed to load branches:', response.errorMessage);
         }

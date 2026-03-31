@@ -6,12 +6,13 @@ import { ChequeDepositService, ImportRecord, ImportDetail } from '../../../../se
 import { UploadFileService } from '../../../../services/upload-file.service';
 import { PaginationComponent } from '@app/components/pagination/pagination.component';
 import { NgIcon } from '@ng-icons/core';
+import { SpinnerComponent } from '../../../../components/spinner/spinner.component';
 declare var bootstrap: any;
 
 @Component({
   selector: 'app-manual-import',
   standalone: true,
-  imports: [CommonModule, FormsModule, PaginationComponent, NgIcon],
+  imports: [CommonModule, FormsModule, PaginationComponent, NgIcon, SpinnerComponent],
   templateUrl: './manual-import.component.html',
   styleUrls: ['./manual-import.component.scss']
 })

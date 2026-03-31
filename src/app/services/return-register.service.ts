@@ -41,7 +41,7 @@ export class ReturnRegisterService {
     pageNumber: number = 1, 
     pageSize: number = 10,
     accountNumber?: string,
-    branch?: number,
+    branch?: string,
     fromDate?: string,
     toDate?: string,
     status?: string,
@@ -55,7 +55,7 @@ export class ReturnRegisterService {
       params = params.set('accountNumber', accountNumber);
     }
     if (branch) {
-      params = params.set('branch', branch.toString());
+      params = params.set('branch', branch);
     }
     if (fromDate) {
       params = params.set('fromDate', fromDate);

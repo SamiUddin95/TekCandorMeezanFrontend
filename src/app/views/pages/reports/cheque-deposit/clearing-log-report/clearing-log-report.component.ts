@@ -2,15 +2,17 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PaginationComponent } from '@app/components/pagination/pagination.component';
+import { SpinnerComponent } from '@app/components/spinner/spinner.component';
 import Swal from 'sweetalert2';
 import { ClearingLogReportService, ClearingLogReportItem, ClearingLogReportListResponse } from '../../../../../services/clearing-log-report.service';
 import { HubService, HubItem } from '../../../../../services/hub.service';
+import { BranchService, FilterHubItem } from '../../../../../services/branch.service';
 import { CycleService, CycleItem } from '../../../../../services/cycle.service';
 import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-clearing-log-report',
-  imports: [CommonModule, FormsModule, PaginationComponent],
+  imports: [CommonModule, FormsModule, PaginationComponent, SpinnerComponent],
   templateUrl: './clearing-log-report.component.html',
   styleUrl: './clearing-log-report.component.scss'
 })
@@ -24,12 +26,12 @@ export class ClearingLogReportComponent implements OnInit, OnDestroy {
   // Filter properties
   fromDate: string = '';
   toDate: string = '';
-  selectedHubId: number | null = null;
+  selectedHubId: string | null = null;
   selectedCycleId: number | null = null;
 
   // Data
   reportData: ClearingLogReportItem[] = [];
-  hubs: HubItem[] = [];
+  hubs: FilterHubItem[] = [];
   cycles: CycleItem[] = [];
 
   private subscriptions: Subscription[] = [];
@@ -37,6 +39,7 @@ export class ClearingLogReportComponent implements OnInit, OnDestroy {
   constructor(
     private clearingLogReportService: ClearingLogReportService,
     private hubService: HubService,
+    private branchService: BranchService,
     private cycleService: CycleService
   ) {}
 
@@ -50,10 +53,10 @@ export class ClearingLogReportComponent implements OnInit, OnDestroy {
   }
 
   loadHubs() {
-    const subscription = this.hubService.getHubs(1, 1000).subscribe({
+    const subscription = this.branchService.getFilterHubs().subscribe({
       next: (response) => {
         if (response.status === 'success') {
-          this.hubs = response.data.items;
+          this.hubs = response.data.hubs;
         } else {
           console.error('Failed to load hubs:', response.errorMessage);
         }

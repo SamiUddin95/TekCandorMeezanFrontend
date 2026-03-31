@@ -48,7 +48,7 @@ export class ClearingLogReportService {
     pageSize: number = 10,
     fromDate?: string,
     toDate?: string,
-    hub?: number,
+    hub?: string,
     cycle?: number
   ): Observable<ClearingLogReportListResponse> {
     let params = new HttpParams()
@@ -62,7 +62,7 @@ export class ClearingLogReportService {
       params = params.set('toDate', toDate);
     }
     if (hub) {
-      params = params.set('hub', hub.toString());
+      params = params.set('hub', hub);
     }
     if (cycle) {
       params = params.set('cycle', cycle.toString());

@@ -38,10 +38,14 @@
                   </div>
                 </td>
               </tr>
-              <tr *ngIf="paginatedHubs.length === 0">
+              <tr *ngIf="isLoading">
+                <td colspan="3">
+                  <app-spinner></app-spinner>
+                </td>
+              </tr>
+              <tr *ngIf="!isLoading && paginatedHubs.length === 0">
                 <td colspan="3" class="text-center text-muted py-3">
-                  <span *ngIf="isLoading">Loading...</span>
-                  <span *ngIf="!isLoading">No records found</span>
+                  No records found
                 </td>
               </tr>
             </tbody>

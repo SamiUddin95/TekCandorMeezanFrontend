@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PaginationComponent } from '@app/components/pagination/pagination.component';
+import { SpinnerComponent } from '@app/components/spinner/spinner.component';
 import Swal from 'sweetalert2';
 import { CycleService, CycleItem, CycleListResponse } from '../../../../services/cycle.service';
 import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-cycle',
-  imports: [CommonModule, FormsModule, PaginationComponent],
+  imports: [CommonModule, FormsModule, PaginationComponent, SpinnerComponent],
   templateUrl: './cycle.component.html',
   styleUrl: './cycle.component.scss'
 })

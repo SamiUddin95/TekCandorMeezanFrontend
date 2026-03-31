@@ -120,11 +120,8 @@
   <div class="card">
     <div class="card-body">
       <!-- Loading State -->
-      <div *ngIf="isLoading" class="text-center py-5">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Loading...</span>
-        </div>
-        <p class="mt-2 text-muted">Loading callback cheques...</p>
+      <div *ngIf="isLoading">
+        <app-spinner></app-spinner>
       </div>
 
       <!-- Empty State -->

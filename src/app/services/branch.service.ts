@@ -19,6 +19,21 @@ export interface BranchItem {
   email3: string;
 }
 
+export interface FilterBranchItem {
+  name: string;
+  code: string;
+}
+
+export interface FilterStatusItem {
+  text: string;
+  value: string;
+}
+
+export interface FilterHubItem {
+  name: string;
+  code: string;
+}
+
 export interface BranchResponse {
   status: string;
   data: {
@@ -40,6 +55,35 @@ export interface BranchListResponse {
     pageNumber: number;
     pageSize: number;
     totalPages: number;
+  };
+  statusCode: number;
+  errorMessage: string | null;
+}
+
+export interface FilterBranchResponse {
+  status: string;
+  data: {
+    branches: FilterBranchItem[];
+    filterType: string;
+  };
+  statusCode: number;
+  errorMessage: string | null;
+}
+
+export interface FilterStatusResponse {
+  status: string;
+  data: {
+    statuses: FilterStatusItem[];
+  };
+  statusCode: number;
+  errorMessage: string | null;
+}
+
+export interface FilterHubResponse {
+  status: string;
+  data: {
+    hubs: FilterHubItem[];
+    filterType: string;
   };
   statusCode: number;
   errorMessage: string | null;
@@ -80,6 +124,18 @@ export class BranchService {
   
   getBranches(pageNumber: number = 1, pageSize: number = 10): Observable<BranchListResponse> {
     return this.http.get<BranchListResponse>(`${this.apiUrl}/Branch?pageNumber=${pageNumber}&pageSize=${pageSize}`, { headers: this.getAuthHeaders() });
+  }
+
+  getFilterBranches(): Observable<FilterBranchResponse> {
+    return this.http.get<FilterBranchResponse>(`${this.apiUrl}/Filter/branch`, { headers: this.getAuthHeaders() });
+  }
+
+  getFilterStatuses(): Observable<FilterStatusResponse> {
+    return this.http.get<FilterStatusResponse>(`${this.apiUrl}/Filter/status`, { headers: this.getAuthHeaders() });
+  }
+
+  getFilterHubs(): Observable<FilterHubResponse> {
+    return this.http.get<FilterHubResponse>(`${this.apiUrl}/Filter/hub`, { headers: this.getAuthHeaders() });
   }
  
   getBranchById(id: number): Observable<BranchResponse> {

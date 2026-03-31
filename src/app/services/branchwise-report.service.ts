@@ -41,7 +41,7 @@ export class BranchwiseReportService {
     pageSize: number = 10,
     fromDate?: string,
     toDate?: string,
-    branch?: number
+    branch?: string
   ): Observable<BranchwiseReportListResponse> {
     let params = new HttpParams()
       .set('pageNumber', pageNumber.toString())
@@ -54,7 +54,7 @@ export class BranchwiseReportService {
       params = params.set('toDate', toDate);
     }
     if (branch) {
-      params = params.set('branch', branch.toString());
+      params = params.set('branch', branch);
     }
 
     return this.http.get<BranchwiseReportListResponse>(`${this.apiUrl}/BranchWiseReport`, { params });

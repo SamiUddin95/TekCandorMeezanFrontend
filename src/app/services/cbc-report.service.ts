@@ -59,10 +59,10 @@ export class CBCReportService {
     pageSize: number = 10,
     fromDate?: string,
     toDate?: string,
-    branch?: number,
+    branch?: string,
     accountNumber?: string,
     status?: string,
-    hub?: number
+    hub?: string
   ): Observable<CBCReportListResponse> {
     let params = new HttpParams()
       .set('pageNumber', pageNumber.toString())
@@ -75,7 +75,7 @@ export class CBCReportService {
       params = params.set('toDate', toDate);
     }
     if (branch) {
-      params = params.set('branch', branch.toString());
+      params = params.set('branch', branch);
     }
     if (accountNumber) {
       params = params.set('accountNumber', accountNumber);
@@ -84,7 +84,7 @@ export class CBCReportService {
       params = params.set('status', status);
     }
     if (hub) {
-      params = params.set('hub', hub.toString());
+      params = params.set('hub', hub);
     }
 
     return this.http.get<CBCReportListResponse>(`${this.apiUrl}/CBCReport`, { params });

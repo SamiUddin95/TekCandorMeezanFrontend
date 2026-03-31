@@ -8,6 +8,7 @@ import { PendingChequeService, PendingChequeRecord, Branch, Hub } from '../../..
 import { FilterService } from '../../../../services/filter.service';
 import { ChequeDepositService } from '../../../../services/cheque-deposit.service';
 import { PaginationComponent } from '../../../../components/pagination/pagination.component';
+import { SpinnerComponent } from '../../../../components/spinner/spinner.component';
 import {
   tablerSearch,
   tablerFilter,
@@ -34,7 +35,8 @@ declare var bootstrap: any;
     CommonModule,
     FormsModule,
     NgIcon,
-    PaginationComponent
+    PaginationComponent,
+    SpinnerComponent
   ],
   providers: [
     provideIcons({

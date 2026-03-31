@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
+import { SpinnerComponent } from '../../../../components/spinner/spinner.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UnauthorizeTransactionsService } from '../../../../services/unauthorize-transactions.service';
 import {
@@ -19,7 +20,7 @@ import {
   templateUrl: './unauthorize-transactions-details.component.html',
   styleUrls: ['./unauthorize-transactions-details.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, NgIcon],
+  imports: [CommonModule, FormsModule, NgIcon, SpinnerComponent],
   providers: [provideIcons({ tablerArrowLeft, tablerFileText, tablerDownload, tablerPrinter, tablerCheck, tablerUser, tablerX }), DatePipe]
 })
 export class UnauthorizeTransactionsDetailsComponent implements OnInit {

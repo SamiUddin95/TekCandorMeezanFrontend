@@ -2,15 +2,16 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PaginationComponent } from '@app/components/pagination/pagination.component';
+import { SpinnerComponent } from '@app/components/spinner/spinner.component';
 import Swal from 'sweetalert2';
 import { ReturnRegisterService, ReturnRegisterItem, ReturnRegisterListResponse } from '../../../../../services/return-register.service';
-import { BranchService, BranchItem } from '../../../../../services/branch.service';
+import { BranchService, BranchItem, FilterBranchItem } from '../../../../../services/branch.service';
 import { CycleService, CycleItem } from '../../../../../services/cycle.service';
 import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-return-register',
-  imports: [CommonModule, FormsModule, PaginationComponent],
+  imports: [CommonModule, FormsModule, PaginationComponent, SpinnerComponent],
   templateUrl: './return-register.component.html',
   styleUrl: './return-register.component.scss'
 })
@@ -23,7 +24,7 @@ export class ReturnRegisterComponent implements OnInit, OnDestroy {
 
   // Filter properties
   accountNumber: string = '';
-  selectedBranchId: number | null = null;
+  selectedBranchId: string | null = null;
   fromDate: string = '';
   toDate: string = '';
   status: string = '';
@@ -31,7 +32,7 @@ export class ReturnRegisterComponent implements OnInit, OnDestroy {
 
   // Data
   reportData: ReturnRegisterItem[] = [];
-  branches: BranchItem[] = [];
+  branches: FilterBranchItem[] = [];
   cycles: CycleItem[] = [];
 
   // Status options (you can adjust these based on your requirements)
@@ -55,10 +56,10 @@ export class ReturnRegisterComponent implements OnInit, OnDestroy {
   }
 
   loadBranches() {
-    const subscription = this.branchService.getBranches(1, 1000).subscribe({
+    const subscription = this.branchService.getFilterBranches().subscribe({
       next: (response) => {
         if (response.status === 'success') {
-          this.branches = response.data.items;
+          this.branches = response.data.branches;
         } else {
           console.error('Failed to load branches:', response.errorMessage);
         }

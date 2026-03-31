@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { BranchReturnService, BranchReturnConfirmation } from '../../../../services/branch-return.service';
 import { FilterService } from '../../../../services/filter.service';
 import { PaginationComponent } from '../../../../components/pagination/pagination.component';
+import { SpinnerComponent } from '../../../../components/spinner/spinner.component';
 import {
   tablerSearch,
   tablerCe,
@@ -17,7 +18,7 @@ import {
   templateUrl: './branch-return-confirmations.component.html',
   styleUrls: ['./branch-return-confirmations.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, NgIcon, PaginationComponent],
+  imports: [CommonModule, FormsModule, NgIcon, PaginationComponent, SpinnerComponent],
   providers: [provideIcons({ tablerSearch, tablerCe, tablerPencil })]
 })
 export class BranchReturnConfirmationsComponent implements OnInit {
@@ -231,6 +232,24 @@ export class BranchReturnConfirmationsComponent implements OnInit {
   onPageChange(event: { page: number; pageSize: number }): void {
     this.currentPage = event.page;
     this.pageSize = event.pageSize;
+    this.loadBranchReturnConfirmations();
+  }
+
+  applyFilters(): void {
+    this.currentPage = 1;
+    this.loadBranchReturnConfirmations();
+  }
+
+  resetFilters(): void {
+    this.selectedBranch = '';
+    this.accountNumber = '';
+    this.chequeNumber = '';
+    this.selectedHub = '';
+    this.selectedResCore = '';
+    this.selectedStatus = '';
+    this.selectedInstrument = '';
+    this.selectedCycle = '';
+    this.currentPage = 1;
     this.loadBranchReturnConfirmations();
   }
 

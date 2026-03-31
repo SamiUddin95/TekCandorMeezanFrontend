@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PaginationComponent } from '@app/components/pagination/pagination.component';
+import { SpinnerComponent } from '@app/components/spinner/spinner.component';
 import Swal from 'sweetalert2';
 import { ReturnReasonService, ReturnReasonItem, ReturnReasonListResponse } from '../../../../services/return-reason.service';
 import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-return-reason',
-  imports: [CommonModule, FormsModule, PaginationComponent],
+  imports: [CommonModule, FormsModule, PaginationComponent, SpinnerComponent],
   templateUrl: './return-reason.component.html',
   styleUrl: './return-reason.component.scss'
 })

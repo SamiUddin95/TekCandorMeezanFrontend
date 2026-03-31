@@ -1,19 +1,23 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { tablerRefresh, tablerSearch } from '@ng-icons/tabler-icons';
 import { PaginationComponent } from '@app/components/pagination/pagination.component';
+import { SpinnerComponent } from '@app/components/spinner/spinner.component';
 import Swal from 'sweetalert2';
 import { BranchwiseReportService, BranchwiseReportItem, BranchwiseReportListResponse } from '../../../../../services/branchwise-report.service';
-import { BranchService, BranchItem } from '../../../../../services/branch.service';
+import { BranchService, BranchItem, FilterBranchItem } from '../../../../../services/branch.service';
 import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-branchwise-report',
-  imports: [CommonModule, FormsModule, PaginationComponent],
+  imports: [CommonModule, FormsModule, NgIcon, PaginationComponent, SpinnerComponent],
+  providers: [provideIcons({ tablerRefresh, tablerSearch })],
   templateUrl: './branchwise-report.component.html',
   styleUrl: './branchwise-report.component.scss'
 })
-export class BranchwiseReportComponent implements OnInit, OnDestroy {
+export class BranchwiseReportComponent implements OnInit, OnDestroy, AfterViewInit {
   currentPage: number = 1;
   pageSize: number = 10;
   totalRecords: number = 0;
@@ -23,11 +27,11 @@ export class BranchwiseReportComponent implements OnInit, OnDestroy {
   // Filter properties
   fromDate: string = '';
   toDate: string = '';
-  selectedBranchId: number | null = null;
+  selectedBranchId: string | null = null;
 
   // Data
   reportData: BranchwiseReportItem[] = [];
-  branches: BranchItem[] = [];
+  branches: FilterBranchItem[] = [];
 
   private subscriptions: Subscription[] = [];
 
@@ -38,17 +42,26 @@ export class BranchwiseReportComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.loadBranches();
+    this.loadReport();
   }
 
   ngOnDestroy() {
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
+  ngAfterViewInit() {
+    // Initialize Bootstrap tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new (window as any).bootstrap.Tooltip(tooltipTriggerEl);
+    });
+  }
+
   loadBranches() {
-    const subscription = this.branchService.getBranches(1, 1000).subscribe({
+    const subscription = this.branchService.getFilterBranches().subscribe({
       next: (response) => {
         if (response.status === 'success') {
-          this.branches = response.data.items;
+          this.branches = response.data.branches;
         } else {
           console.error('Failed to load branches:', response.errorMessage);
         }

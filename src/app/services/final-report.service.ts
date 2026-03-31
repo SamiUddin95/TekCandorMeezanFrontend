@@ -35,8 +35,8 @@ export class FinalReportService {
     pageSize: number = 10,
     fromDate?: string,
     toDate?: string,
-    cycle?: number,
-    branch?: number
+    cycleCode?: number,
+    branch?: string
   ): Observable<FinalReportListResponse> {
     let params = new HttpParams()
       .set('pageNumber', pageNumber.toString())
@@ -48,11 +48,11 @@ export class FinalReportService {
     if (toDate) {
       params = params.set('toDate', toDate);
     }
-    if (cycle) {
-      params = params.set('cycle', cycle.toString());
+    if (cycleCode) {
+      params = params.set('cycleCode', cycleCode.toString());
     }
     if (branch) {
-      params = params.set('branch', branch.toString());
+      params = params.set('branch', branch);
     }
 
     return this.http.get<FinalReportListResponse>(`${this.apiUrl}/FinalReport`, { params });

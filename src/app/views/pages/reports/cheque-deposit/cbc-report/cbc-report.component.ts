@@ -2,15 +2,16 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PaginationComponent } from '@app/components/pagination/pagination.component';
+import { SpinnerComponent } from '@app/components/spinner/spinner.component';
 import Swal from 'sweetalert2';
 import { CBCReportService, CBCReportItem, CBCReportListResponse, StatusOption } from '../../../../../services/cbc-report.service';
-import { BranchService, BranchItem } from '../../../../../services/branch.service';
+import { BranchService, BranchItem, FilterBranchItem, FilterHubItem } from '../../../../../services/branch.service';
 import { HubService, HubItem } from '../../../../../services/hub.service';
 import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-cbc-report',
-  imports: [CommonModule, FormsModule, PaginationComponent],
+  imports: [CommonModule, FormsModule, PaginationComponent, SpinnerComponent],
   templateUrl: './cbc-report.component.html',
   styleUrl: './cbc-report.component.scss'
 })
@@ -24,15 +25,15 @@ export class CBCReportComponent implements OnInit, OnDestroy {
   // Filter properties
   fromDate: string = '';
   toDate: string = '';
-  selectedBranchId: number | null = null;
+  selectedBranchId: string | null = null;
   accountNumber: string = '';
   status: string = '';
-  selectedHubId: number | null = null;
+  selectedHubId: string | null = null;
 
   // Data
   reportData: CBCReportItem[] = [];
-  branches: BranchItem[] = [];
-  hubs: HubItem[] = [];
+  branches: FilterBranchItem[] = [];
+  hubs: FilterHubItem[] = [];
 
   // Status options loaded from API
   statusOptions: StatusOption[] = [];
@@ -56,10 +57,10 @@ export class CBCReportComponent implements OnInit, OnDestroy {
   }
 
   loadBranches() {
-    const subscription = this.branchService.getBranches(1, 1000).subscribe({
+    const subscription = this.branchService.getFilterBranches().subscribe({
       next: (response) => {
         if (response.status === 'success') {
-          this.branches = response.data.items;
+          this.branches = response.data.branches;
         } else {
           console.error('Failed to load branches:', response.errorMessage);
         }
@@ -72,10 +73,10 @@ export class CBCReportComponent implements OnInit, OnDestroy {
   }
 
   loadHubs() {
-    const subscription = this.hubService.getHubs(1, 1000).subscribe({
+    const subscription = this.branchService.getFilterHubs().subscribe({
       next: (response) => {
         if (response.status === 'success') {
-          this.hubs = response.data.items;
+          this.hubs = response.data.hubs;
         } else {
           console.error('Failed to load hubs:', response.errorMessage);
         }

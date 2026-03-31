@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { ReturnTransactionService, ReturnTransaction } from '../../../../services/return-transaction.service';
 import { FilterService } from '../../../../services/filter.service';
 import { PaginationComponent } from '../../../../components/pagination/pagination.component';
+import { SpinnerComponent } from '../../../../components/spinner/spinner.component';
 import {
   tablerSearch,
   tablerCe,
@@ -19,7 +20,7 @@ import {
   templateUrl: './return-transaction.component.html',
   styleUrls: ['./return-transaction.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, NgIcon, PaginationComponent],
+  imports: [CommonModule, FormsModule, NgIcon, PaginationComponent, SpinnerComponent],
   providers: [provideIcons({ tablerSearch, tablerCe, tablerRefresh, tablerDownload, tablerFileExport })]
 })
 export class ReturnTransactionComponent implements OnInit {

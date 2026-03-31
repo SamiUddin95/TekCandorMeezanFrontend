@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { UnauthorizeTransactionsService, UnauthorizeTransaction } from '../../../../services/unauthorize-transactions.service';
 import { FilterService } from '../../../../services/filter.service';
 import { PaginationComponent } from '../../../../components/pagination/pagination.component';
+import { SpinnerComponent } from '../../../../components/spinner/spinner.component';
 import {
   tablerSearch,
   tablerFilter,
@@ -21,7 +22,7 @@ import {
   templateUrl: './unauthorize-transactions.component.html',
   styleUrls: ['./unauthorize-transactions.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, NgIcon, PaginationComponent],
+  imports: [CommonModule, FormsModule, NgIcon, PaginationComponent, SpinnerComponent],
   providers: [provideIcons({ tablerSearch, tablerFilter, tablerRefresh, tablerEye, tablerCheck, tablerX, tablerAlertTriangle })]
 })
 export class UnauthorizeTransactionsComponent implements OnInit {

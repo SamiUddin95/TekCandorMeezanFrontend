@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PaginationComponent } from '@app/components/pagination/pagination.component';
+import { SpinnerComponent } from '@app/components/spinner/spinner.component';
 import Swal from 'sweetalert2';
 import { GroupService, GroupItem, PermissionItem, GroupCreateRequest, GroupUpdateRequest, AssignPermissionsRequest } from '../../../../services/group.service';
 import { AuthService } from '../../../../services/auth.service';
@@ -16,7 +17,7 @@ export interface Permission {
 
 @Component({
   selector: 'app-group',
-  imports: [CommonModule, FormsModule, PaginationComponent],
+  imports: [CommonModule, FormsModule, PaginationComponent, SpinnerComponent],
   templateUrl: './group.component.html',
   styleUrl: './group.component.scss'
 })

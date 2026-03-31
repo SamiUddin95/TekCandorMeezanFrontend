@@ -27,7 +27,7 @@
               class="form-select form-select-sm"
               [(ngModel)]="selectedBranchId">
               <option [value]="null">All Branches</option>
-              <option *ngFor="let branch of branches" [value]="branch.id">
+              <option *ngFor="let branch of branches" [value]="branch.code">
                 {{ branch.name }}
               </option>
             </select>
@@ -59,7 +59,7 @@
               class="form-select form-select-sm"
               [(ngModel)]="selectedHubId">
               <option [value]="null">All Hubs</option>
-              <option *ngFor="let hub of hubs" [value]="hub.id">
+              <option *ngFor="let hub of hubs" [value]="hub.code">
                 {{ hub.name }}
               </option>
             </select>
@@ -118,10 +118,14 @@
                 <td>{{ item.cbcStatus || '-' }}</td>
                 <td>{{ item.branchStaffId || '-' }}</td>
               </tr>
-              <tr *ngIf="paginatedReportData.length === 0">
-                <td colspan="10" class="text-center text-muted py-3">
-                  <span *ngIf="isLoading">Loading...</span>
-                  <span *ngIf="!isLoading">Please apply filters and click Search to view data</span>
+              <tr *ngIf="isLoading">
+                <td colspan="13">
+                  <app-spinner></app-spinner>
+                </td>
+              </tr>
+              <tr *ngIf="!isLoading && paginatedReportData.length === 0">
+                <td colspan="13" class="text-center text-muted py-3">
+                  Please apply filters and click Search to view data
                 </td>
               </tr>
             </tbody>

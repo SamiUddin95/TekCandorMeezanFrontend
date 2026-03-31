@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { PaginationComponent } from '../../../../components/pagination/pagination.component';
+import { SpinnerComponent } from '../../../../components/spinner/spinner.component';
 import { 
   tablerFileUpload,
   tablerUpload,
@@ -37,7 +38,8 @@ declare var bootstrap: any;
     CommonModule,
     FormsModule,
     NgIcon,
-    PaginationComponent
+    PaginationComponent,
+    SpinnerComponent
   ],
   providers: [provideIcons({
     tablerFileUpload,

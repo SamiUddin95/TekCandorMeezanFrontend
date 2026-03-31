@@ -2,6 +2,7 @@ import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgIcon } from '@ng-icons/core';
+import { SpinnerComponent } from '../../../../components/spinner/spinner.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { PendingChequeService, PendingChequeRecord } from '../../../../services/pending-cheque.service';
@@ -16,7 +17,8 @@ declare var bootstrap: any;
   imports: [
     CommonModule,
     FormsModule,
-    NgIcon
+    NgIcon,
+    SpinnerComponent
   ],
   templateUrl: './cheque-details.component.html',
   styleUrl: './cheque-details.component.scss'

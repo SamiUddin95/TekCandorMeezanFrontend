@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { CallbackChequeService, CallbackCheque } from '../../../../services/callback-cheque.service';
 import { FilterService } from '../../../../services/filter.service';
 import { PaginationComponent } from '../../../../components/pagination/pagination.component';
+import { SpinnerComponent } from '../../../../components/spinner/spinner.component';
 import Swal from 'sweetalert2';
 import {
   tablerSearch,
@@ -18,7 +19,7 @@ import {
   templateUrl: './callback-cheques.component.html',
   styleUrls: ['./callback-cheques.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, NgIcon, PaginationComponent],
+  imports: [CommonModule, FormsModule, NgIcon, PaginationComponent, SpinnerComponent],
   providers: [provideIcons({ tablerSearch, tablerCe, tablerPencil })]
 })
 export class CallbackChequesComponent implements OnInit {

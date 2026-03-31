@@ -170,6 +170,11 @@ export const PAGES_ROUTES: Routes = [
                         loadComponent: () => import('./reports/cheque-deposit/clearing-log-report/clearing-log-report.component').then(mod => mod.ClearingLogReportComponent),
                         data: {title: 'Clearing Log Report'}
                     },
+                    {
+                        path: 'inward-clearing-report',
+                        loadComponent: () => import('./reports/inward-clearing-report/inward-clearing-report.component').then(mod => mod.InwardClearingReportComponent),
+                        data: {title: 'Inward Clearing Report'}
+                    },
                 ]
             },
         ]
