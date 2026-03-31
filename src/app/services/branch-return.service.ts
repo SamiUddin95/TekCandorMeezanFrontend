@@ -63,7 +63,7 @@ export class BranchReturnService {
 
   // Get branch return confirmation details by ID
   getBranchReturnConfirmationDetails(id: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/branch-return-details/${id}`);
+    return this.http.get(`${this.apiUrl}/ChequeDeposit/${id}/branch-return-edit`);
   }
 
   

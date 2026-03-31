@@ -1,6 +1,7 @@
 import {Component, inject, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {MenuItemType} from '@/app/types/layout';
 import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
 import {NgIcon} from '@ng-icons/core';
 import {NgbCollapse} from '@ng-bootstrap/ng-bootstrap';
 import {NavigationEnd, Router, RouterLink} from '@angular/router';
@@ -12,8 +13,9 @@ import {MenuPermissionService} from '@/app/services/menu-permission.service';
 
 @Component({
     selector: 'app-menu',
-    imports: [NgIcon, NgbCollapse, RouterLink, CommonModule],
-    templateUrl: './app-menu.component.html'
+    imports: [NgIcon, NgbCollapse, RouterLink, CommonModule, FormsModule],
+    templateUrl: './app-menu.component.html',
+    styleUrls: ['./app-menu.component.scss']
 })
 export class AppMenuComponent implements OnInit {
 
@@ -28,6 +30,11 @@ export class AppMenuComponent implements OnInit {
     menuItem!: TemplateRef<{ item: MenuItemType }>;
 
     menuItems: MenuItemType[] = [];
+    
+    // Search properties
+    searchQuery: string = '';
+    filteredItems: any[] = [];
+    displayItems: MenuItemType[] = [];
 
     ngOnInit(): void {
         // Load filtered menu items based on user permissions
@@ -47,6 +54,7 @@ export class AppMenuComponent implements OnInit {
     loadMenuItems() {
         // Get filtered menu items based on user permissions
         this.menuItems = this.menuPermissionService.getFilteredMenuItems();
+        this.displayItems = [...this.menuItems];
         console.log('Sidebar Menu Items (Filtered):', this.menuItems);
     }
 
@@ -84,6 +92,80 @@ export class AppMenuComponent implements OnInit {
             const offset = itemRect.top - containerRect.top - window.innerHeight * 0.4;
 
             scrollToElement(scrollContainer, scrollContainer.scrollTop + offset, 500);
+        }
+    }
+
+    // Search methods
+    filterMenu(): void {
+        const query = this.searchQuery.toLowerCase().trim();
+        
+        if (!query) {
+            this.displayItems = [...this.menuItems];
+            this.filteredItems = [];
+            return;
+        }
+
+        this.filteredItems = [];
+        this.searchInMenuItems(this.menuItems, query, '');
+        
+        // Filter display items to show only matching items
+        if (query) {
+            this.displayItems = this.menuItems.filter(item => 
+                this.itemMatches(item, query)
+            );
+        } else {
+            this.displayItems = [...this.menuItems];
+        }
+    }
+
+    searchInMenuItems(items: MenuItemType[], query: string, parentLabel: string): void {
+        items.forEach(item => {
+            if (!item.isTitle && item.label) {
+                const itemLabel = item.label.toLowerCase();
+                if (itemLabel.includes(query)) {
+                    this.filteredItems.push({
+                        ...item,
+                        parentLabel: parentLabel || null
+                    });
+                }
+                
+                // Search in children
+                if (item.children && item.children.length > 0) {
+                    this.searchInMenuItems(item.children, query, item.label);
+                }
+            }
+        });
+    }
+
+    itemMatches(item: MenuItemType, query: string): boolean {
+        if (item.isTitle) return false;
+        
+        const label = item.label?.toLowerCase() || '';
+        if (label.includes(query)) return true;
+        
+        if (item.children && item.children.length > 0) {
+            return item.children.some(child => this.itemMatches(child, query));
+        }
+        
+        return false;
+    }
+
+    clearSearch(): void {
+        this.searchQuery = '';
+        this.filteredItems = [];
+        this.displayItems = [...this.menuItems];
+    }
+
+    navigateToItem(item: any): void {
+        if (item.url) {
+            this.router.navigate([item.url]);
+            this.clearSearch();
+        }
+    }
+
+    navigateToFirstMatch(): void {
+        if (this.filteredItems.length > 0) {
+            this.navigateToItem(this.filteredItems[0]);
         }
     }
 

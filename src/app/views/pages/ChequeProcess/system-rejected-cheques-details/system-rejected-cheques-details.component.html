@@ -1,9 +1,8 @@
 <div class="cheque-details-container">
 
   <!-- Loading State -->
-  <div *ngIf="isLoading" class="text-center py-3">
-    <div class="spinner-border text-primary loading-spinner" role="status"></div>
-    <p class="mt-2 text-muted fw-semibold">Loading System Rejected Cheque Details...</p>
+  <div *ngIf="isLoading">
+    <app-spinner></app-spinner>
   </div>
 
   <!-- System Rejected Cheque Details Content -->
@@ -34,8 +33,7 @@
             <label class="form-label">Account Title</label>
             <input type="text"
                    class="form-control"
-                   [(ngModel)]="chequeDetails.accountNumber"
-                   placeholder="Enter Account Number"
+                   [value]="chequeDetails.accountTitle || ''"
                    readonly>
           </div>
 
@@ -49,14 +47,14 @@
           <div class="col-md-3">
             <label class="form-label text-muted">Account Number</label>
             <div class="form-control bg-light border-0" style="font-weight: 500;">
-              {{ chequeDetails.status || 'N/A' }}
+              {{ chequeDetails.accountNumber || 'N/A' }}
             </div>
           </div>
 
           <div class="col-md-3">
             <label class="form-label text-muted">Status</label>
             <div class="form-control bg-light border-0" style="font-weight: 500;">
-              {{ chequeDetails.accountTitle || 'N/A' }}
+              {{ chequeDetails.status || 'N/A' }}
             </div>
           </div>
 
@@ -67,12 +65,22 @@
             </div>
           </div>
 
-          <div class="col-md-3">
-            <label class="form-label text-muted">Error Feild</label>
+          
+
+          
+
+          
+
+          
+
+          <div class="col-md-6">
+            <label class="form-label text-muted">Error Fields</label>
             <div class="form-control bg-light border-0" style="font-weight: 500; min-height: 38px;">
-              {{ chequeDetails.postingRestriction || 'No restrictions' }}
+              {{ chequeDetails.errorFieldsName || 'No errors' }}
             </div>
           </div>
+
+           
         </div>
       </div>
     </div>
@@ -92,16 +100,23 @@
               <div class="carousel-inner bg-light">
 
                 <div class="carousel-item active">
-                  <img [src]="chequeDetails.frontImage || 'assets/images/placeholder.png'"
+                  <img [src]="chequeDetails.imagePath + '/' + (chequeDetails.imgF || '')"
                        class="w-100"
                        alt="Front Image"
                        (error)="onImageError($event)">
                 </div>
 
                 <div class="carousel-item">
-                  <img [src]="chequeDetails.backImage || 'assets/images/placeholder.png'"
+                  <img [src]="chequeDetails.imagePath + '/' + (chequeDetails.imgR || '')"
                        class="w-100"
                        alt="Back Image"
+                       (error)="onImageError($event)">
+                </div>
+                
+                <div class="carousel-item" *ngIf="chequeDetails.imgU">
+                  <img [src]="chequeDetails.imagePath + '/' + chequeDetails.imgU"
+                       class="w-100"
+                       alt="UV Image"
                        (error)="onImageError($event)">
                 </div>
 
@@ -135,18 +150,24 @@
             <div id="signatureCarousel" class="carousel slide" data-bs-ride="carousel">
               <div class="carousel-inner bg-light">
 
-                <div class="carousel-item active">
-                  <img [src]="chequeDetails.signatureImage || 'assets/images/signature-placeholder.png'"
+                <div class="carousel-item active" *ngIf="chequeDetails.signature && chequeDetails.signature.length > 0">
+                  <img [src]="chequeDetails.imagePath + '/' + chequeDetails.signature[0]"
                        class="w-100"
-                       alt="Signature Image"
+                       alt="Signature 1"
                        (error)="onImageError($event)">
                 </div>
 
-                <div class="carousel-item">
-                  <img [src]="chequeDetails.additionalSignatureImage || 'assets/images/signature-placeholder.png'"
+                <div class="carousel-item" *ngIf="chequeDetails.signature && chequeDetails.signature.length > 1">
+                  <img [src]="chequeDetails.imagePath + '/' + chequeDetails.signature[1]"
                        class="w-100"
-                       alt="Additional Signature"
+                       alt="Signature 2"
                        (error)="onImageError($event)">
+                </div>
+                
+                <div class="carousel-item active" *ngIf="!chequeDetails.signature || chequeDetails.signature.length === 0">
+                  <div class="text-center p-4">
+                    <p class="text-muted">No signatures available</p>
+                  </div>
                 </div>
 
               </div>

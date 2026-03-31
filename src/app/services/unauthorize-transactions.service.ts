@@ -65,7 +65,7 @@ export class UnauthorizeTransactionsService {
 
   // Get unauthorize transaction details by ID
   getUnauthorizeTransactionDetails(id: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/unauthorize-transactions/${id}`);
+    return this.http.get(`${this.apiUrl}/ChequeDeposit/${id}/authorizer-edit`);
   }
 
   

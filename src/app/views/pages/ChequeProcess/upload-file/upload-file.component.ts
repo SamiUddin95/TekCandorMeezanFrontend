@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { PaginationComponent } from '../../../../components/pagination/pagination.component';
+import { SpinnerComponent } from '../../../../components/spinner/spinner.component';
 import { 
   tablerFileUpload,
   tablerUpload,
@@ -37,7 +38,8 @@ declare var bootstrap: any;
     CommonModule,
     FormsModule,
     NgIcon,
-    PaginationComponent
+    PaginationComponent,
+    SpinnerComponent
   ],
   providers: [provideIcons({
     tablerFileUpload,
@@ -190,7 +192,6 @@ export class UploadFileComponent implements OnInit {
 
     this.chequeDepositService.uploadFile(this.selectedFile).subscribe({
       next: (response: any) => {
-        console.log('Upload response:', response);
         Swal.fire({
           icon: 'success',
           title: 'Upload Successful',
@@ -240,7 +241,6 @@ export class UploadFileComponent implements OnInit {
 
     this.chequeDepositService.importFile(this.services).subscribe({
       next: (response: any) => {
-        console.log('Import response:', response);
         Swal.fire({
           icon: 'success',
           title: 'Import Completed',
@@ -275,7 +275,6 @@ export class UploadFileComponent implements OnInit {
     
     this.chequeDepositService.getImportHistory(this.currentPage, this.pageSize).subscribe({
       next: (response: any) => {
-        console.log('Import history response:', response);
         
         if (response?.status === 'success' && response?.data?.items) {
           this.importHistory = response.data.items;
@@ -347,7 +346,6 @@ export class UploadFileComponent implements OnInit {
     // Call import API
     this.chequeDepositService.importData().subscribe({
       next: (response: any) => {
-        console.log('Import response:', response);
         Swal.fire({
           icon: 'success',
           title: 'Import Completed',
@@ -381,24 +379,39 @@ export class UploadFileComponent implements OnInit {
       }
     });
 
-    // Call start service API
-    this.uploadFileService.startService().subscribe({
+    // Call start service API with isChecked=true
+    this.uploadFileService.startService(true).subscribe({
       next: (response: any) => {
-        console.log('Start service response:', response);
-        Swal.fire({
-          icon: 'success',
-          title: 'Service Started',
-          text: response?.message || 'Service has been successfully started',
-          timer: 3000,
-          showConfirmButton: false
-        });
+        
+        if (response.status === 'success') {
+          Swal.fire({
+            icon: 'success',
+            title: 'Service Started',
+            text: response.data || 'Service has been successfully started',
+            timer: 3000,
+            showConfirmButton: false
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Service Start Failed',
+            text: response.errorMessage || 'Failed to start service'
+          });
+        }
       },
       error: (error: any) => {
         console.error('Start service error:', error);
+        console.error('Error details:', {
+          status: error.status,
+          statusText: error.statusText,
+          message: error.message,
+          error: error.error
+        });
+        
         Swal.fire({
           icon: 'error',
           title: 'Service Start Failed',
-          text: error?.error?.message || 'Failed to start service'
+          text: error.error?.message || error.message || 'Failed to start service'
         });
       }
     });
@@ -415,14 +428,13 @@ export class UploadFileComponent implements OnInit {
       }
     });
 
-    // Call SS Card service API
-    this.uploadFileService.ssCardService().subscribe({
+    // Call the new get-signatures API
+    this.uploadFileService.getSignatures().subscribe({
       next: (response: any) => {
-        console.log('SS Card service response:', response);
         Swal.fire({
           icon: 'success',
           title: 'SS Card Service Completed',
-          text: response?.message || 'SS Card service has been successfully processed',
+          text: response.data || 'Signatures retrieved successfully',
           timer: 3000,
           showConfirmButton: false
         });
@@ -432,7 +444,7 @@ export class UploadFileComponent implements OnInit {
         Swal.fire({
           icon: 'error',
           title: 'SS Card Service Failed',
-          text: error?.error?.message || 'Failed to process SS Card service'
+          text: error.error?.message || error.message || 'Failed to retrieve signatures. Please try again.'
         });
       }
     });
@@ -441,32 +453,31 @@ export class UploadFileComponent implements OnInit {
   // SFTP Image Upload method
   sftpImageUpload(): void {
     Swal.fire({
-      title: 'Uploading Images via SFTP',
-      text: 'Please wait while we upload images via SFTP...',
+      title: 'Importing Images',
+      text: 'Please wait while we import images...',
       allowOutsideClick: false,
       didOpen: () => {
         Swal.showLoading();
       }
     });
 
-    // Call SFTP image upload API
-    this.uploadFileService.sftpImageUpload().subscribe({
+    // Call the new import-images API
+    this.uploadFileService.importImages().subscribe({
       next: (response: any) => {
-        console.log('SFTP upload response:', response);
         Swal.fire({
           icon: 'success',
-          title: 'SFTP Upload Completed',
-          text: response?.message || 'Images have been successfully uploaded via SFTP',
+          title: 'Image Import Completed',
+          text: response.data || 'Images have been successfully imported',
           timer: 3000,
           showConfirmButton: false
         });
       },
       error: (error: any) => {
-        console.error('SFTP upload error:', error);
+        console.error('Image import error:', error);
         Swal.fire({
           icon: 'error',
-          title: 'SFTP Upload Failed',
-          text: error?.error?.message || 'Failed to upload images via SFTP'
+          title: 'Image Import Failed',
+          text: error.error?.message || error.message || 'Failed to import images. Please try again.'
         });
       }
     });

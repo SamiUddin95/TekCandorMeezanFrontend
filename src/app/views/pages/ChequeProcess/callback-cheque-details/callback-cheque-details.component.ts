@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CallbackChequeService } from '../../../../services/callback-cheque.service';
+import { FilterService } from '../../../../services/filter.service';
 import {
   tablerArrowLeft,
   tablerRefresh
@@ -22,14 +23,18 @@ export class CallbackChequeDetailsComponent implements OnInit {
   chequeDetails: any = null;
   isLoading: boolean = false;
   chequeId: number = 0;
+  cbcStatusOptions: any[] = [];
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private callbackChequeService: CallbackChequeService
+    private callbackChequeService: CallbackChequeService,
+    private filterService: FilterService
   ) { }
 
   ngOnInit(): void {
+    this.loadCbcStatusOptions();
+    
     this.route.params.subscribe(params => {
       this.chequeId = +params['id'];
       if (this.chequeId) {
@@ -55,6 +60,25 @@ export class CallbackChequeDetailsComponent implements OnInit {
         console.error('Error loading cheque details:', error);
         alert('Error loading cheque details. Please try again.');
         this.isLoading = false;
+      }
+    });
+  }
+
+  loadCbcStatusOptions(): void {
+    this.filterService.getCbcStatusOptions().subscribe({
+      next: (response: any) => {
+        if (response.status === 'success' && response.data && response.data.cbcStatus) {
+          this.cbcStatusOptions = response.data.cbcStatus.map((status: any) => ({
+            value: status.value,
+            label: status.text
+          }));
+        } else {
+          this.cbcStatusOptions = [];
+        }
+      },
+      error: (error: any) => {
+        console.error('Error loading CBC status options:', error);
+        this.cbcStatusOptions = [];
       }
     });
   }

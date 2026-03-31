@@ -8,6 +8,16 @@
             Filters
           </h6>
       </div>
+       <div class="header-buttons">
+        <button class="action-btn inprocess-btn">
+          <ng-icon name="tablerRefresh" size="16"></ng-icon>
+          <span>Send to Approve</span>
+        </button>
+        <button class="action-btn approve-btn">
+          <ng-icon name="tablerFileExport" size="16"></ng-icon>
+          <span>Approve</span>
+        </button>
+      </div>
     </div>
     <div class="card-body">
       <div class="row g-1">
@@ -94,6 +104,21 @@
             </option>
           </select>
         </div>
+
+         <div class="row mt-3">
+        <div class="col-md-12">
+          <div class="d-flex gap-2 justify-content-end">
+            <button class="btn btn-outline-secondary px-4" (click)="resetFilters()">
+              <ng-icon name="tablerRefresh" class="me-2"></ng-icon>
+              Reset Filters
+            </button>
+            <button class="btn btn-primary px-4" (click)="applyFilters()">
+              <ng-icon name="tablerSearch" class="me-2"></ng-icon>
+              Search
+            </button>
+          </div>
+        </div>
+      </div>
       </div>
     </div>
   </div>
@@ -102,11 +127,8 @@
   <div class="card">
     <div class="card-body">
       <!-- Loading State -->
-      <div *ngIf="isLoading" class="text-center py-5">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Loading...</span>
-        </div>
-        <p class="mt-2 text-muted">Loading in process cheques...</p>
+      <div *ngIf="isLoading">
+        <app-spinner></app-spinner>
       </div>
 
       <!-- Empty State -->
@@ -186,7 +208,7 @@
                   <button class="btn btn-sm btn-primary" 
                           (click)="showChequeDetails(cheque)"
                           title="View Details">
-                    <ng-icon name="tablerEye"></ng-icon>
+                    <ng-icon name="tablerPencil"></ng-icon>
                   </button>
                 </td>
               </tr>

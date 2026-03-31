@@ -4,7 +4,7 @@ export type StatisticsWidgetType = {
     title: string;
     badge?: {
         text: string;
-        variant: 'success' | 'primary' | 'info' | 'warning';
+        variant: 'success' | 'primary' | 'info' | 'warning' | 'danger' | 'secondary';
     };
     value: number;
     prefix?: string;

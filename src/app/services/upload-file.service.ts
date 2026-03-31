@@ -81,21 +81,33 @@ export class UploadFileService {
   }
 
   // Start Service API
-  startService(): Observable<any> {
-    return this.http.post(`${this.apiUrl}/ChequeDeposit/start-service`, { 
-      startedBy: this.getCurrentUserName()
-    }, { 
+  startService(isChecked: boolean = true): Observable<any> {
+    console.log('Start service call:', {
+      isChecked: isChecked,
+      url: `${this.apiUrl}/ChequeDeposit/start-service?isChecked=${isChecked}`,
+      token: sessionStorage.getItem('access_token') ? 'Token exists' : 'No token'
+    });
+
+    return this.http.post(`${this.apiUrl}/ChequeDeposit/start-service?isChecked=${isChecked}`, {}, { 
       headers: this.getAuthHeaders() 
     });
   }
 
-  // SS Card Service API
-  ssCardService(): Observable<any> {
-    return this.http.post(`${this.apiUrl}/ChequeDeposit/ss-card-service`, { 
-      processedBy: this.getCurrentUserName()
-    }, { 
-      headers: this.getAuthHeaders() 
-    });
+
+  // Get Signatures API
+  getSignatures(): Observable<any> {
+    const url = `${this.apiUrl}/ChequeDeposit/get-signatures`;
+    const headers = this.getAuthHeaders();
+    
+    return this.http.post(url, {}, { headers });
+  }
+
+  // Import Images API
+  importImages(): Observable<any> {
+    const url = `${this.apiUrl}/ChequeDeposit/import-images`;
+    const headers = this.getAuthHeaders();
+    
+    return this.http.post(url, {}, { headers });
   }
 
   // SFTP Image Upload API

@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PaginationComponent } from '@app/components/pagination/pagination.component';
+import { SpinnerComponent } from '@app/components/spinner/spinner.component';
 import Swal from 'sweetalert2';
 import { HubService, HubItem, HubListResponse } from '../../../../services/hub.service';
 import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-hub',
-  imports: [CommonModule, FormsModule, PaginationComponent],
+  imports: [CommonModule, FormsModule, PaginationComponent, SpinnerComponent],
   templateUrl: './hub.component.html',
   styleUrl: './hub.component.scss'
 })
@@ -67,18 +68,11 @@ export class Hub implements OnInit {
   }
 
   get filteredHubs(): HubItem[] {
-    const q = this.searchName.trim().toLowerCase();
-    if (!q) return this.hubs;
-    return this.hubs.filter((h) => h.name.toLowerCase().includes(q));
+    return this.hubs;
   }
 
   get paginatedHubs(): HubItem[] {
-    if (!this.filteredHubs || this.filteredHubs.length === 0) {
-      return [];
-    }
-    const startIndex = (this.currentPage - 1) * this.pageSize;
-    const endIndex = startIndex + this.pageSize;
-    return this.filteredHubs.slice(startIndex, endIndex);
+     return this.hubs;
   }
 
   onPageChange(event: { page: number; pageSize: number }) {

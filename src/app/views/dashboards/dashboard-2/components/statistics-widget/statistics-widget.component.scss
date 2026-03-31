@@ -1,0 +1,165 @@
+.banking-stats-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  gap: 16px;
+  
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+    border-color: #8b5cf6;
+  }
+}
+
+.card-icon-section {
+  flex-shrink: 0;
+}
+
+.icon-chart {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  line-height: 1.2;
+}
+
+.status-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  
+  &.badge-success {
+    background: #dcfce7;
+    color: #16a34a;
+  }
+  
+  &.badge-primary {
+    background: #dbeafe;
+    color: #2563eb;
+  }
+  
+  &.badge-warning {
+    background: #fef3c7;
+    color: #d97706;
+  }
+  
+  &.badge-info {
+    background: #cffafe;
+    color: #0891b2;
+  }
+  
+  &.badge-danger {
+    background: #fee2e2;
+    color: #dc2626;
+  }
+  
+  &.badge-secondary {
+    background: #f3f4f6;
+    color: #4b5563;
+  }
+}
+
+.card-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.main-number {
+  font-size: 28px;
+  font-weight: 700;
+  color: #8b5cf6;
+  line-height: 1;
+}
+
+.sub-text {
+  font-size: 11px;
+  font-weight: 500;
+  color: #6b7280;
+  line-height: 1.2;
+}
+
+.card-footer {
+  border-top: 1px solid #f3f4f6;
+  padding-top: 8px;
+  margin-top: auto;
+}
+
+.amount-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.amount-label {
+  font-size: 10px;
+  font-weight: 500;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.amount-value {
+  font-size: 13px;
+  font-weight: 700;
+  color: #059669;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .banking-stats-card {
+    padding: 16px;
+  }
+  
+  .main-number {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 576px) {
+  .banking-stats-card {
+    padding: 14px;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .main-number {
+    font-size: 22px;
+  }
+  
+  .icon-chart {
+    width: 35px;
+    height: 35px;
+  }
+}

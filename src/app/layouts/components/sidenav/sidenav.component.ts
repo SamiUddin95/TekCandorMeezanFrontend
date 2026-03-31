@@ -9,12 +9,13 @@ import {RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-sidenav',
-    imports: [
+  imports: [
         AppMenuComponent,
         SimplebarAngularModule,
+        NgIf,
         NgIcon,
         RouterLink
-    ],
+  ],
   templateUrl: './sidenav.component.html',
 })
 export class SidenavComponent {

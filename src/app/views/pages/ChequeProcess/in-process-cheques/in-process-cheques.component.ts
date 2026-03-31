@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { InProcessChequesService, InProcessCheque } from '../../../../services/in-process-cheques.service';
 import { FilterService } from '../../../../services/filter.service';
 import { PaginationComponent } from '../../../../components/pagination/pagination.component';
+import { SpinnerComponent } from '../../../../components/spinner/spinner.component';
 import {
   tablerSearch,
   tablerFilter,
@@ -21,7 +22,7 @@ import {
   templateUrl: './in-process-cheques.component.html',
   styleUrls: ['./in-process-cheques.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, NgIcon, PaginationComponent],
+  imports: [CommonModule, FormsModule, NgIcon, PaginationComponent, SpinnerComponent],
   providers: [provideIcons({ tablerSearch, tablerFilter, tablerRefresh, tablerEye, tablerCheck, tablerX, tablerLoader })]
 })
 export class InProcessChequesComponent implements OnInit {

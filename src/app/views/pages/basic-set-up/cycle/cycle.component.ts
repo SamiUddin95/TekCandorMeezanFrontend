@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PaginationComponent } from '@app/components/pagination/pagination.component';
+import { SpinnerComponent } from '@app/components/spinner/spinner.component';
 import Swal from 'sweetalert2';
 import { CycleService, CycleItem, CycleListResponse } from '../../../../services/cycle.service';
 import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-cycle',
-  imports: [CommonModule, FormsModule, PaginationComponent],
+  imports: [CommonModule, FormsModule, PaginationComponent, SpinnerComponent],
   templateUrl: './cycle.component.html',
   styleUrl: './cycle.component.scss'
 })
@@ -67,18 +68,11 @@ export class Cycle implements OnInit {
   }
 
   get filteredCycles(): CycleItem[] {
-    const q = this.searchName.trim().toLowerCase();
-    if (!q) return this.cycles;
-    return this.cycles.filter((c) => c.name.toLowerCase().includes(q));
+    return this.cycles;
   }
 
   get paginatedCycles(): CycleItem[] {
-    if (!this.filteredCycles || this.filteredCycles.length === 0) {
-      return [];
-    }
-    const startIndex = (this.currentPage - 1) * this.pageSize;
-    const endIndex = startIndex + this.pageSize;
-    return this.filteredCycles.slice(startIndex, endIndex);
+    return this.cycles;
   }
 
   onPageChange(event: { page: number; pageSize: number }) {

@@ -20,6 +20,8 @@
      "baseUrl": ".",
     "paths": {
       "@app/components/*": ["./src/app/components/*"],
+      "@app/services/*": ["./src/app/services/*"],
+      "@app/styles/*": ["./src/app/styles/*"],
       "@common/*": ["./src/app/common/*"],
       "@core/*": ["./src/app/core/*"],
       "@layouts/*": ["./src/app/layouts/*"],

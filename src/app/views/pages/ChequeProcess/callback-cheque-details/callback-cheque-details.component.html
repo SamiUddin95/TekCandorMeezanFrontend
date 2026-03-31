@@ -67,10 +67,10 @@
           <label class="form-label mb-0">CBC Status</label>
           <select class="form-select" [(ngModel)]="chequeDetails.cbcStatus">
             <option value="">Select CBC Status</option>
-            <option value="pending">Pending</option>
-            <option value="processing">Processing</option>
-            <option value="completed">Completed</option>
-            <option value="rejected">Rejected</option>
+            <option *ngFor="let status of cbcStatusOptions" 
+                    [value]="status.value">
+              {{ status.label }}
+            </option>
           </select>
         </div>
 

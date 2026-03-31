@@ -154,4 +154,67 @@ uploadFile(file: File): Observable<any> {
       headers: this.getAuthHeaders() 
     });
   }
+
+  // Start manual service API
+  startManualService(isChecked: boolean): Observable<any> {
+    const url = `${this.apiUrl}/ChequeDeposit/manual-start-service?isChecked=${isChecked}`;
+    const headers = this.getAuthHeaders();
+    
+    console.log('Start manual service called:', {
+      isChecked: isChecked,
+      url: url,
+      headers: headers,
+      token: sessionStorage.getItem('access_token') ? 'Token exists' : 'No token'
+    });
+
+    const request = this.http.post(url, {}, { headers });
+    
+    // Add subscription logging
+    request.subscribe({
+      next: (response) => console.log('API call successful:', response),
+      error: (error) => console.error('API call failed:', error)
+    });
+
+    return request;
+  }
+
+  // Send cheque to in-process API
+  sendToInProcess(id: number): Observable<any> {
+    const url = `${this.apiUrl}/ChequeDeposit/pending-po-approve`;
+    const headers = this.getAuthHeaders();
+    const body = { id: id };
+    return this.http.post(url, body, { headers });
+  }
+
+  // Approve selected cheques API
+  approveSelected(selectedIds: number[]): Observable<any> {
+    const url = `${this.apiUrl}/ChequeDeposit/pending-approve-selected`;
+    const headers = this.getAuthHeaders();
+    const body = { selectedIds: selectedIds };
+    
+    console.log('Approve selected called:', {
+      selectedIds: selectedIds,
+      url: url,
+      body: body,
+      headers: headers,
+      token: sessionStorage.getItem('access_token') ? 'Token exists' : 'No token'
+    });
+
+    return this.http.post(url, body, { headers });
+  }
+
+  // Get signature images API
+  getSignatureImages(requestBody: any): Observable<any> {
+    const url = `${this.apiUrl}/ChequeDeposit/get-signature`;
+    const headers = this.getAuthHeaders();
+    
+    console.log('Get signature images called:', {
+      requestBody: requestBody,
+      url: url,
+      headers: headers,
+      token: sessionStorage.getItem('access_token') ? 'Token exists' : 'No token'
+    });
+
+    return this.http.post(url, requestBody, { headers });
+  }
 }

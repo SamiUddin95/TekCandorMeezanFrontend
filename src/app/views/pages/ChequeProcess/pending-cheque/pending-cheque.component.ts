@@ -8,6 +8,7 @@ import { PendingChequeService, PendingChequeRecord, Branch, Hub } from '../../..
 import { FilterService } from '../../../../services/filter.service';
 import { ChequeDepositService } from '../../../../services/cheque-deposit.service';
 import { PaginationComponent } from '../../../../components/pagination/pagination.component';
+import { SpinnerComponent } from '../../../../components/spinner/spinner.component';
 import {
   tablerSearch,
   tablerFilter,
@@ -34,7 +35,8 @@ declare var bootstrap: any;
     CommonModule,
     FormsModule,
     NgIcon,
-    PaginationComponent
+    PaginationComponent,
+    SpinnerComponent
   ],
   providers: [
     provideIcons({
@@ -109,7 +111,7 @@ export class PendingChequeComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadDropdownData();
-    this.loadPendingCheques();
+    // Don't load pending cheques automatically - wait for search button click
   }
 
   // Load dropdown data
@@ -306,6 +308,7 @@ export class PendingChequeComponent implements OnInit {
     this.selectedBranch = '';
     this.accountNumber = '';
     this.chequeNumber = '';
+    this.amount = '';
     this.selectedHub = '';
     this.selectedResCore = '';
     this.selectedStatus = '';
@@ -313,7 +316,11 @@ export class PendingChequeComponent implements OnInit {
     this.selectedCycle = '';
     this.currentPage = 1;
     
-    this.loadPendingCheques();
+    // Clear data without loading - user must click search
+    this.pendingCheques = [];
+    this.filteredCheques = [];
+    this.totalRecords = 0;
+    this.totalPages = 0;
   }
 
   // Show cheque details
@@ -401,5 +408,242 @@ export class PendingChequeComponent implements OnInit {
   // Get selected count
   getSelectedCount(): number {
     return this.filteredCheques.filter(cheque => cheque.selected).length;
+  }
+
+  // Send selected cheques to in-process
+  sendToInProcess(): void {
+    const selectedCheques = this.getSelectedCheques();
+    
+    if (selectedCheques.length === 0) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'No Selection',
+        text: 'Please select at least one cheque to send to in-process.',
+        confirmButtonColor: '#6f42c1'
+      });
+      return;
+    }
+
+    // Show confirmation dialog
+    Swal.fire({
+      title: 'Are you sure?',
+      html: `
+        <p>You are about to send <strong>${selectedCheques.length}</strong> cheque(s) to in-process.</p>
+        <p>This action cannot be undone.</p>
+        <p>Do you want to continue?</p>
+      `,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#6f42c1',
+      cancelButtonColor: '#dc3545',
+      confirmButtonText: 'Yes, send to in-process!',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.processSendToInProcess(selectedCheques);
+      }
+    });
+  }
+
+  // Process the API call to send cheques to in-process
+  private processSendToInProcess(selectedCheques: PendingChequeRecord[]): void {
+    Swal.fire({
+      title: 'Processing...',
+      text: 'Please wait while we send cheques to in-process...',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
+    // Process each selected cheque
+    const promises = selectedCheques.map(cheque => {
+      return this.chequeDepositService.sendToInProcess(cheque.id).toPromise();
+    });
+
+    Promise.all(promises)
+      .then((responses) => {
+        
+        // Check if all were successful
+        const successCount = responses.filter(res => res?.status === 'success').length;
+        const failureCount = responses.length - successCount;
+
+        if (successCount === selectedCheques.length) {
+          // All successful
+          Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            html: `
+              <p><strong>${successCount}</strong> cheque(s) successfully sent to in-process.</p>
+            `,
+            confirmButtonColor: '#6f42c1'
+          });
+          
+          // Clear selections and refresh data
+          this.clearSelections();
+          this.loadPendingCheques();
+        } else if (successCount > 0) {
+          // Partial success
+          Swal.fire({
+            icon: 'warning',
+            title: 'Partial Success',
+            html: `
+              <p><strong>${successCount}</strong> cheque(s) sent successfully.</p>
+              <p><strong>${failureCount}</strong> cheque(s) failed to process.</p>
+            `,
+            confirmButtonColor: '#6f42c1'
+          });
+          
+          // Clear selections and refresh data
+          this.clearSelections();
+          this.loadPendingCheques();
+        } else {
+          // All failed
+          Swal.fire({
+            icon: 'error',
+            title: 'Processing Failed',
+            html: `
+              <p>Failed to send cheques to in-process.</p>
+              <p>Please try again later.</p>
+            `,
+            confirmButtonColor: '#dc3545'
+          });
+        }
+      })
+      .catch((error) => {
+        console.error('Send to in-process error:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          html: `
+            <p>An error occurred while processing your request.</p>
+            <p>Please try again later.</p>
+          `,
+          confirmButtonColor: '#dc3545'
+        });
+      });
+  }
+
+  // Clear all selections
+  private clearSelections(): void {
+    this.allSelected = false;
+    this.filteredCheques.forEach(cheque => {
+      cheque.selected = false;
+    });
+  }
+
+  // Approve selected cheques
+  approveSelected(): void {
+    const selectedCheques = this.getSelectedCheques();
+    
+    if (selectedCheques.length === 0) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'No Selection',
+        text: 'Please select at least one cheque to approve.',
+        confirmButtonColor: '#198754'
+      });
+      return;
+    }
+
+    // Show confirmation dialog
+    Swal.fire({
+      title: 'Are you sure?',
+      html: `
+        <p>You are about to approve <strong>${selectedCheques.length}</strong> cheque(s).</p>
+        <p>This action cannot be undone.</p>
+        <p>Do you want to continue?</p>
+      `,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#198754',
+      cancelButtonColor: '#dc3545',
+      confirmButtonText: 'Yes, approve selected!',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.processApproveSelected(selectedCheques);
+      }
+    });
+  }
+
+  // Process the API call to approve selected cheques
+  private processApproveSelected(selectedCheques: PendingChequeRecord[]): void {
+    Swal.fire({
+      title: 'Approving...',
+      text: 'Please wait while we approve the selected cheques...',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
+    // Extract selected IDs
+    const selectedIds = selectedCheques.map(cheque => cheque.id);
+
+    // Call the approve API with selected IDs
+    this.chequeDepositService.approveSelected(selectedIds).subscribe({
+      next: (response: any) => {
+        
+        if (response.status === 'success') {
+          const data = response.data;
+          const successCount = data.successCount || 0;
+          const chequeNumbers = data.chequeNumbers || '';
+          const message = data.message || '';
+
+          if (successCount > 0) {
+            // Success case
+            Swal.fire({
+              icon: 'success',
+              title: 'Approval Successful!',
+              html: `
+                <p><strong>${successCount}</strong> cheque(s) successfully approved.</p>
+                ${chequeNumbers ? `<p>Cheque Numbers: <strong>${chequeNumbers}</strong></p>` : ''}
+                <p>${message}</p>
+              `,
+              confirmButtonColor: '#198754'
+            });
+            
+            // Clear selections and refresh data
+            this.clearSelections();
+            this.loadPendingCheques();
+          } else {
+            // No cheques approved
+            Swal.fire({
+              icon: 'warning',
+              title: 'No Approvals',
+              html: `
+                <p>No cheques were approved.</p>
+                <p>${message}</p>
+              `,
+              confirmButtonColor: '#198754'
+            });
+          }
+        } else {
+          // API returned failure status
+          Swal.fire({
+            icon: 'error',
+            title: 'Approval Failed',
+            html: `
+              <p>Failed to approve cheques.</p>
+              <p>${response.errorMessage || 'Please try again later.'}</p>
+            `,
+            confirmButtonColor: '#dc3545'
+          });
+        }
+      },
+      error: (error: any) => {
+        console.error('Approve selected error:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          html: `
+            <p>An error occurred while processing your approval request.</p>
+            <p>Please try again later.</p>
+          `,
+          confirmButtonColor: '#dc3545'
+        });
+      }
+    });
   }
 }

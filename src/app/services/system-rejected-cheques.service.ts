@@ -65,7 +65,7 @@ export class SystemRejectedChequesService {
 
   // Get system rejected cheque details by ID
   getSystemRejectedChequeDetails(id: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/system-rejected-cheques/${id}`);
+    return this.http.get(`${this.apiUrl}/ChequeDeposit/${id}/system-reject-edit`);
   }
 
   

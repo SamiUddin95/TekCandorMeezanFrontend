@@ -37,8 +37,8 @@ export class FilterService {
   }
 
   // Get return reason options API
-  getReturnReasonOptions(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/return-reason-options`);
+  getReturnReasonOptions(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/Filter/returnreason`);
   }
 
   // Get posting restriction options API
@@ -47,8 +47,8 @@ export class FilterService {
   }
 
   // Get CBC status options API
-  getCbcStatusOptions(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/cbc-status-options`);
+  getCbcStatusOptions(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/Filter/cbcStatus`);
   }
 
   // Get branch status options API

@@ -2,10 +2,12 @@ import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgIcon } from '@ng-icons/core';
+import { SpinnerComponent } from '../../../../components/spinner/spinner.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { PendingChequeService, PendingChequeRecord } from '../../../../services/pending-cheque.service';
 import { ChequeDepositService } from '../../../../services/cheque-deposit.service';
+import { FilterService } from '../../../../services/filter.service';
 import Swal from 'sweetalert2';
 declare var bootstrap: any;
 
@@ -15,7 +17,8 @@ declare var bootstrap: any;
   imports: [
     CommonModule,
     FormsModule,
-    NgIcon
+    NgIcon,
+    SpinnerComponent
   ],
   templateUrl: './cheque-details.component.html',
   styleUrl: './cheque-details.component.scss'
@@ -30,18 +33,25 @@ export class ChequeDetailsComponent implements OnInit {
   transactionHistory: any[] = [];
   documents: any[] = [];
   selectedReturnReason: string = '';
+  returnReasonOptions: any[] = [];
   currentImageIndex: number = 0;
   totalImages: number = 2;
+  signatureImages: any[] = [];
+  isLoadingSignatureImages: boolean = false;
+  signatureImageError: string = '';
 
   constructor(
     private pendingChequeService: PendingChequeService,
     private route: ActivatedRoute,
     private router: Router,
     private http: HttpClient,
-    private chequeDepositService: ChequeDepositService
+    private chequeDepositService: ChequeDepositService,
+    private filterService: FilterService
   ) {}
 
   ngOnInit(): void {
+    this.loadReturnReasonOptions();
+    
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
@@ -79,6 +89,26 @@ export class ChequeDetailsComponent implements OnInit {
           text: 'Failed to load cheque details'
         });
         this.isLoading = false;
+      }
+    });
+  }
+
+  // Load return reason options
+  loadReturnReasonOptions(): void {
+    this.filterService.getReturnReasonOptions().subscribe({
+      next: (response: any) => {
+        if (response.status === 'success' && response.data && response.data.returnReasons) {
+          this.returnReasonOptions = response.data.returnReasons.map((reason: any) => ({
+            value: reason.value,
+            label: reason.text
+          }));
+        } else {
+          this.returnReasonOptions = [];
+        }
+      },
+      error: (error: any) => {
+        console.error('Error loading return reason options:', error);
+        this.returnReasonOptions = [];
       }
     });
   }
@@ -209,5 +239,92 @@ export class ChequeDetailsComponent implements OnInit {
         });
       }
     });
+  }
+
+  // Fetch signature images
+  fetchSignatureImages(): void {
+    if (!this.chequeDetails) {
+      this.signatureImageError = 'No cheque details available';
+      return;
+    }
+
+    // Start loading state
+    this.isLoadingSignatureImages = true;
+    this.signatureImageError = '';
+    this.signatureImages = [];
+
+    // Prepare request body
+    const requestBody = {
+      id: this.chequeDetails.id,
+      accountNumber: this.chequeDetails.accountNumber || '',
+      chequeNumber: this.chequeDetails.chequeNumber || ''
+    };
+
+    // Call API to get signature images
+    this.chequeDepositService.getSignatureImages(requestBody).subscribe({
+      next: (response: any) => {
+        // Stop loading state
+        this.isLoadingSignatureImages = false;
+        
+        // Handle the response and populate signatureImages array
+        if (response.status === 'success' && response.data) {
+          this.signatureImages = this.processSignatureImageData(response.data);
+          
+          if (this.signatureImages.length === 0) {
+            this.signatureImageError = 'No signature images found in response';
+          }
+        } else {
+          this.signatureImages = [];
+          this.signatureImageError = response.errorMessage || 'No signature images found or error in response';
+        }
+      },
+      error: (error: any) => {
+        // Stop loading state and set error
+        this.isLoadingSignatureImages = false;
+        this.signatureImages = [];
+        
+        // Extract error message from response
+        if (error.error?.message) {
+          this.signatureImageError = error.error.message;
+        } else if (error.message) {
+          this.signatureImageError = error.message;
+        } else if (error.status === 500) {
+          this.signatureImageError = 'Server error occurred. Please try again later.';
+        } else {
+          this.signatureImageError = 'Failed to load signature images. Please try again.';
+        }
+      }
+    });
+  }
+
+  // Process signature image data from API response
+  private processSignatureImageData(data: any): any[] {
+    const images: any[] = [];
+    
+    if (Array.isArray(data)) {
+      // If data is an array of image objects
+      data.forEach((image: any, index: number) => {
+        if (image.imageUrl || image.imageData || image.url) {
+          images.push({
+            id: index + 1,
+            url: image.imageUrl || image.imageData || image.url,
+            title: `Signature Image ${index + 1}`
+          });
+        }
+      });
+    } else if (typeof data === 'object') {
+      // If data is an object with image properties
+      Object.keys(data).forEach((key, index) => {
+        const imageUrl = data[key];
+        if (imageUrl && typeof imageUrl === 'string') {
+          images.push({
+            id: index + 1,
+            url: imageUrl,
+            title: `Signature Image ${index + 1}`
+          });
+        }
+      });
+    }
+    return images;
   }
 }
