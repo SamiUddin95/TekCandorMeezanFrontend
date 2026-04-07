@@ -1,11 +1,11 @@
 <div class="banking-stats-card">
-    <div class="card-icon-section">
+    <!-- <div class="card-icon-section">
         @if (item.chartOptions) {
         <div class="icon-chart">
             <app-echart [getOptions]="item.chartOptions" height="40px" width="40px"/>
         </div>
         }
-    </div>
+    </div> -->
     
     <div class="card-content">
         <div class="card-header">
@@ -14,13 +14,13 @@
             <span [class]="`status-badge badge-${item.badge.variant}`">{{ item.badge.text }}</span>
             }
         </div>
-        
-        <div class="card-metrics">
+        <div class="card-metrics d-flex">
+            <div class="sub-text fw-bold">{{ item.description }}</div>
             <div class="main-number">
                 {{ item.prefix }}<span [countUp]="item.value">0</span>{{ item.suffix }}
             </div>
-            <div class="sub-text">{{ item.description }}</div>
         </div>
+        
         
         <div class="card-footer">
             <div class="amount-info">

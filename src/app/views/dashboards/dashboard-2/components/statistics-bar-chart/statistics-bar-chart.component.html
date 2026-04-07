@@ -1,0 +1,13 @@
+<div class="statistics-bar-chart-card">
+  <div class="card-headerr p-2">
+    <h5 class="card-title mb-0">Cheques Status Overview</h5>
+    <div class="card-subtitle">Graphical view of all cheque statuses</div>
+  </div>
+  <div class="card-body">
+    @if (statistics && statistics.length > 0) {
+      <app-echart [getOptions]="getChartOptions" height="255px" width="100%"></app-echart>
+    } @else {
+      <div class="no-data">No data available</div>
+    }
+  </div>
+</div>

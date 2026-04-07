@@ -1,0 +1,61 @@
+.statistics-bar-chart-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: #8b5cf6;
+  }
+}
+
+.card-headerr {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #f3f4f6;
+  flex-shrink: 0;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 0 0;
+  letter-spacing: -0.02em;
+}
+
+.card-subtitle {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 0;
+  font-weight: 500;
+}
+
+.card-body {
+  padding: 0;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: stretch;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .statistics-bar-chart-card {
+    padding: 16px;
+  }
+  
+  .card-title {
+    font-size: 16px;
+  }
+  
+  .card-subtitle {
+    font-size: 12px;
+  }
+}

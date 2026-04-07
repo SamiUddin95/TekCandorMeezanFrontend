@@ -1,12 +1,21 @@
-<div class="container-fluid">
-    <app-page-title title="Dashboard"/>
+<div class="dashboard-container">
+    <app-page-title title="Dashboard" class="mb-3"/>
 
-    <!-- Statistics Cards -->
-    <div class="row g-3 mb-4">
-        @for (item of statistics; track $index) {
-        <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6">
-            <app-statistics-widget [item]="item"/>
+    <div class="row g-3">
+        <!-- Statistics Cards - Left Side (8 columns) -->
+        <div class="col-lg-8">
+            <div class="row g-3">
+                @for (item of statistics; track $index) {
+                <div class="col-xxl-4 col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <app-statistics-widget [item]="item"/>
+                </div>
+                }
+            </div>
         </div>
-        }
+
+        <!-- Bar Chart - Right Side (4 columns) -->
+        <div class="col-lg-4">
+            <app-statistics-bar-chart [statistics]="statistics"/>
+        </div>
     </div>
 </div>

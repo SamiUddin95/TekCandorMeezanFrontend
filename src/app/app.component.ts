@@ -1,10 +1,13 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, inject, OnInit, OnDestroy} from '@angular/core';
 import {ActivatedRoute, NavigationEnd, Router, RouterOutlet} from '@angular/router';
 import * as tablerIcons from '@ng-icons/tabler-icons';
 import * as tablerIconsFill from '@ng-icons/tabler-icons/fill';
 import {provideIcons} from '@ng-icons/core';
 import {Title} from '@angular/platform-browser';
 import {filter, map, mergeMap} from 'rxjs/operators';
+import {Subscription} from 'rxjs';
+import {AuthService} from './services/auth.service';
+import {InactivityService} from './services/inactivity.service';
 
 @Component({
     selector: 'app-root',
@@ -13,10 +16,14 @@ import {filter, map, mergeMap} from 'rxjs/operators';
     styleUrl: './app.component.scss',
     viewProviders: [provideIcons({...tablerIcons, ...tablerIconsFill})]
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
     private titleService = inject(Title)
     private router = inject(Router)
     private activatedRoute = inject(ActivatedRoute)
+    private authService = inject(AuthService)
+    private inactivityService = inject(InactivityService)
+
+    private authSub: Subscription | null = null;
 
     ngOnInit(): void {
         this.router.events
@@ -34,8 +41,22 @@ export class AppComponent implements OnInit {
             .subscribe(data => {
                 if (data['title']) {
                     this.titleService.setTitle(data['title'] +
-                        ' | INSPINIA - Angular Responsive Bootstrap 5 Admin Dashboard');
+                        ' | TEK - CANDOR');
                 }
             });
+
+        // Start / stop inactivity tracking based on auth state
+        this.authSub = this.authService.isLoggedIn$.subscribe(isLoggedIn => {
+            if (isLoggedIn) {
+                this.inactivityService.start();
+            } else {
+                this.inactivityService.stop();
+            }
+        });
+    }
+
+    ngOnDestroy(): void {
+        this.authSub?.unsubscribe();
+        this.inactivityService.stop();
     }
 }

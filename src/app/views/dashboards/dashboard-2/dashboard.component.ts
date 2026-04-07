@@ -5,12 +5,16 @@ import {statistics} from '@/app/views/dashboards/dashboard-2/data';
 import {
     StatisticsWidgetComponent
 } from '@/app/views/dashboards/dashboard-2/components/statistics-widget/statistics-widget.component';
+import {
+    StatisticsBarChartComponent
+} from '@/app/views/dashboards/dashboard-2/components/statistics-bar-chart/statistics-bar-chart.component';
 
 @Component({
     selector: 'app-dashboard-2',
     imports: [
         PageTitleComponent,
         StatisticsWidgetComponent,
+        StatisticsBarChartComponent,
         CurrencyPipe,
     ],
     templateUrl: './dashboard.component.html'

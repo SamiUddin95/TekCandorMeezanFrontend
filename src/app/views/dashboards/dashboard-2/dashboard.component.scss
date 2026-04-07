@@ -150,3 +150,21 @@
 .col-xxl-4, .col-xl-6, .col-lg-6, .col-md-6 {
   margin-bottom: 0;
 }
+
+// Dashboard container for single page view
+.dashboard-container {
+  max-height: calc(100vh - 120px);
+  overflow: hidden;
+  padding: 0;
+  
+  .row {
+    margin-left: 0;
+    margin-right: 0;
+  }
+  
+  // Compact spacing for cards
+  .g-3 {
+    --bs-gutter-x: 0.75rem;
+    --bs-gutter-y: 0.75rem;
+  }
+}

@@ -13,7 +13,7 @@ export interface SSRSReportRequest {
 export interface SSRSReportResponse {
   status: string;
   data: {
-    fileData: string; // Base64 encoded file data
+    fileData: string; 
     fileName: string;
     contentType: string;
   };
@@ -31,14 +31,14 @@ export class SSRSReportService {
 
   private exportReport(request: SSRSReportRequest): Observable<any> {
     // Use the single endpoint for all reports
-    return this.http.post(`http://192.168.100.162:5223/api/ReportFormat/BranchWise`, request, { 
+    return this.http.post(`${this.apiUrl}/BranchWise`, request, { 
       responseType: 'blob',
       observe: 'response'
     }).pipe(
       // If blob fails, try as JSON
       catchError((error) => {
         console.log('Blob request failed, trying JSON:', error);
-        return this.http.post(`http://192.168.100.162:5223/api/ReportFormat/BranchWise`, request, { 
+        return this.http.post(`${this.apiUrl}/BranchWise`, request, { 
           responseType: 'json',
           observe: 'response'
         });
