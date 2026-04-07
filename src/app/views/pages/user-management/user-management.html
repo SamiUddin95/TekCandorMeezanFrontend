@@ -140,7 +140,8 @@
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="credentials-tab" data-bs-toggle="tab" data-bs-target="#credentials"
-                            type="button" role="tab" aria-controls="credentials" aria-selected="false">Security
+                            type="button" role="tab" aria-controls="credentials" aria-selected="false"
+                            (click)="showGroupSelection()">Security
                             Groups</button>
                     </li>
                 </ul>
@@ -193,7 +194,7 @@
                                     </select>
                                 </div>
 
-                                 <div class="col-md-4">
+                                <div class="col-md-4">
                                     <label class="form-label">Branch</label>
                                     <select class="form-select" [(ngModel)]="selectedUser.branchId" name="userBranch">
                                         <option value="">Select Branch</option>
@@ -203,7 +204,7 @@
                                     </select>
                                 </div>
                             </div>
-                            
+
                             <!-- ROW 3 -->
                             <div class="row g-3 mt-3">
                                 <div class="col-md-4">
@@ -238,8 +239,7 @@
 
                                 <!-- Save Button Column - Thoda neecha kiya gaya hai -->
                                 <div class="col-md-4 d-flex align-items-end">
-                                    <button type="button" class="btn btn-primary px-4 w-30 mt-4"
-                                        (click)="onSaveUser()">
+                                    <button type="button" class="btn btn-primary px-4 w-30 mt-4" (click)="onSaveUser()">
                                         Save
                                     </button>
                                 </div>
@@ -253,10 +253,10 @@
                         <div class="card mt-3">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <h5 class="mb-0">Security Groups</h5>
-                                <button class="btn btn-primary" style="width:45px;height:45px;font-size:22px"
+                                <!-- <button class="btn btn-primary" style="width:45px;height:45px;font-size:22px"
                                     (click)="showGroupSelection()">
                                     +
-                                </button>
+                                </button> -->
                             </div>
 
                             <div class="card-body">
@@ -275,11 +275,11 @@
                                                 <td>{{ group.name }}</td>
                                                 <td>{{ group.description }}</td>
                                                 <td>
-                                                    <button class="btn btn-danger btn-sm d-flex align-items-center"
+                                                    <!-- <button class="btn btn-danger btn-sm d-flex align-items-center"
                                                         (click)="removeGroup(i)">
                                                         <i class="bi bi-trash-fill me-1"></i>
                                                         Remove
-                                                    </button>
+                                                    </button> -->
                                                 </td>
                                             </tr>
                                             <tr *ngIf="selectedSecurityGroups.length === 0">
@@ -305,7 +305,7 @@
                                         <tbody>
                                             <tr *ngFor="let group of allSecurityGroups">
                                                 <td>
-                                                    <input type="checkbox" (change)="onCheckboxChange($event, group)">
+                                                    <!-- <input type="checkbox" (change)="onCheckboxChange($event, group)"> -->
                                                 </td>
                                                 <td>{{ group.name }}</td>
                                                 <td>{{ group.description }}</td>
@@ -314,12 +314,12 @@
                                     </table>
 
                                     <div class="text-end mt-2">
-                                        <button class="btn btn-secondary me-2" (click)="cancelSelection()">
+                                        <!-- <button class="btn btn-secondary me-2" (click)="cancelSelection()">
                                             Cancel
                                         </button>
                                         <button class="btn btn-success" (click)="addSelectedGroups()">
                                             Add Selected
-                                        </button>
+                                        </button> -->
                                     </div>
                                 </div>
                             </div>
