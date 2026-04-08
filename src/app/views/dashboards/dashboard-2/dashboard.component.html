@@ -2,20 +2,17 @@
     <app-page-title title="Dashboard" class="mb-3"/>
 
     <div class="row g-3">
-        <!-- Statistics Cards - Left Side (8 columns) -->
-        <div class="col-lg-8">
-            <div class="row g-3">
-                @for (item of statistics; track $index) {
-                <div class="col-xxl-4 col-xl-6 col-lg-6 col-md-6 col-sm-6">
-                    <app-statistics-widget [item]="item"/>
-                </div>
-                }
+        @if (isLoading) {
+            <div class="col-12 text-center py-5">
+                <app-spinner></app-spinner>
+                <p class="mt-2 text-muted">Loading dashboard data...</p>
             </div>
-        </div>
-
-        <!-- Bar Chart - Right Side (4 columns) -->
-        <div class="col-lg-4">
-            <app-statistics-bar-chart [statistics]="statistics"/>
-        </div>
+        } @else {
+            @for (item of statistics; track $index) {
+            <div class="col-lg-4 col-md-4 col-sm-4">
+                <app-statistics-widget [item]="item"/>
+            </div>
+            }
+        }
     </div>
 </div>

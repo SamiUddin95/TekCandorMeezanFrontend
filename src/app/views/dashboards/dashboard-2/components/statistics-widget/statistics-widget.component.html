@@ -25,7 +25,7 @@
         <div class="card-footer">
             <div class="amount-info">
                 <span class="amount-label">Amount</span>
-                <span class="amount-value">{{ getAmountForCard(item.title) | currency:'USD':'symbol':'1.0-0' }}</span>
+                <span class="amount-value">{{ item.amount | currency:'Rs:':'symbol':'1.0-0' }}</span>
             </div>
         </div>
     </div>

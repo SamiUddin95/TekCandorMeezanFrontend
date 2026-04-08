@@ -7,6 +7,7 @@ export type StatisticsWidgetType = {
         variant: 'success' | 'primary' | 'info' | 'warning' | 'danger' | 'secondary';
     };
     value: number;
+    amount?: number;
     prefix?: string;
     suffix?: string;
     description: string;

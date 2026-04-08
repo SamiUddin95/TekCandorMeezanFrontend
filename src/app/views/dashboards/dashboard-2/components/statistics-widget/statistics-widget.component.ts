@@ -13,17 +13,4 @@ import {EchartComponent} from '@app/components/echart.component';
 })
 export class StatisticsWidgetComponent {
     @Input() item!: StatisticsWidgetType
-
-    // Method to get amount for each card based on the data from your image
-    getAmountForCard(title: string): number {
-        const amounts: { [key: string]: number } = {
-            'Approved': 8849570,
-            'In Process': 770365, 
-            'Pending': 23038183,
-            'Return': 17332317,
-            'System Rejected': 3530862317,
-            'Un Authorized': 15000
-        };
-        return amounts[title] || 0;
-    }
 }

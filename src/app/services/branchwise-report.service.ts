@@ -54,7 +54,7 @@ export class BranchwiseReportService {
       params = params.set('toDate', toDate);
     }
     if (branch) {
-      params = params.set('branch', branch);
+      params = params.set('branchCode', branch);
     }
 
     return this.http.get<BranchwiseReportListResponse>(`${this.apiUrl}/BranchWiseReport`, { params });
