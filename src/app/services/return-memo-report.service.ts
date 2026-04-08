@@ -59,7 +59,7 @@ export class ReturnMemoReportService {
       params = params.set('chequeNumber', chequeNumber);
     }
     if (branch) {
-      params = params.set('branch', branch);
+      params = params.set('branchCode', branch);
     }
     if (accountNumber) {
       params = params.set('accountNumber', accountNumber);

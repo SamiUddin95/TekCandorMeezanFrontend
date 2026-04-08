@@ -201,6 +201,7 @@ export class InwardClearingReportComponent implements OnInit, OnDestroy {
     const parameters: { [key: string]: any } = {};
     if (this.fromDate) parameters['FromDate'] = this.fromDate;
     if (this.toDate) parameters['ToDate'] = this.toDate;
+    if (this.chequeNumber) parameters['ChequeNumber'] = this.chequeNumber;
     if (this.accountNumber) parameters['AccountNumber'] = this.accountNumber;
     if (this.selectedBranchId) parameters['BranchCode'] = this.selectedBranchId;
     if (this.selectedStatus && this.selectedStatus !== 'all') parameters['Status'] = this.selectedStatus;

@@ -174,7 +174,7 @@ export class FinalReportComponent implements OnInit, OnDestroy {
     }
     
     if (this.selectedCycleId) {
-      parameters['CycleId'] = this.selectedCycleId;
+      parameters['CycleCode'] = this.selectedCycleId;
     }
     
     if (this.selectedBranchId) {

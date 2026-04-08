@@ -161,7 +161,7 @@ export class ClearingLogReportComponent implements OnInit, OnDestroy {
     if (this.fromDate) parameters['FromDate'] = this.fromDate;
     if (this.toDate) parameters['ToDate'] = this.toDate;
     if (this.selectedHubId) parameters['HubCode'] = this.selectedHubId;
-    if (this.selectedCycleId) parameters['CycleId'] = this.selectedCycleId;
+    if (this.selectedCycleId) parameters['CycleCode'] = this.selectedCycleId;
 
     Swal.fire({ title: 'Exporting...', text: `Please wait while we export the ${format} report.`, allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
 

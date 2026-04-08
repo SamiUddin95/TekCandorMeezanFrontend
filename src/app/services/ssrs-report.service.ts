@@ -29,16 +29,16 @@ export class SSRSReportService {
 
   constructor(private http: HttpClient) {}
 
-  private exportReport(request: SSRSReportRequest): Observable<any> {
-    // Use the single endpoint for all reports
-    return this.http.post(`${this.apiUrl}/BranchWise`, request, { 
+  private exportReport(request: SSRSReportRequest, endpoint: string = 'BranchWise'): Observable<any> {
+    // Use the specified endpoint for the report
+    return this.http.post(`${this.apiUrl}/${endpoint}`, request, { 
       responseType: 'blob',
       observe: 'response'
     }).pipe(
       // If blob fails, try as JSON
       catchError((error) => {
         console.log('Blob request failed, trying JSON:', error);
-        return this.http.post(`${this.apiUrl}/BranchWise`, request, { 
+        return this.http.post(`${this.apiUrl}/${endpoint}`, request, { 
           responseType: 'json',
           observe: 'response'
         });
@@ -65,7 +65,7 @@ export class SSRSReportService {
       fileName: `FinalReport_${new Date().toISOString().split('T')[0]}`
     };
 
-    return this.exportReport(request);
+    return this.exportReport(request, 'FinalReport');
   }
 
   exportCBCReport(format: 'PDF' | 'EXCEL' | 'CSV', parameters: { [key: string]: any } = {}): Observable<any> {
@@ -76,7 +76,7 @@ export class SSRSReportService {
       fileName: `CBCReport_${new Date().toISOString().split('T')[0]}`
     };
 
-    return this.exportReport(request);
+    return this.exportReport(request, 'CBCReport');
   }
 
   exportReturnMemoReport(format: 'PDF' | 'EXCEL' | 'CSV', parameters: { [key: string]: any } = {}): Observable<any> {
@@ -87,7 +87,7 @@ export class SSRSReportService {
       fileName: `ReturnMemoReport_${new Date().toISOString().split('T')[0]}`
     };
 
-    return this.exportReport(request);
+    return this.exportReport(request, 'ReturnMemoReport');
   }
 
   exportReturnRegisterReport(format: 'PDF' | 'EXCEL' | 'CSV', parameters: { [key: string]: any } = {}): Observable<any> {
@@ -98,7 +98,7 @@ export class SSRSReportService {
       fileName: `ReturnRegisterReport_${new Date().toISOString().split('T')[0]}`
     };
 
-    return this.exportReport(request);
+    return this.exportReport(request, 'ReturnRegisterReport');
   }
 
   exportInwardClearingReport(format: 'PDF' | 'EXCEL' | 'CSV', parameters: { [key: string]: any } = {}): Observable<any> {
@@ -109,7 +109,7 @@ export class SSRSReportService {
       fileName: `InwardClearingReport_${new Date().toISOString().split('T')[0]}`
     };
 
-    return this.exportReport(request);
+    return this.exportReport(request, 'InwardClearingReport');
   }
 
   exportClearingLogReport(format: 'PDF' | 'EXCEL' | 'CSV', parameters: { [key: string]: any } = {}): Observable<any> {
@@ -120,7 +120,7 @@ export class SSRSReportService {
       fileName: `ClearingLogReport_${new Date().toISOString().split('T')[0]}`
     };
 
-    return this.exportReport(request);
+    return this.exportReport(request, 'ClearingLogReport');
   }
 
   // Utility method to download file from base64 data
