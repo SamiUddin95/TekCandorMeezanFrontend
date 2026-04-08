@@ -28,6 +28,18 @@ export interface GroupUpdateRequest {
   description: string;
 }
 
+export interface AddUsersRequest {
+  securityGroupId: number;
+  selectedIds: number[];
+}
+
+export interface AddUsersResponse {
+  status: string;
+  data: string;
+  statusCode: number;
+  errorMessage: string | null;
+}
+
 export interface GroupResponse {
   status: string;
   data: GroupItem;
@@ -170,6 +182,28 @@ export class GroupService {
     const headers = this.getAuthHeaders();
     return this.http.post<AssignPermissionsResponse>(
       `${this.apiUrl}/Group/assign-permissions`,
+      request,
+      { headers }
+    );
+  }
+
+  // Get users belonging to a group
+  getGroupUsers(groupId: number): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.get<any>(`${this.apiUrl}/Group/${groupId}/users`, { headers });
+  }
+
+  // Get permissions for a specific group
+  getGroupPermissions(groupId: number): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.get<any>(`${this.apiUrl}/Group/${groupId}/permissions`, { headers });
+  }
+
+  // Add users to group
+  addUsers(request: AddUsersRequest): Observable<AddUsersResponse> {
+    const headers = this.getAuthHeaders();
+    return this.http.post<AddUsersResponse>(
+      `${this.apiUrl}/Group/add-users`,
       request,
       { headers }
     );

@@ -1,0 +1,271 @@
+<div class="row mt-2">
+  <div class="col-lg-12">
+    <div class="card">
+      <div class="card-header bg-light d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">{{ isNew ? 'Add New Security Group' : 'Edit Security Group' }}</h5>
+        <button class="btn btn-outline-secondary btn-sm" (click)="goBack()">
+          &larr; Back to Groups
+        </button>
+      </div>
+      <div class="card-body p-0">
+
+        <!-- Tabs -->
+        <ul class="nav nav-tabs px-3 pt-2">
+          <li class="nav-item">
+            <a class="nav-link" [class.active]="activeTab === 'info'" (click)="setActiveTab('info')" style="cursor:pointer;">Info</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" [class.active]="activeTab === 'users'" (click)="setActiveTab('users')" style="cursor:pointer;">Users</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" [class.active]="activeTab === 'permissions'" (click)="setActiveTab('permissions')" style="cursor:pointer;">Security Group Permissions</a>
+          </li>
+        </ul>
+
+        <div class="p-3">
+
+          <!-- LOADING -->
+          <div *ngIf="isLoading" class="text-center py-4">
+            <app-spinner></app-spinner>
+          </div>
+
+          <!-- TAB 1: INFO -->
+          <div *ngIf="!isLoading && activeTab === 'info'">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Security Group <span class="text-danger">*</span></label>
+                <input type="text" class="form-control form-control-sm" placeholder="Enter security group name" [(ngModel)]="groupName" />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Description <span class="text-danger">*</span></label>
+                <input type="text" class="form-control form-control-sm" placeholder="Enter description" [(ngModel)]="groupDescription" />
+              </div>
+            </div>
+            <div class="d-flex gap-2 mt-2">
+              <button class="btn btn-primary btn-sm px-4" (click)="saveGroup()" [disabled]="isSaving">
+                {{ isSaving ? 'Saving...' : (isNew ? 'Create Group' : 'Save Changes') }}
+              </button>
+              <button class="btn btn-outline-secondary btn-sm px-4" (click)="goBack()">Cancel</button>
+            </div>
+          </div>
+
+          <!-- TAB 2: USERS -->
+          <div *ngIf="!isLoading && activeTab === 'users'">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h6 class="mb-0 fw-semibold">Users</h6>
+              <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1" (click)="openSelectUsersModal()">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="16"/>
+                    <line x1="8" y1="12" x2="16" y2="12"/>
+                  </svg>
+                  Add
+                </button>
+                <button class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1" [disabled]="true">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3,6 5,6 21,6"/>
+                    <path d="m19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"/>
+                  </svg>
+                  Delete
+                </button>
+              </div>
+            </div>
+
+            <div *ngIf="isUsersLoading" class="text-center py-3">
+              <app-spinner></app-spinner>
+            </div>
+
+            <div *ngIf="!isUsersLoading" class="table-responsive">
+              <table class="table table-hover table-striped table-sm">
+                <thead class="bg-light">
+                  <tr>
+                    <th style="width:40px;"><input type="checkbox" class="form-check-input" /></th>
+                    <th><u class="text-primary" style="cursor:pointer;">Name</u></th>
+                    <th><u class="text-primary" style="cursor:pointer;">Email</u></th>
+                    <th style="width:80px;">Action</th>
+                  </tr>
+                </thead>
+                <tbody class="table-group-divider">
+                  <tr *ngFor="let user of groupUsers">
+                    <td><input type="checkbox" class="form-check-input" /></td>
+                    <td class="fw-medium">{{ user.name }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                      <button class="btn btn-sm btn-outline-danger py-1 px-2 d-flex align-items-center justify-content-center" 
+                              (click)="removeUser(user)" 
+                              title="Remove User">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <polyline points="3,6 5,6 21,6"/>
+                          <path d="m19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"/>
+                        </svg>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr *ngIf="groupUsers.length === 0">
+                    <td colspan="4" class="text-center text-muted py-3">
+                      <div class="d-flex flex-column align-items-center">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#dee2e6" stroke-width="1.5" class="mb-2">
+                          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                          <circle cx="9" cy="7" r="4"/>
+                          <path d="m22 21-3.5-3.5M19 16v6"/>
+                        </svg>
+                        <span>No users added yet. Click Add to add users.</span>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- TAB 3: SECURITY GROUP PERMISSIONS -->
+          <div *ngIf="!isLoading && activeTab === 'permissions'">
+            <div class="card border mb-3">
+              <div class="card-body py-2">
+                <div class="row align-items-end">
+                  <div class="col-md-3 mb-2">
+                    <label class="form-label mb-1">Module name</label>
+                    <select class="form-select form-select-sm" [(ngModel)]="moduleNameFilter" (change)="filterPermissions()">
+                      <option value="">All</option>
+                      <option *ngFor="let perm of allPermissions" [value]="perm.name">{{ perm.name }}</option>
+                    </select>
+                  </div>
+                  <div class="col-md-2 mb-2">
+                    <button class="btn btn-sm btn-outline-secondary" (click)="filterPermissions()">
+                      &#128269; Search
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div *ngIf="isPermissionsLoading" class="text-center py-3">
+              <app-spinner></app-spinner>
+            </div>
+
+            <div *ngIf="!isPermissionsLoading">
+              <div class="d-flex gap-2 mb-3">
+                <button class="btn btn-sm btn-outline-success" (click)="savePermissions()" [disabled]="isSaving">
+                  &#10003; {{ isSaving ? 'Saving...' : 'Save changes' }}
+                </button>
+                <button class="btn btn-sm btn-outline-secondary" (click)="cancelPermissions()">
+                  &#9711; Cancel changes
+                </button>
+              </div>
+
+              <div class="table-responsive">
+                <table class="table table-hover table-striped table-sm">
+                  <thead class="bg-light">
+                    <tr>
+                      <th style="width:35%;">Record Value</th>
+                      <th style="width:45%;">Description</th>
+                      <th style="width:20%; color:#dc3545;" class="text-center">Security Group Permissions</th>
+                    </tr>
+                  </thead>
+                  <tbody class="table-group-divider">
+                    <tr *ngFor="let perm of filteredPermissions">
+                      <td>{{ perm.recordValue || perm.name }}</td>
+                      <td>{{ perm.description }}</td>
+                      <td class="text-center">
+                        <span [class]="perm.enabled ? 'text-success' : 'text-danger'" style="cursor:pointer;" (click)="perm.enabled = !perm.enabled">
+                          {{ perm.enabled ? 'true' : 'false' }}
+                        </span>
+                      </td>
+                    </tr>
+                    <tr *ngIf="filteredPermissions.length === 0">
+                      <td colspan="3" class="text-center text-muted py-3">No permissions found.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SELECT USERS MODAL -->
+<div class="modal-backdrop fade show" *ngIf="showSelectUsersModal" style="z-index:1040;"></div>
+<div class="modal fade show d-block" tabindex="-1" *ngIf="showSelectUsersModal" style="z-index:1050;">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content rounded-4">
+      <div class="modal-header bg-light rounded-top-4">
+        <h5 class="modal-title">Select Users</h5>
+        <button type="button" class="btn-close" (click)="closeSelectUsersModal()"></button>
+      </div>
+      <div class="modal-body bg-light">
+        <!-- Search -->
+        <div class="card border mb-3">
+          <div class="card-body py-3">
+            <div class="row align-items-end">
+              <div class="col-md-4">
+                <label class="form-label mb-1 fw-medium">Name</label>
+                <input type="text" class="form-control form-control-sm rounded-3" 
+                       [(ngModel)]="userSearchName" 
+                       placeholder="Search by name..." />
+              </div>
+              <div class="col-md-2">
+                <button class="btn btn-sm btn-outline-secondary rounded-3 d-flex align-items-center gap-1" (click)="searchUsers()">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="m21,21l-4.35,-4.35"/>
+                  </svg>
+                  Search
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Users Table -->
+        <div *ngIf="isAllUsersLoading" class="text-center py-3">
+          <app-spinner></app-spinner>
+        </div>
+        <div *ngIf="!isAllUsersLoading" class="table-responsive" style="max-height:350px; overflow-y:auto;">
+          <table class="table table-hover table-sm">
+            <thead class="bg-light sticky-top">
+              <tr>
+                <th style="width:40px;">
+                  <input type="checkbox" class="form-check-input" (change)="toggleAllUsers($event)" />
+                </th>
+                <th><u class="text-primary" style="cursor:pointer;">Name</u></th>
+                <th><u class="text-primary" style="cursor:pointer;">Email</u></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of filteredAllUsers">
+                <td><input type="checkbox" class="form-check-input" [checked]="selectedUserIds.has(user.id)" (change)="toggleUserSelection(user.id)" /></td>
+                <td class="fw-medium">{{ user.name }}</td>
+                <td>{{ user.email }}</td>
+              </tr>
+              <tr *ngIf="filteredAllUsers.length === 0">
+                <td colspan="3" class="text-center text-muted py-3">
+                  <div class="d-flex flex-column align-items-center">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#dee2e6" stroke-width="1.5" class="mb-2">
+                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                      <circle cx="9" cy="7" r="4"/>
+                      <path d="m22 21-3.5-3.5M19 16v6"/>
+                    </svg>
+                    <span>No users available.</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer bg-light rounded-bottom-4">
+        <button class="btn btn-secondary btn-sm rounded-3" (click)="closeSelectUsersModal()">Cancel</button>
+        <button class="btn btn-primary btn-sm rounded-3" 
+                (click)="confirmAddUsers()" 
+                [disabled]="selectedUserIds.size === 0 || isAllUsersLoading">
+          {{ isAllUsersLoading ? 'Adding...' : ('Add Selected (' + selectedUserIds.size + ')') }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

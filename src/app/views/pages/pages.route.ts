@@ -1,6 +1,7 @@
 import {Routes} from '@angular/router';
 import { UserManagement } from './user-management/user-management';
 import { GroupComponent } from './user-management/group/group.component';
+import { GroupDetailComponent } from './user-management/group-detail/group-detail.component';
 import { Cycle } from './basic-set-up/cycle/cycle.component';
 import { Branch } from './basic-set-up/branch/branch.component';
 import { Hub } from './basic-set-up/hub/hub.component';
@@ -27,6 +28,16 @@ export const PAGES_ROUTES: Routes = [
                 path: 'group',
                 component: GroupComponent,
                 data: {title: 'Group Management'}
+            },
+            {
+                path: 'group-detail/new',
+                component: GroupDetailComponent,
+                data: {title: 'Add Security Group'}
+            },
+            {
+                path: 'group-detail/:id',
+                component: GroupDetailComponent,
+                data: {title: 'Edit Security Group'}
             },
             {
                 path: 'basic-set-up',

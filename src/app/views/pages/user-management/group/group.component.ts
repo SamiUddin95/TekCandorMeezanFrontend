@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { PaginationComponent } from '@app/components/pagination/pagination.component';
 import { SpinnerComponent } from '@app/components/spinner/spinner.component';
 import Swal from 'sweetalert2';
@@ -36,7 +37,7 @@ export class GroupComponent implements OnInit {
   selectedGroup: GroupItem = this.getEmptyGroup();
   selectedPermissions: Permission[] = [];
 
-  constructor(private groupService: GroupService, private authService: AuthService, private permissionGuard: PermissionGuardService) {}
+  constructor(private groupService: GroupService, private authService: AuthService, private permissionGuard: PermissionGuardService, private router: Router) {}
 
   ngOnInit() {
     this.loadGroups();
@@ -166,17 +167,11 @@ export class GroupComponent implements OnInit {
   }
 
   onAddNew() {
-    this.selectedGroup = this.getEmptyGroup();
-    this.selectedPermissions = this.getDefaultPermissions();
-    this.isEditMode = false;
-    this.openModal();
+    this.router.navigate(['/pages/group-detail/new']);
   }
 
   onEdit(group: GroupItem) {
-    this.selectedGroup = { ...group };
-    this.selectedPermissions = this.getDefaultPermissions();
-    this.isEditMode = true;
-    this.openModal();
+    this.router.navigate(['/pages/group-detail', group.id]);
   }
 
   onDelete(group: GroupItem) {
