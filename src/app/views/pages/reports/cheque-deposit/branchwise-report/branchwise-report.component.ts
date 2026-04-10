@@ -34,6 +34,10 @@ export class BranchwiseReportComponent implements OnInit, OnDestroy, AfterViewIn
   reportData: BranchwiseReportItem[] = [];
   branches: FilterBranchItem[] = [];
 
+  // Dynamic columns
+  tableColumns: string[] = [];
+  columnHeaders: { [key: string]: string } = {};
+
   private subscriptions = new Subscription();
 
   constructor(
@@ -89,6 +93,11 @@ export class BranchwiseReportComponent implements OnInit, OnDestroy, AfterViewIn
           this.reportData = response.data.items;
           this.totalRecords = response.data.totalCount;
           this.totalPages = response.data.totalPages;
+          
+          // Extract columns dynamically from first item
+          if (this.reportData.length > 0) {
+            this.extractColumns(this.reportData[0]);
+          }
         } else {
           Swal.fire({
             icon: 'error',
@@ -109,6 +118,41 @@ export class BranchwiseReportComponent implements OnInit, OnDestroy, AfterViewIn
       }
     });
     this.subscriptions.add(subscription);
+  }
+
+  private extractColumns(item: any): void {
+    // Get all keys from the first item
+    this.tableColumns = Object.keys(item);
+    
+    // Generate user-friendly headers
+    this.columnHeaders = {};
+    this.tableColumns.forEach(col => {
+      this.columnHeaders[col] = this.formatColumnHeader(col);
+    });
+  }
+
+  private formatColumnHeader(columnName: string): string {
+    // Convert camelCase to Title Case with spaces
+    // e.g., "chequeNumber" -> "Cheque Number"
+    return columnName
+      .replace(/([A-Z])/g, ' $1') // Add space before capital letters
+      .replace(/^./, str => str.toUpperCase()) // Capitalize first letter
+      .trim();
+  }
+
+  getColumnValue(item: any, column: string): any {
+    const value = item[column];
+    
+    // Format amount columns with 2 decimal places
+    if (column.toLowerCase().includes('amount') && typeof value === 'number') {
+      return value.toFixed(2);
+    }
+    
+    return value || '';
+  }
+
+  isAmountColumn(column: string): boolean {
+    return column.toLowerCase().includes('amount');
   }
 
   onPageChange(event: { page: number; pageSize: number }) {

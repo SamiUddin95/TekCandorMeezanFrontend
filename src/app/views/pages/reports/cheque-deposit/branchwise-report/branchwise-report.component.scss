@@ -3,6 +3,122 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+// ── SSRS-Style Report Preview ────────────────────────────────────────────────
+.report-preview {
+  background: #ffffff;
+  padding: 28px 32px 12px;
+}
+
+// Header row: title left, bank right
+.report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 2px solid #333;
+  padding-bottom: 10px;
+  margin-bottom: 8px;
+}
+
+.report-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.report-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: 0.01em;
+}
+
+.report-subtitle {
+  font-size: 0.82rem;
+  color: #444;
+}
+
+.report-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bank-logo-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.3;
+}
+
+.bank-name-main {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #5b2d8e;
+  letter-spacing: 0.02em;
+}
+
+.bank-name-sub {
+  font-size: 0.72rem;
+  color: #5b2d8e;
+  font-style: italic;
+}
+
+// Table
+.report-table-wrapper {
+  overflow-x: auto;
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.825rem;
+
+  thead tr {
+    background-color: #4a4a4a;
+
+    th {
+      color: #ffffff;
+      font-weight: 600;
+      padding: 8px 10px;
+      border: 1px solid #5a5a5a;
+      white-space: nowrap;
+      text-align: left;
+    }
+  }
+
+  tbody tr {
+    background-color: #ffffff;
+
+    &.row-alt {
+      background-color: #dce9f5;
+    }
+
+    &:hover {
+      background-color: #c8ddf0 !important;
+    }
+
+    td {
+      padding: 6px 10px;
+      border: 1px solid #ccc;
+      color: #1a1a1a;
+      vertical-align: middle;
+    }
+
+    td.text-end {
+      text-align: right;
+    }
+  }
+}
+
+.report-footer {
+  font-size: 0.78rem;
+  color: #666;
+  text-align: right;
+  padding: 8px 0 4px;
+  border-top: 1px solid #e0e0e0;
+  margin-top: 4px;
+}
+
 .table th {
   font-weight: 600;
   white-space: nowrap;
