@@ -2,3 +2,37 @@
 border-radius:20px;
 overflow:hidden;
 }
+
+// Multi-select dropdown styles
+.dropdown-item {
+  padding: 0.25rem 0.5rem;
+  
+  .form-check {
+    margin: 0;
+    
+    .form-check-input {
+      cursor: pointer;
+    }
+    
+    .form-check-label {
+      cursor: pointer;
+      margin-left: 0.25rem;
+      width: 100%;
+    }
+  }
+}
+
+.dropdown-menu {
+  .dropdown-item:hover {
+    background-color: #f8f9fa;
+  }
+}
+
+// Ensure dropdown doesn't close when clicking checkboxes
+.dropdown-menu .dropdown-item {
+  cursor: pointer;
+  
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+}

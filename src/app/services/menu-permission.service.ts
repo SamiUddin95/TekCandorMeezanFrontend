@@ -32,6 +32,12 @@ export class MenuPermissionService {
         requiredPermissions: ['system.Dashboard'] 
       },
       {
+        label: 'Live Monitoring',
+        icon: 'tablerActivity',
+        url: '/pages/live-monitoring',
+        requiredPermissions: ['system.LiveMonitoring']
+      },
+      {
         label: 'Basic Setup',
         icon: 'tablerSettings',
         isCollapsed: true,
@@ -216,7 +222,7 @@ export class MenuPermissionService {
             requiredPermissions: ['Security.Groups']
           },
         ]
-      }
+      },
     ];
   }
 

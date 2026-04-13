@@ -12,6 +12,7 @@ import { PendingChequeComponent } from './ChequeProcess/pending-cheque/pending-c
 import { ChequeDetailsComponent } from './ChequeProcess/cheque-details/cheque-details.component';
 import { CallbackChequesComponent } from './ChequeProcess/callback-cheques/callback-cheques.component';
 import { CallbackChequeDetailsComponent } from './ChequeProcess/callback-cheque-details/callback-cheque-details.component';
+import { LiveMonitoringComponent } from './live-monitoring/live-monitoring.component';
 
 
 
@@ -38,6 +39,11 @@ export const PAGES_ROUTES: Routes = [
                 path: 'group-detail/:id',
                 component: GroupDetailComponent,
                 data: {title: 'Edit Security Group'}
+            },
+            {
+                path: 'live-monitoring',
+                component: LiveMonitoringComponent,
+                data: {title: 'Live Monitoring'}
             },
             {
                 path: 'basic-set-up',

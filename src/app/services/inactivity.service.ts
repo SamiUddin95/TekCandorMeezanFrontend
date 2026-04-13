@@ -7,8 +7,8 @@ import Swal from 'sweetalert2';
   providedIn: 'root'
 })
 export class InactivityService implements OnDestroy {
-  private readonly TIMEOUT_DURATION = environment.inactivityTimeout || 60 * 1000;      // 1 minute
-  private readonly WARNING_BEFORE   = environment.inactivityWarningBefore || 30 * 1000; // warn at 30s remaining
+  private readonly TIMEOUT_DURATION = environment.inactivityTimeout      // 1 minute
+  private readonly WARNING_BEFORE   = environment.inactivityWarningBefore;// warn at 30s remaining
 
   private inactivityTimer: any = null;
   private warningTimer: any   = null;

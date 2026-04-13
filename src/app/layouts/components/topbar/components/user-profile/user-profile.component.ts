@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {NgbDropdown, NgbDropdownMenu, NgbDropdownToggle} from "@ng-bootstrap/ng-bootstrap";
+import {NgbDropdown, NgbDropdownMenu} from "@ng-bootstrap/ng-bootstrap";
 import {userDropdownItems} from '@layouts/components/data';
-import {RouterLink} from '@angular/router';
 import {NgIcon} from '@ng-icons/core';
 import {AuthService, User} from '../../../../../services/auth.service';
 import {CommonModule} from '@angular/common';
@@ -11,8 +10,6 @@ import {CommonModule} from '@angular/common';
   imports: [
     NgbDropdown,
     NgbDropdownMenu,
-    NgbDropdownToggle,
-    RouterLink,
     NgIcon,
     CommonModule
   ],

@@ -1,5 +1,4 @@
 import {Component} from '@angular/core';
-import {RouterLink} from '@angular/router';
 import {NgIcon} from '@ng-icons/core';
 import {LayoutStoreService} from '@core/services/layout-store.service';
 import {LucideAngularModule, Search} from 'lucide-angular';
@@ -11,7 +10,6 @@ import {UserProfileComponent} from '@layouts/components/topbar/components/user-p
     selector: 'app-topbar',
     imports: [
         NgIcon,
-        RouterLink,
         LucideAngularModule,
         ThemeTogglerComponent,
         UserProfileComponent,

@@ -1,6 +1,6 @@
 import { credits, currentYear } from '@/app/constants';
 import { Component } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { NgIcon } from '@ng-icons/core';
 import Swal from 'sweetalert2';
 import { AuthService } from '@/app/services/auth.service';
@@ -8,7 +8,7 @@ import { AuthService } from '@/app/services/auth.service';
 @Component({
     selector: 'app-sign-in',
     host: { 'data-component-id': 'auth2-sign-in' },
-    imports: [RouterLink,NgIcon],
+    imports: [NgIcon],
     templateUrl: './sign-in.component.html',
     styleUrl: './sign-in.component.css'
 })

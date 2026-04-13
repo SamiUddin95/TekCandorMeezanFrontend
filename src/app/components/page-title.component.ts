@@ -1,10 +1,9 @@
 import {Component, Input} from '@angular/core';
-import {RouterLink} from '@angular/router';
 import {NgIcon} from '@ng-icons/core';
 
 @Component({
     selector: 'app-page-title',
-    imports: [RouterLink, NgIcon],
+    imports: [NgIcon],
     template: `
         <div class="page-title-head d-flex align-items-center">
             <div class="flex-grow-1">

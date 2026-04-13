@@ -1,13 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import {CurrencyPipe} from '@angular/common';
 import {PageTitleComponent} from '@app/components/page-title.component';
 import {SpinnerComponent} from '@app/components/spinner/spinner.component';
 import {
     StatisticsWidgetComponent
 } from '@/app/views/dashboards/dashboard-2/components/statistics-widget/statistics-widget.component';
-import {
-    StatisticsBarChartComponent
-} from '@/app/views/dashboards/dashboard-2/components/statistics-bar-chart/statistics-bar-chart.component';
+
 import { DashboardService, DashboardItem } from '@app/services/dashboard.service';
 import { StatisticsWidgetType } from '@/app/views/dashboards/dashboard-2/types';
 
@@ -17,8 +14,6 @@ import { StatisticsWidgetType } from '@/app/views/dashboards/dashboard-2/types';
         PageTitleComponent,
         SpinnerComponent,
         StatisticsWidgetComponent,
-        StatisticsBarChartComponent,
-        CurrencyPipe,
     ],
     templateUrl: './dashboard.component.html'
 })

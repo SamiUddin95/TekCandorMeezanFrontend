@@ -1,0 +1,131 @@
+<div class="dashboard-container">
+  <app-page-title title="Live Monitoring" class="mb-3"></app-page-title>
+
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <app-spinner></app-spinner>
+    </div>
+  } @else {
+
+    <!-- ─── COMPACT SUMMARY CARDS ────────────────────────────────── -->
+    <div class="row g-3 mb-2">
+
+      <!-- Monitoring Summary Card -->
+      <div class="col-xl-6 col-lg-6">
+        <div class="summary-card summary-card--monitoring">
+          <div class="summary-card__brand">
+            <div class="summary-card__icon"><i class="fas fa-chart-line"></i></div>
+            <div class="summary-card__title-block">
+              <h6 class="summary-card__title">Monitoring</h6>
+              <p class="summary-card__subtitle">Cheque Records</p>
+            </div>
+          </div>
+          <div class="summary-card__divider"></div>
+          <div class="summary-card__stats">
+            @for (w of monitoringWidgets; track $index) {
+              <div class="summary-stat" [class.summary-stat--warning]="w.badge?.variant === 'warning'"
+                                        [class.summary-stat--success]="w.badge?.variant === 'success'">
+                <i class="fas summary-stat__icon"
+                   [class.fa-clock]="w.badge?.variant === 'warning'"
+                   [class.fa-check-circle]="w.badge?.variant === 'success'"></i>
+                <div class="summary-stat__body">
+                  <p class="summary-stat__label">{{ w.description }}</p>
+                  <h4 class="summary-stat__value"><span [countUp]="w.value">0</span></h4>
+                </div>
+              </div>
+            }
+          </div>
+          <div class="summary-card__total-block">
+            <p class="summary-card__total-label">Total</p>
+            <h3 class="summary-card__total">{{ monitoringTotal }}</h3>
+          </div>
+        </div>
+      </div>
+
+      <!-- Signatures Summary Card -->
+      <div class="col-xl-6 col-lg-6">
+        <div class="summary-card summary-card--signatures">
+          <div class="summary-card__brand">
+            <div class="summary-card__icon"><i class="fas fa-pen-nib"></i></div>
+            <div class="summary-card__title-block">
+              <h6 class="summary-card__title">Signatures</h6>
+              <p class="summary-card__subtitle">Verification Records</p>
+            </div>
+          </div>
+          <div class="summary-card__divider"></div>
+          <div class="summary-card__stats">
+            @for (w of signatureWidgets; track $index) {
+              <div class="summary-stat" [class.summary-stat--purple]="w.badge?.variant === 'warning'"
+                                        [class.summary-stat--violet]="w.badge?.variant === 'success'">
+                <i class="fas summary-stat__icon"
+                   [class.fa-hourglass-half]="w.badge?.variant === 'warning'"
+                   [class.fa-check-double]="w.badge?.variant === 'success'"></i>
+                <div class="summary-stat__body">
+                  <p class="summary-stat__label">{{ w.description }}</p>
+                  <h4 class="summary-stat__value"><span [countUp]="w.value">0</span></h4>
+                </div>
+              </div>
+            }
+          </div>
+          <div class="summary-card__total-block">
+            <p class="summary-card__total-label">Total</p>
+            <h3 class="summary-card__total">{{ signaturesTotal }}</h3>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ─── CHARTS ROW ──────────────────────────────────────────────── -->
+    <div class="row g-3">
+
+      <!-- Bar Chart -->
+      <div class="col-xl-6 col-lg-12">
+        <div class="chart-card">
+          <div class="chart-card__header">
+            <div>
+              <h6 class="chart-card__title">Comparison Overview</h6>
+              <p class="chart-card__subtitle">Monitoring vs Signatures</p>
+            </div>
+            <div class="chart-card__totals">
+              <span class="total-pill total-pill--green">Mon: {{ monitoringTotal }}</span>
+              <span class="total-pill total-pill--purple">Sig: {{ signaturesTotal }}</span>
+            </div>
+          </div>
+          <app-echart [getOptions]="barChartOptions" height="260px"></app-echart>
+        </div>
+      </div>
+
+      <!-- Monitoring Pie -->
+      <div class="col-xl-3 col-md-6">
+        <div class="chart-card">
+          <div class="chart-card__header">
+            <div>
+              <h6 class="chart-card__title">Monitoring</h6>
+              <p class="chart-card__subtitle">Record breakdown</p>
+            </div>
+            <span class="chart-card__total">{{ monitoringTotal }}</span>
+          </div>
+          <app-echart [getOptions]="monitoringPieOptions" height="235px"></app-echart>
+        </div>
+      </div>
+
+      <!-- Signatures Pie -->
+      <div class="col-xl-3 col-md-6">
+        <div class="chart-card">
+          <div class="chart-card__header">
+            <div>
+              <h6 class="chart-card__title">Signatures</h6>
+              <p class="chart-card__subtitle">Record breakdown</p>
+            </div>
+            <span class="chart-card__total">{{ signaturesTotal }}</span>
+          </div>
+          <app-echart [getOptions]="signaturePieOptions" height="235px"></app-echart>
+        </div>
+      </div>
+
+    </div>
+
+  }
+</div>
+

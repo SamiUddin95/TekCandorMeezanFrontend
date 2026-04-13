@@ -19,6 +19,8 @@ export interface UserItem {
   branchOrHub: string;
   hubId: number;
   branchId: number;
+  hubIds: number[];  // For multi-select hubs
+  branchIds: number[];  // For multi-select branches
   group: string;
   active: boolean;
   loginPassword: string;
@@ -404,6 +406,8 @@ highlightedIndex: any;
       branchOrHub: 'branchWise',
       hubId: 0,
       branchId: 0,
+      hubIds: [],  // Initialize empty array for multi-select
+      branchIds: [],  // Initialize empty array for multi-select
       group: '',
       active: true,
       loginPassword: '',
@@ -416,6 +420,68 @@ highlightedIndex: any;
       reports: 0,
       adminNotes: ''
     };
+  }
+
+  // Multi-select methods for hubs
+  onHubSelectionChange(event: any, hubId: number) {
+    if (event.target.checked) {
+      // Add hub to selection
+      if (!this.selectedUser.hubIds.includes(hubId)) {
+        this.selectedUser.hubIds.push(hubId);
+      }
+    } else {
+      // Remove hub from selection
+      this.selectedUser.hubIds = this.selectedUser.hubIds.filter(id => id !== hubId);
+    }
+  }
+
+  // Multi-select methods for branches
+  onBranchSelectionChange(event: any, branchId: number) {
+    if (event.target.checked) {
+      // Add branch to selection
+      if (!this.selectedUser.branchIds.includes(branchId)) {
+        this.selectedUser.branchIds.push(branchId);
+      }
+    } else {
+      // Remove branch from selection
+      this.selectedUser.branchIds = this.selectedUser.branchIds.filter(id => id !== branchId);
+    }
+  }
+
+  // Check if hub is selected
+  isHubSelected(hubId: number): boolean {
+    return this.selectedUser.hubIds.includes(hubId);
+  }
+
+  // Check if branch is selected
+  isBranchSelected(branchId: number): boolean {
+    return this.selectedUser.branchIds.includes(branchId);
+  }
+
+  // Get selected hub names for display
+  getSelectedHubNames(): string {
+    if (this.selectedUser.hubIds.length === 0) return 'Select Hubs';
+    
+    const selectedHubNames = this.hubs
+      .filter((hub: any) => this.selectedUser.hubIds.includes(hub.id))
+      .map((hub: any) => hub.name);
+    
+    if (selectedHubNames.length === 0) return 'Select Hubs';
+    if (selectedHubNames.length === 1) return selectedHubNames[0];
+    return `${selectedHubNames.length} Hubs Selected`;
+  }
+
+  // Get selected branch names for display
+  getSelectedBranchNames(): string {
+    if (this.selectedUser.branchIds.length === 0) return 'Select Branches';
+    
+    const selectedBranchNames = this.branches
+      .filter((branch: any) => this.selectedUser.branchIds.includes(branch.id))
+      .map((branch: any) => branch.name);
+    
+    if (selectedBranchNames.length === 0) return 'Select Branches';
+    if (selectedBranchNames.length === 1) return selectedBranchNames[0];
+    return `${selectedBranchNames.length} Branches Selected`;
   }
 
   onChangePassword() {
