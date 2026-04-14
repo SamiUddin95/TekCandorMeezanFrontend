@@ -1,0 +1,77 @@
+<div class="row mt-2">
+  <div class="col-lg-12">
+    <div class="card">
+      <div class="card-header bg-light d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">Cheque Lodgment</h5>
+        <button class="btn btn-primary btn-sm" (click)="onAddNew()">ADD</button>
+      </div>
+
+      <div class="card-body">
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <label class="form-label mb-1">Search (Depositor, Account, Tracking #)</label>
+            <input
+              type="text"
+              class="form-control form-control-sm"
+              placeholder="Search by name, account or tracking #..."
+              [(ngModel)]="searchTerm" />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label mb-1">Status</label>
+            <select class="form-select form-select-sm" [(ngModel)]="filterStatus">
+              <option value="">All Status</option>
+              <option value="Completed">Completed</option>
+              <option value="Pending Review">Pending Review</option>
+              <option value="Scanning">Scanning</option>
+              <option value="Draft">Draft</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-hover table-striped table-sm">
+            <thead class="bg-light">
+              <tr>
+                <th style="width: 14%;">Tracking No.</th>
+                <th style="width: 16%;">Depositor</th>
+                <th style="width: 14%;">Account</th>
+                <th style="width: 16%;">Beneficiary</th>
+                <th style="width: 12%;">Amount</th>
+                <th style="width: 10%;">Date</th>
+                <th style="width: 8%;">Status</th>
+                <th style="width: 5%;">Action</th>
+              </tr>
+            </thead>
+            <tbody class="table-group-divider">
+              @for (item of filteredData; track item.id; let i = $index) {
+                <tr>
+                  <td class="font-monospace">{{ item.trackingNumber }}</td>
+                  <td>{{ item.depositorName }}</td>
+                  <td class="font-monospace">{{ item.accountNumber }}</td>
+                  <td>{{ item.beneficiaryName }}</td>
+                  <td class="text-end fw-bold">{{ item.currency }} {{ formatAmount(item.amount) }}</td>
+                  <td>{{ item.date }}</td>
+                  <td>
+                    <span [ngClass]="item.status">{{ item.status }}</span>
+                  </td>
+                  <td>
+                    <div class="btn-group btn-group-sm" role="group">
+                      <button class="btn btn-outline-primary btn-sm" (click)="onView(item)">VIEW</button>
+                    </div>
+                  </td>
+                </tr>
+              }
+              @if (filteredData.length === 0) {
+                <tr>
+                  <td colspan="9" class="text-center text-muted py-3">
+                    No records found
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,167 @@
+<div class="cln-page">
+
+  <!-- Header -->
+  <div class="cln-header">
+    <div>
+      <h5 class="cln-header__title">New Cheque Lodgment</h5>
+      <p class="cln-header__subtitle">Capture depositor information and beneficiary details to initiate instrument scanning.</p>
+    </div>
+  </div>
+
+  <div class="cln-grid">
+
+    <!-- ── LEFT: Form ──────────────────────────────────────────── -->
+    <div class="cln-form-col">
+
+      <!-- Depositor Details -->
+      <div class="cln-section">
+        <div class="cln-section__header">
+          <i class="fas fa-user-circle cln-section__icon"></i>
+          <div>
+            <h6 class="cln-section__title">Depositor Details</h6>
+            <p class="cln-section__subtitle">Primary account where funds will be credited.</p>
+          </div>
+        </div>
+
+        <div class="cln-field-row">
+          <div class="cln-field">
+            <label class="cln-label">Depositor Type</label>
+            <select class="cln-input" [(ngModel)]="depositorType" (ngModelChange)="onDepositorTypeChange()">
+              <option value="Self">Self</option>
+              <option value="MBL Account Holder">MBL Account Holder</option>
+              <option value="Walk-in">Walk-in</option>
+            </select>
+          </div>
+          @if (!isWalkIn) {
+            <div class="cln-field">
+              <label class="cln-label">Account Number</label>
+              <input type="text" class="cln-input" placeholder="0102-099283-001" [(ngModel)]="depositorAccount" (blur)="onDepositorAccountBlur()"/>
+            </div>
+          } @else {
+            <div class="cln-field">
+              <label class="cln-label">CNIC</label>
+              <input type="text" class="cln-input" placeholder="00000-0000000-0" [(ngModel)]="cnic" (blur)="onCnicBlur()"/>
+            </div>
+          }
+        </div>
+
+        <div class="cln-field">
+          <label class="cln-label">Title</label>
+          <input type="text" class="cln-input" placeholder="Auto fetched" [(ngModel)]="fullName" readonly/>
+        </div>
+      </div>
+
+      <!-- Beneficiary & Instrument -->
+      <div class="cln-section">
+        <div class="cln-section__header">
+          <i class="fas fa-file-invoice cln-section__icon"></i>
+          <div>
+            <h6 class="cln-section__title">Beneficiary &amp; Instrument</h6>
+            <p class="cln-section__subtitle">Information regarding the clearing instrument.</p>
+          </div>
+        </div>
+
+        <div class="cln-field">
+          <label class="cln-label">Beneficiary Account / Title</label>
+          <input type="text" class="cln-input" placeholder="Enter beneficiary name or account number" [(ngModel)]="beneficiaryAccount"/>
+        </div>
+
+        <div class="cln-field-row">
+          <div class="cln-field">
+            <label class="cln-label">Currency</label>
+            <select class="cln-input" [(ngModel)]="currency">
+              <option>PKR - Pak Rupee</option>
+              <option>USD - US Dollar</option>
+            </select>
+          </div>
+          <div class="cln-field">
+            <label class="cln-label">Instrument Amount</label>
+            <div class="cln-amount-wrap">
+              <span class="cln-amount-prefix">Rs.</span>
+              <input type="number" class="cln-input cln-input--amount" placeholder="0.00" [(ngModel)]="instrumentAmount"/>
+            </div>
+          </div>
+        </div>
+
+        <div class="cln-field">
+          <label class="cln-label">Remarks (Optional)</label>
+          <textarea class="cln-input cln-textarea" placeholder="Add any special instructions..." [(ngModel)]="remarks" rows="2"></textarea>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="cln-actions">
+        <button class="cln-btn-cancel" (click)="onCancel()">Cancel</button>
+        <button class="cln-btn-scan" [disabled]="!isFormValid" (click)="onScanCheque()">
+          <i class="fas fa-qrcode me-2"></i>Scan Cheque
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ── RIGHT: Summary ──────────────────────────────────────── -->
+    <div class="cln-summary-col">
+
+      <!-- Lodgment Summary -->
+      <div class="cln-summary-card">
+        <div class="cln-summary-card__header">
+          <i class="fas fa-clipboard-list me-2"></i>Lodgment Summary
+        </div>
+        <p class="cln-summary-card__subtitle">Review the details before proceeding to scan the physical instrument.</p>
+
+        <div class="cln-summary-row">
+          <span class="cln-summary-label">Depositor Type</span>
+          <span class="cln-summary-value cln-summary-value--accent">{{ depositorType }}</span>
+        </div>
+        <div class="cln-summary-row">
+          <span class="cln-summary-label">Account / CNIC</span>
+          <span class="cln-summary-value">{{ isWalkIn ? (cnic || '—') : (depositorAccount || '—') }}</span>
+        </div>
+        <div class="cln-summary-row">
+          <span class="cln-summary-label">Instrument Currency</span>
+          <span class="cln-summary-value cln-summary-value--accent">PKR</span>
+        </div>
+
+        <!-- Pre-Scan Checklist -->
+        <div class="cln-checklist">
+          <p class="cln-checklist__title">
+            <i class="fas fa-clipboard-check me-1"></i>Pre-Scan Checklist
+          </p>
+          @for (check of preScanChecks; track $index) {
+            <label class="cln-checklist__item">
+              <input type="checkbox" [(ngModel)]="check.checked"/>
+              <span>{{ check.label }}</span>
+            </label>
+          }
+        </div>
+
+        <p class="cln-manual-note">
+          <i class="fas fa-info-circle me-1"></i>Manual data overrides are disabled after scanning begins.
+        </p>
+      </div>
+
+      <!-- Workflow Status -->
+      <div class="cln-workflow">
+        <p class="cln-workflow__title">Workflow Status</p>
+        <div class="cln-workflow__steps">
+          <div class="cln-step" [class.cln-step--active]="currentStep >= 1">
+            <span class="cln-step__num">1</span>
+            <span class="cln-step__label">Form</span>
+          </div>
+          <div class="cln-step__line" [class.cln-step__line--active]="currentStep >= 2"></div>
+          <div class="cln-step" [class.cln-step--active]="currentStep >= 2">
+            <span class="cln-step__num">2</span>
+            <span class="cln-step__label">Scan</span>
+          </div>
+          <div class="cln-step__line" [class.cln-step__line--active]="currentStep >= 3"></div>
+          <div class="cln-step" [class.cln-step--active]="currentStep >= 3">
+            <span class="cln-step__num">3</span>
+            <span class="cln-step__label">Review</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>

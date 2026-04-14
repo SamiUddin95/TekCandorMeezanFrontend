@@ -1,0 +1,175 @@
+<div class="clr-page">
+
+  <!-- Header -->
+  <div class="clr-header">
+    <div>
+      <h5 class="clr-header__title">Review Transaction</h5>
+      <div class="clr-breadcrumb">
+        <span>Lodgment</span>
+        <i class="fas fa-chevron-right mx-1"></i>
+        <span>Scanning</span>
+        <i class="fas fa-chevron-right mx-1"></i>
+        <span class="clr-breadcrumb--active">Final Review</span>
+      </div>
+    </div>
+    <div class="clr-header__right">
+      <span class="clr-ref">Ref Number</span>
+      <span class="clr-ref-val">{{ refNumber }}</span>
+    </div>
+  </div>
+
+  <!-- Validation Badge -->
+  @if (validationPassed) {
+    <div class="clr-validation">
+      <i class="fas fa-check-circle me-2"></i>
+      <div>
+        <strong>AI Validation Passed</strong>
+        <span class="clr-validation__sub">MICR, amount and signature consistency verified</span>
+      </div>
+      <div class="clr-validation__score">
+        <span class="clr-score-badge">{{ confidenceScore }}%</span>
+        <span class="clr-score-label">AUTO VALID</span>
+      </div>
+    </div>
+  }
+
+  <div class="clr-grid">
+
+    <!-- ── LEFT: Cheque Preview ──────────────────────────────── -->
+    <div class="clr-left">
+
+      <!-- Scanned Preview -->
+      <div class="clr-preview-card">
+        <div class="clr-preview-card__header">
+          <span>Scanned Instrument Preview</span>
+          <span class="clr-confidence">High Confidence</span>
+        </div>
+
+        <div class="clr-cheque-img">
+          <div class="clr-cheque-mock">
+            <div class="clr-cheque-mock__bank">
+              <i class="fas fa-university me-2"></i>Meezan Bank
+            </div>
+            <div class="clr-cheque-mock__row">
+              <span>DATE: 15/11/2023</span>
+              <span class="clr-cheque-mock__amt">Rs. PKR 50,000/-</span>
+            </div>
+            <div class="clr-cheque-mock__payee">PAY TO THE ORDER OF Cash</div>
+            <div class="clr-cheque-mock__date-line">15/11/2023</div>
+            <div class="clr-cheque-mock__micr">E 5454155514000000 E 00123456</div>
+            <div class="clr-cheque-mock__footer">
+              <span>Scan Resolution: 600DPI</span>
+              <span>Color Profile: Grayscale</span>
+              <span>Timestamp: 08 Apr 2026 14:22:11</span>
+            </div>
+          </div>
+          <button class="clr-inspect-btn"><i class="fas fa-search me-1"></i>Inspect</button>
+        </div>
+      </div>
+
+      <!-- Branch Officer Note -->
+      <div class="clr-note-card">
+        <div class="clr-note-card__header">
+          <i class="fas fa-sticky-note me-2"></i>Branch Officer Note
+        </div>
+        <p class="clr-note-card__text">
+          Verify that the amount in figures matches the amount in words exactly. If any discrepancy exists, please edit the data
+          before confirming. Ensure the customer's endorsement is present on the reverse of the instrument.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- ── RIGHT: Digital Verification Data ──────────────────── -->
+    <div class="clr-right">
+
+      <div class="clr-data-card">
+        <div class="clr-data-card__header">
+          <i class="fas fa-shield-alt me-2"></i>Digital Verification Data
+        </div>
+
+        <!-- Depositor Info -->
+        <div class="clr-data-section">
+          <p class="clr-data-section__title"><i class="fas fa-user me-1"></i>Depositor Info</p>
+          <div class="clr-data-row">
+            <span class="clr-data-key">Account Name</span>
+            <span class="clr-data-val">{{ depositorInfo.accountName }}</span>
+          </div>
+          <div class="clr-data-row">
+            <span class="clr-data-key">Account Number</span>
+            <span class="clr-data-val clr-data-val--mono">{{ depositorInfo.accountNumber }}</span>
+          </div>
+          <div class="clr-data-row">
+            <span class="clr-data-key">Branch Name</span>
+            <span class="clr-data-val">{{ depositorInfo.branchName }}</span>
+          </div>
+        </div>
+
+        <!-- Instrument Details -->
+        <div class="clr-data-section">
+          <p class="clr-data-section__title"><i class="fas fa-hashtag me-1"></i>Instrument Details</p>
+          <div class="clr-data-row">
+            <span class="clr-data-key">Cheque Number</span>
+            <span class="clr-data-val">{{ instrumentDetails.chequeNumber }}</span>
+          </div>
+          <div class="clr-data-row">
+            <span class="clr-data-key">MICR Code</span>
+            <span class="clr-data-val clr-data-val--mono">{{ instrumentDetails.micrCode }}</span>
+          </div>
+          <div class="clr-data-row">
+            <span class="clr-data-key">Instrument Date</span>
+            <span class="clr-data-val">{{ instrumentDetails.instrumentDate }}</span>
+          </div>
+          <div class="clr-data-row">
+            <span class="clr-data-key">Drawer Bank</span>
+            <span class="clr-data-val">{{ instrumentDetails.drawerBank }}</span>
+          </div>
+        </div>
+
+        <!-- Financial Settlement -->
+        <div class="clr-data-section">
+          <p class="clr-data-section__title"><i class="fas fa-money-bill me-1"></i>Financial Settlement</p>
+          <div class="clr-data-row">
+            <span class="clr-data-key">Total Amount</span>
+            <span class="clr-data-val clr-data-val--amount">PKR {{ formatAmount(financialSettlement.totalAmount) }}</span>
+          </div>
+          <div class="clr-data-row">
+            <span class="clr-data-key">Amount in Words</span>
+            <span class="clr-data-val">{{ financialSettlement.amountInWords }}</span>
+          </div>
+          <div class="clr-data-row">
+            <span class="clr-data-key">Transaction Type</span>
+            <span class="clr-data-val">{{ financialSettlement.transactionType }} <span class="clr-sync-badge">SYNCED</span></span>
+          </div>
+        </div>
+
+        <p class="clr-last-sync">Last Sync: {{ lastSync }}</p>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom Action Bar -->
+  <div class="clr-action-bar">
+    <div class="clr-action-bar__info">
+      <div class="clr-info-item">
+        <span class="clr-info-label">Selected Mode</span>
+        <span class="clr-info-value">{{ selectedMode }}</span>
+      </div>
+      <div class="clr-info-item">
+        <span class="clr-info-label">Reviewing As</span>
+        <span class="clr-info-value">{{ reviewingAs }}</span>
+      </div>
+    </div>
+    <div class="clr-action-bar__btns">
+      <button class="clr-btn-edit" (click)="onEditDetails()">
+        <i class="fas fa-pen me-1"></i>Edit Details
+      </button>
+      <button class="clr-btn-submit" (click)="onConfirmSubmit()">
+        <i class="fas fa-check me-1"></i>Confirm &amp; Submit
+      </button>
+    </div>
+  </div>
+
+</div>

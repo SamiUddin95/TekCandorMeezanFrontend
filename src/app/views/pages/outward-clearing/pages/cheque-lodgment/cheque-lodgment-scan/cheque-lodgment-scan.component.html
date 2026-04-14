@@ -1,0 +1,120 @@
+<div class="cls-page">
+
+  <div class="cls-grid">
+
+    <!-- ── LEFT: Instrument Capture ──────────────────────────── -->
+    <div class="cls-capture">
+
+      <div class="cls-capture__header">
+        <div>
+          <h5 class="cls-capture__title"><i class="fas fa-camera me-2"></i>Instrument Capture</h5>
+          <p class="cls-capture__subtitle">Digital image processing for clearing</p>
+        </div>
+        <div class="cls-capture__tools">
+          <button class="cls-tool-btn" title="Zoom In"><i class="fas fa-search-plus"></i></button>
+          <button class="cls-tool-btn" title="Zoom Out"><i class="fas fa-search-minus"></i></button>
+          <button class="cls-tool-btn" title="Rotate"><i class="fas fa-redo"></i></button>
+        </div>
+      </div>
+
+      <!-- Cheque Preview Area -->
+      <div class="cls-preview">
+        <div class="cls-cheque-mock">
+          <div class="cls-cheque-mock__bank">
+            <i class="fas fa-university me-2"></i>GLOBAL TRUST BANK
+          </div>
+          <div class="cls-cheque-mock__payee">PAY TO THE ORDER OF <span class="cls-cheque-mock__line"></span></div>
+          <div class="cls-cheque-mock__amount-box">
+            <span>Rs.</span>
+            <strong>{{ formatAmount(amount) }}</strong>
+          </div>
+          <div class="cls-cheque-mock__words">ONE HUNDRED FORTY FIVE THOUSAND ONLY</div>
+          <div class="cls-cheque-mock__micr">
+            <span>{{ micrCode }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Progress Bars -->
+      <div class="cls-progress-row">
+        <div class="cls-progress-bar"><div class="cls-progress-bar__fill cls-progress-bar__fill--green" style="width:100%"></div></div>
+        <div class="cls-progress-bar"><div class="cls-progress-bar__fill cls-progress-bar__fill--blue" style="width:100%"></div></div>
+      </div>
+
+    </div>
+
+    <!-- ── RIGHT: Verification Panel ─────────────────────────── -->
+    <div class="cls-verify">
+
+      <div class="cls-verify__header">
+        <h6 class="cls-verify__title">Verification Panel</h6>
+        <span class="cls-verify__status">
+          <i class="fas fa-check-circle me-1"></i>Ready for Review
+        </span>
+      </div>
+
+      <!-- Instrument Details -->
+      <div class="cls-vgroup">
+        <p class="cls-vgroup__label"><i class="fas fa-hashtag me-1"></i>Instrument Details</p>
+
+        <div class="cls-vrow">
+          <span class="cls-vrow__key"><i class="fas fa-barcode me-1"></i>Cheque Number</span>
+          <div class="cls-vrow__val-wrap">
+            <span class="cls-vrow__val">{{ chequeNumber }}</span>
+            <span class="cls-verified-badge"><i class="fas fa-check"></i> Verified</span>
+          </div>
+        </div>
+
+        <div class="cls-vrow">
+          <span class="cls-vrow__key"><i class="fas fa-code me-1"></i>MICR Code Line</span>
+          <div class="cls-vrow__val-wrap">
+            <span class="cls-vrow__val cls-vrow__val--mono">{{ micrCode }}</span>
+            <span class="cls-review-badge"><i class="fas fa-eye"></i> Review</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transaction Data -->
+      <div class="cls-vgroup">
+        <p class="cls-vgroup__label"><i class="fas fa-money-bill me-1"></i>Transaction Data</p>
+
+        <div class="cls-vrow-inline">
+          <div class="cls-vfield">
+            <span class="cls-vfield__key">Amount (PKR) <span class="cls-verified-badge"><i class="fas fa-check"></i> Verified</span></span>
+            <span class="cls-vfield__val">{{ formatAmount(amount) }}</span>
+          </div>
+          <div class="cls-vfield">
+            <span class="cls-vfield__key"><i class="fas fa-calendar me-1"></i>Cheque Date</span>
+            <span class="cls-vfield__val">{{ chequeDate }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Beneficiary -->
+      <div class="cls-vgroup">
+        <p class="cls-vgroup__label"><i class="fas fa-user me-1"></i>Beneficiary / Payee</p>
+        <p class="cls-beneficiary">{{ beneficiary }}</p>
+      </div>
+
+      <!-- OCR Stats -->
+      <div class="cls-ocr">
+        <div class="cls-ocr__row"><span>OCR Engine:</span><span class="cls-ocr__val">{{ ocrEngine }}</span></div>
+        <div class="cls-ocr__row"><span>Processing Time:</span><span class="cls-ocr__val">{{ processingTime }}</span></div>
+        <div class="cls-ocr__row"><span>Confidence Score:</span><span class="cls-ocr__val cls-ocr__val--green">{{ confidenceScore }}%</span></div>
+      </div>
+
+      <!-- Actions -->
+      <button class="cls-btn-proceed" (click)="onProceedToReview()">
+        <i class="fas fa-arrow-right me-2"></i>Save &amp; Proceed to Review
+      </button>
+      <button class="cls-btn-discard" (click)="onDiscard()">
+        <i class="fas fa-redo me-2"></i>Discard &amp; Re-scan
+      </button>
+
+      <p class="cls-server-note"><i class="fas fa-signal me-1"></i>LIVE CONNECTION · ICE SERVER 4</p>
+
+    </div>
+
+  </div>
+
+</div>

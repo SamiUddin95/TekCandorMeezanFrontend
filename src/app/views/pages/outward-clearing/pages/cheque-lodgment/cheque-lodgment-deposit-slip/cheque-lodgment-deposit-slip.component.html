@@ -1,0 +1,156 @@
+<div class="cld-page">
+
+  <!-- Header -->
+  <div class="cld-header">
+    <div>
+      <h5 class="cld-header__title">Deposit Slip</h5>
+      <p class="cld-header__subtitle">Transaction completed successfully. Slip generated for records.</p>
+    </div>
+    <div class="cld-header__actions">
+      <button class="cld-btn-dashboard" (click)="onDashboard()">
+        <i class="fas fa-plus me-1"></i>Dashboard
+      </button>
+      <button class="cld-btn-print" (click)="onPrint()">
+        <i class="fas fa-print me-1"></i>Print Slip
+      </button>
+    </div>
+  </div>
+
+  <!-- Slip Card -->
+  <div class="cld-slip">
+
+    <!-- Bank Header -->
+    <div class="cld-slip__bank-header">
+      <div class="cld-bank-info">
+        <div class="cld-bank-logo">
+          <i class="fas fa-university"></i>
+        </div>
+        <div>
+          <h6 class="cld-bank-name">Meezan Bank</h6>
+          <span class="cld-deposit-badge">Deposit Slip</span>
+        </div>
+      </div>
+      <div class="cld-tracking">
+        <span class="cld-tracking__label">Tracking Number</span>
+        <span class="cld-tracking__value">{{ trackingNumber }}</span>
+      </div>
+    </div>
+
+    <!-- Meta Row -->
+    <div class="cld-meta-row">
+      <div class="cld-meta-item">
+        <i class="fas fa-calendar me-1"></i>
+        <span class="cld-meta-label">Business Date</span>
+        <span class="cld-meta-value">{{ businessDate }}</span>
+      </div>
+      <div class="cld-meta-item">
+        <i class="fas fa-map-marker-alt me-1"></i>
+        <span class="cld-meta-label">Branch Name</span>
+        <span class="cld-meta-value">{{ branchName }}</span>
+      </div>
+      <div class="cld-meta-item">
+        <i class="fas fa-file-alt me-1"></i>
+        <span class="cld-meta-label">Instrument Type</span>
+        <span class="cld-meta-value">{{ instrumentType }}</span>
+      </div>
+    </div>
+
+    <!-- Details Grid -->
+    <div class="cld-details-grid">
+
+      <!-- Depositor Details -->
+      <div class="cld-details-card cld-details-card--purple">
+        <p class="cld-details-card__title"><i class="fas fa-user me-1"></i>Depositor Details</p>
+        <div class="cld-detail-row">
+          <span class="cld-detail-key">Full Name</span>
+          <span class="cld-detail-val">{{ depositor.fullName }}</span>
+        </div>
+        <div class="cld-detail-row">
+          <span class="cld-detail-key">Account Number</span>
+          <span class="cld-detail-val cld-detail-val--mono">{{ depositor.accountNumber }}</span>
+        </div>
+        <div class="cld-detail-row">
+          <span class="cld-detail-key">Relationship</span>
+          <span class="cld-detail-val">{{ depositor.relationship }}</span>
+        </div>
+      </div>
+
+      <!-- Beneficiary Details -->
+      <div class="cld-details-card cld-details-card--blue">
+        <p class="cld-details-card__title"><i class="fas fa-user-check me-1"></i>Beneficiary Details</p>
+        <div class="cld-detail-row">
+          <span class="cld-detail-key">Title of Account</span>
+          <span class="cld-detail-val">{{ beneficiary.titleOfAccount }}</span>
+        </div>
+        <div class="cld-detail-row">
+          <span class="cld-detail-key">Account Number</span>
+          <span class="cld-detail-val cld-detail-val--mono">{{ beneficiary.accountNumber }}</span>
+        </div>
+        <div class="cld-detail-row">
+          <span class="cld-detail-key">Bank Name</span>
+          <span class="cld-detail-val">{{ beneficiary.bankName }}</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Instrument Breakdown -->
+    <div class="cld-breakdown">
+      <div class="cld-breakdown__header">
+        <span class="cld-breakdown__title">Instrument Breakdown</span>
+        <span class="cld-breakdown__note">Figures in PKR</span>
+      </div>
+      <table class="cld-breakdown__table">
+        <thead>
+          <tr>
+            <th>S.No</th>
+            <th>Cheque No.</th>
+            <th>Drawee Bank &amp; Branch</th>
+            <th>Clearing Type</th>
+            <th class="text-end">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of instruments; track $index) {
+            <tr>
+              <td>{{ item.sNo | number:'2.0-0' }}</td>
+              <td class="td-mono">{{ item.chequeNo }}</td>
+              <td>
+                <strong>{{ item.draweeBank }}</strong><br/>
+                <span class="td-sub">{{ item.draweeBranch }}</span>
+              </td>
+              <td><span class="cld-clearing-badge">{{ item.clearingType }}</span></td>
+              <td class="text-end td-amount">{{ formatAmount(item.amount) }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      <div class="cld-total-row">
+        <span class="cld-total-label">Total Deposit Amount</span>
+        <span class="cld-total-value">PKR {{ formatAmount(totalAmount) }}</span>
+      </div>
+    </div>
+
+    <!-- Signature Row -->
+    <div class="cld-signature-row">
+      <div class="cld-signature-box">
+        <div class="cld-signature-line"></div>
+        <span>Customer Signature</span>
+      </div>
+      <div class="cld-signature-box">
+        <div class="cld-signature-line"></div>
+        <span>Bank Officer Stamp/Sign</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Back to List -->
+  <div class="cld-footer-actions">
+    <button class="cld-btn-back" (click)="onBackToList()">
+      <i class="fas fa-arrow-left me-1"></i>Back to Cheque Lodgment
+    </button>
+  </div>
+
+</div>

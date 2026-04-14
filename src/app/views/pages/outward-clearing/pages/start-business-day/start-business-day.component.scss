@@ -1,0 +1,249 @@
+// ─── Start Business Day – Meezan Bank Theme ───────────────────────────────
+$meezan-deep:    #5a2181;
+$meezan-mid:     #9c59c3;
+$meezan-light:   #ede9fe;
+$success-green:  #16a34a;
+$danger-red:     #dc2626;
+$border:         #e5e7eb;
+$text-primary:   #1f2937;
+$text-secondary: #6b7280;
+$text-muted:     #9ca3af;
+
+// ── Page wrapper ──────────────────────────────────────────────────────────
+.sbd-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 16px 8px;
+  overflow: hidden;
+}
+
+// ── Card ──────────────────────────────────────────────────────────────────
+.sbd-card {
+  width: 100%;
+  max-width: 580px;
+  background: #ffffff;
+  border: 1px solid $border;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 2px 16px rgba(90, 33, 129, .10);
+
+  // ── Top status bar ──────────────────────────────────────────────────
+  &__topbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 7px 20px;
+    background: linear-gradient(90deg, #f5f0fa 0%, #ede9fe 100%);
+    border-bottom: 1px solid rgba(90,33,129,.12);
+    font-size: 11px;
+    font-weight: 600;
+    color: $meezan-deep;
+    letter-spacing: .2px;
+
+    i { opacity: .8; }
+  }
+
+  // ── Body ────────────────────────────────────────────────────────────
+  &__body {
+    padding: 18px 32px 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  // ── Footer ──────────────────────────────────────────────────────────
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 24px;
+    border-top: 1px solid $border;
+    background: #fafafa;
+  }
+}
+
+.topbar-divider {
+  width: 1px;
+  height: 12px;
+  background: rgba(90, 33, 129, .2);
+}
+
+// ── Icon ──────────────────────────────────────────────────────────────────
+.sbd-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #fef2f2;
+  border: 2px solid #fecaca;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: $danger-red;
+  margin-bottom: 10px;
+  transition: all .3s ease;
+
+  &--started {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+    color: $success-green;
+  }
+}
+
+// ── Status Badge ──────────────────────────────────────────────────────────
+.sbd-badge {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  background: $danger-red;
+  color: #ffffff;
+  margin-bottom: 8px;
+  transition: background .3s ease;
+
+  &--started { background: $success-green; }
+}
+
+// ── Date ──────────────────────────────────────────────────────────────────
+.sbd-date {
+  font-size: 26px;
+  font-weight: 800;
+  color: $text-primary;
+  margin: 0 0 6px;
+}
+
+// ── Description ───────────────────────────────────────────────────────────
+.sbd-description {
+  font-size: 12px;
+  color: $text-secondary !important;
+  line-height: 1.5;
+  margin-bottom: 14px;
+  max-width: 380px;
+
+  a, span { color: $text-secondary !important; }
+}
+
+// ── Info Grid ─────────────────────────────────────────────────────────────
+.sbd-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 14px;
+  text-align: left;
+}
+
+.sbd-info-box {
+  background: #f8f6fc;
+  border: 1px solid rgba(90,33,129,.10);
+  border-radius: 8px;
+  padding: 10px 12px;
+  border-left: 3px solid $meezan-deep;
+
+  &__title {
+    margin: 0 0 7px;
+    font-size: 11px;
+    font-weight: 700;
+    color: $meezan-deep;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+
+    i { opacity: .8; }
+  }
+
+  &__text {
+    margin: 0;
+    font-size: 11px;
+    color: $text-secondary;
+    line-height: 1.5;
+  }
+}
+
+// ── Checklist ─────────────────────────────────────────────────────────────
+.sbd-checklist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11px;
+    color: $text-secondary;
+    font-weight: 500;
+  }
+}
+
+.check-ok   { color: $success-green; }
+.check-fail { color: $danger-red; }
+
+// ── CTA Button ────────────────────────────────────────────────────────────
+.sbd-btn {
+  width: 100%;
+  padding: 11px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, $meezan-deep 0%, $meezan-mid 100%);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .6px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity .2s ease, transform .2s ease;
+  box-shadow: 0 3px 10px rgba(90, 33, 129, .30);
+  margin-bottom: 8px;
+
+  &:hover:not(:disabled) {
+    opacity: .9;
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: .65;
+  }
+
+  &--started {
+    background: linear-gradient(135deg, $success-green 0%, #22c55e 100%);
+    box-shadow: 0 3px 10px rgba(22, 163, 74, .25);
+  }
+}
+
+// ── Auth Note ─────────────────────────────────────────────────────────────
+.sbd-auth-note {
+  font-size: 10px;
+  font-weight: 600;
+  color: $text-muted;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  margin: 0;
+}
+
+// ── Footer Links ──────────────────────────────────────────────────────────
+.sbd-link {
+  font-size: 11px;
+  font-weight: 600;
+  color: $meezan-deep;
+  text-decoration: none;
+  transition: color .2s ease;
+
+  &:hover { color: $meezan-mid; text-decoration: underline; }
+}
+
+// ── Responsive ────────────────────────────────────────────────────────────
+@media (max-width: 480px) {
+  .sbd-card__body { padding: 14px 16px 10px; }
+  .sbd-info-grid  { grid-template-columns: 1fr; }
+  .sbd-date       { font-size: 20px; }
+}

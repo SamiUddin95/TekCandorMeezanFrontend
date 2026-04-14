@@ -1,0 +1,82 @@
+<div class="sbd-page">
+    <div class="sbd-card mt-4">
+
+      <!-- ── Main Body ──────────────────────────────────────────── -->
+      <div class="sbd-card__body">
+
+        <!-- Shield Icon -->
+        <div class="sbd-icon" [class.sbd-icon--started]="isDayStarted">
+          <i [class]="isDayStarted ? 'fas fa-check-circle' : 'fas fa-exclamation-circle'"></i>
+        </div>
+
+        <!-- Status Badge -->
+        <div class="sbd-badge" [class.sbd-badge--started]="isDayStarted">
+          {{ isDayStarted ? 'Day Started' : 'Day Not Started' }}
+        </div>
+
+        <!-- Date -->
+        @if (businessDate) {
+          <h2 class="sbd-date">{{ businessDate | date:'MMMM dd, yyyy' }}</h2>
+        }
+
+        <!-- Description -->
+        <p class="sbd-description">
+          @if (isDayStarted) {
+            The business day has been successfully initiated. All teller modules are now active.
+          } @else {
+            The branch system is currently in offline mode.<br/>
+            Please initiate the business day to begin transactions.
+          }
+        </p>
+
+        <!-- Info Grid -->
+        <div class="sbd-info-grid">
+          <div class="sbd-info-box">
+            <p class="sbd-info-box__title">
+              <i class="fas fa-circle-check me-1"></i>System Readiness
+            </p>
+            <ul class="sbd-checklist">
+              @for (check of systemChecks; track $index) {
+                <li class="sbd-checklist__item">
+                  <i [class]="check.ok ? 'fas fa-check-circle check-ok' : 'fas fa-times-circle check-fail'"></i>
+                  {{ check.label }}
+                </li>
+              }
+            </ul>
+          </div>
+          <div class="sbd-info-box">
+            <p class="sbd-info-box__title">
+              <i class="fas fa-bolt me-1"></i>Operational Impact
+            </p>
+            <p class="sbd-info-box__text">
+              Initiating the day will timestamp your login,
+              synchronize the branch ledger with the head
+              office, and enable Cheque Lodgment modules
+              for all tellers.
+            </p>
+          </div>
+        </div>
+
+        <!-- CTA Button -->
+        <button
+          class="sbd-btn"
+          [class.sbd-btn--started]="isDayStarted"
+          [disabled]="isDayStarted || isStarting"
+          (click)="onStartBusinessDay()">
+          @if (isStarting) {
+            <span class="spinner-border spinner-border-sm me-2"></span> Starting...
+          } @else if (isDayStarted) {
+            <i class="fas fa-circle-check me-2"></i> Business Day Active
+          } @else {
+            <i class="fas fa-play-circle me-2"></i> START BUSINESS DAY
+          }
+        </button>
+
+        <!-- Auth Note -->
+        <p class="sbd-auth-note">
+          Authorized Personnel: Branch Officer / Manager Approval Required
+        </p>
+
+      </div>
+    </div>
+</div>

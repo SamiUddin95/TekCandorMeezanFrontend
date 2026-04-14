@@ -155,6 +155,41 @@ export const PAGES_ROUTES: Routes = [
                 ]
             },
             {
+                path: 'outward-clearing',
+                children: [
+                    {
+                        path: 'start-business-day',
+                        loadComponent: () => import('./outward-clearing/pages/start-business-day/start-business-day.component').then(mod => mod.StartBusinessDayComponent),
+                        data: { title: 'Start Business Day' }
+                    },
+                    {
+                        path: 'cheque-lodgment',
+                        loadComponent: () => import('./outward-clearing/pages/cheque-lodgment/cheque-lodgment-list/cheque-lodgment-list.component').then(mod => mod.ChequeLodgmentListComponent),
+                        data: { title: 'Cheque Lodgment' }
+                    },
+                    {
+                        path: 'cheque-lodgment/new',
+                        loadComponent: () => import('./outward-clearing/pages/cheque-lodgment/cheque-lodgment-new/cheque-lodgment-new.component').then(mod => mod.ChequeLodgmentNewComponent),
+                        data: { title: 'New Cheque Lodgment' }
+                    },
+                    {
+                        path: 'cheque-lodgment/scan/:id',
+                        loadComponent: () => import('./outward-clearing/pages/cheque-lodgment/cheque-lodgment-scan/cheque-lodgment-scan.component').then(mod => mod.ChequeLodgmentScanComponent),
+                        data: { title: 'Instrument Capture' }
+                    },
+                    {
+                        path: 'cheque-lodgment/review/:id',
+                        loadComponent: () => import('./outward-clearing/pages/cheque-lodgment/cheque-lodgment-review/cheque-lodgment-review.component').then(mod => mod.ChequeLodgmentReviewComponent),
+                        data: { title: 'Review Transaction' }
+                    },
+                    {
+                        path: 'cheque-lodgment/deposit-slip/:id',
+                        loadComponent: () => import('./outward-clearing/pages/cheque-lodgment/cheque-lodgment-deposit-slip/cheque-lodgment-deposit-slip.component').then(mod => mod.ChequeLodgmentDepositSlipComponent),
+                        data: { title: 'Deposit Slip' }
+                    },
+                ]
+            },
+            {
                 path: 'reports',
                 children: [
                     {

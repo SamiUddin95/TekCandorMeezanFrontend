@@ -1,0 +1,331 @@
+$meezan-deep: #5a2181;
+$meezan-mid: #9c59c3;
+$border: #e5e7eb;
+$text-primary: #1f2937;
+$text-secondary: #6b7280;
+$text-muted: #9ca3af;
+$accent-blue: #0ea5e9;
+
+.cls-page { padding: 4px 0; }
+
+.cls-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 16px;
+  align-items: start;
+}
+
+// ── Capture Panel ─────────────────────────────────────────────────────────
+.cls-capture {
+  background: #fff;
+  border: 1px solid $border;
+  border-radius: 12px;
+  overflow: hidden;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 18px;
+    border-bottom: 1px solid $border;
+  }
+
+  &__title { margin: 0; font-size: 15px; font-weight: 700; color: $text-primary; i { color: $meezan-deep; } }
+  &__subtitle { margin: 2px 0 0; font-size: 11px; color: $text-secondary; }
+  &__tools { display: flex; gap: 6px; }
+}
+
+.cls-tool-btn {
+  width: 30px;
+  height: 30px;
+  border: 1px solid $border;
+  border-radius: 6px;
+  background: #fff;
+  color: $text-secondary;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .2s;
+  &:hover { background: #f8f6fc; color: $meezan-deep; border-color: $meezan-deep; }
+}
+
+// ── Preview Area ──────────────────────────────────────────────────────────
+.cls-preview {
+  padding: 30px 24px;
+  background: #f8fafb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 220px;
+}
+
+.cls-cheque-mock {
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  border: 2px solid #d1fae5;
+  border-radius: 8px;
+  padding: 18px 20px;
+  position: relative;
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+
+  &__bank {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f766e;
+    margin-bottom: 12px;
+    i { font-size: 14px; }
+  }
+
+  &__payee {
+    font-size: 11px;
+    color: $text-secondary;
+    margin-bottom: 6px;
+  }
+
+  &__line {
+    display: inline-block;
+    width: 150px;
+    border-bottom: 1px solid $text-muted;
+    margin-left: 4px;
+  }
+
+  &__amount-box {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: #f0fdfa;
+    border: 1px solid #99f6e4;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 13px;
+    color: #0f766e;
+    span { margin-right: 4px; font-size: 11px; }
+    strong { font-weight: 800; }
+  }
+
+  &__words {
+    font-size: 11px;
+    font-weight: 600;
+    color: $text-primary;
+    margin: 8px 0 14px;
+    letter-spacing: .3px;
+  }
+
+  &__micr {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    color: $text-muted;
+    border-top: 1px dashed $border;
+    padding-top: 8px;
+    letter-spacing: 1px;
+  }
+}
+
+// ── Progress Bars ─────────────────────────────────────────────────────────
+.cls-progress-row {
+  display: flex;
+  gap: 8px;
+  padding: 8px 18px 12px;
+}
+
+.cls-progress-bar {
+  flex: 1;
+  height: 4px;
+  background: #f3f4f6;
+  border-radius: 4px;
+  overflow: hidden;
+
+  &__fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width .6s ease;
+    &--green { background: #10b981; }
+    &--blue { background: $accent-blue; }
+  }
+}
+
+// ── Verification Panel ────────────────────────────────────────────────────
+.cls-verify {
+  background: #fff;
+  border: 1px solid $border;
+  border-radius: 12px;
+  padding: 16px 18px;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid $border;
+  }
+
+  &__title { margin: 0; font-size: 15px; font-weight: 700; color: $text-primary; }
+
+  &__status {
+    font-size: 11px;
+    font-weight: 600;
+    color: #0f766e;
+    i { color: #10b981; }
+  }
+}
+
+.cls-vgroup {
+  margin-bottom: 16px;
+
+  &__label {
+    margin: 0 0 8px;
+    font-size: 11px;
+    font-weight: 700;
+    color: $meezan-deep;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    i { opacity: .7; }
+  }
+}
+
+.cls-vrow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 6px 0;
+  border-bottom: 1px solid #f3f4f6;
+
+  &__key {
+    font-size: 11px;
+    color: $text-secondary;
+    i { font-size: 10px; color: $text-muted; }
+  }
+
+  &__val-wrap { display: flex; align-items: center; gap: 6px; }
+
+  &__val {
+    font-size: 12px;
+    font-weight: 600;
+    color: $text-primary;
+
+    &--mono { font-family: monospace; font-size: 11px; letter-spacing: .5px; }
+  }
+}
+
+.cls-verified-badge {
+  font-size: 9px;
+  font-weight: 700;
+  color: #16a34a;
+  background: #dcfce7;
+  padding: 1px 6px;
+  border-radius: 8px;
+  i { font-size: 8px; }
+}
+
+.cls-review-badge {
+  font-size: 9px;
+  font-weight: 700;
+  color: $accent-blue;
+  background: #e0f2fe;
+  padding: 1px 6px;
+  border-radius: 8px;
+  i { font-size: 8px; }
+}
+
+.cls-vrow-inline {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.cls-vfield {
+  background: #f9fafb;
+  border: 1px solid $border;
+  border-radius: 6px;
+  padding: 8px 10px;
+
+  &__key {
+    display: block;
+    font-size: 10px;
+    color: $text-secondary;
+    margin-bottom: 4px;
+    i { font-size: 9px; }
+  }
+
+  &__val { font-size: 14px; font-weight: 700; color: $text-primary; }
+}
+
+.cls-beneficiary {
+  font-size: 13px;
+  font-weight: 700;
+  color: $text-primary;
+  margin: 0;
+  padding: 6px 0;
+}
+
+// ── OCR Stats ─────────────────────────────────────────────────────────────
+.cls-ocr {
+  background: #f9fafb;
+  border: 1px solid $border;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: $text-secondary;
+    padding: 3px 0;
+  }
+
+  &__val {
+    font-weight: 700;
+    color: $text-primary;
+    &--green { color: #16a34a; }
+  }
+}
+
+// ── Buttons ───────────────────────────────────────────────────────────────
+.cls-btn-proceed {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, $meezan-deep, $meezan-mid);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(90,33,129,.25);
+  transition: opacity .2s;
+  margin-bottom: 8px;
+  &:hover { opacity: .9; }
+}
+
+.cls-btn-discard {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid $border;
+  border-radius: 8px;
+  background: #fff;
+  color: $text-secondary;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color .2s;
+  margin-bottom: 10px;
+  &:hover { border-color: $text-secondary; }
+}
+
+.cls-server-note {
+  font-size: 10px;
+  color: $text-muted;
+  text-align: center;
+  margin: 0;
+  letter-spacing: .5px;
+  i { color: #10b981; font-size: 9px; }
+}
+
+@media (max-width: 768px) {
+  .cls-grid { grid-template-columns: 1fr; }
+}

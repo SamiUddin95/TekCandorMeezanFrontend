@@ -26,114 +26,162 @@ export class MenuPermissionService {
   private getAllMenuItems(): MenuItemType[] {
     return [
       {
-        label: 'Dashboard',
-        icon: 'tablerDashboard',
-        url: '/dashboard',
-        requiredPermissions: ['system.Dashboard'] 
-      },
-      {
-        label: 'Live Monitoring',
-        icon: 'tablerActivity',
-        url: '/pages/live-monitoring',
-        requiredPermissions: ['system.LiveMonitoring']
-      },
-      {
-        label: 'Basic Setup',
-        icon: 'tablerSettings',
-        isCollapsed: true,
-        requiredPermissions: ['basicSetUp.Cycle', 'basicSetUp.Branch', 'basicSetUp.Hub', 'basicSetUp.ReturnReason'],
+        label: 'Inward Clearing',
+        icon: 'tablerArrowBarToDown',
+        isCollapsed: false,
+        requiredPermissions: ['system.Dashboard', 'system.LiveMonitoring', 'basicSetUp.Cycle', 'basicSetUp.Branch', 'basicSetUp.Hub', 'basicSetUp.ReturnReason', 'chequeProcess.ManualImport', 'chequeProcess.UplaodFile', 'chequeProcess.pendingCheques', 'chequeProcess.callbackcheques', 'chequeProcess.ReturnTransactions', 'Security.Users', 'Security.Groups'],
         children: [
-          { 
-            label: 'Cycle', 
-            icon: 'tablerRefresh', 
-            url: '/pages/basic-set-up/cycle',
-            requiredPermissions: ['basicSetUp.Cycle']
+          {
+            label: 'Dashboard',
+            icon: 'tablerDashboard',
+            url: '/dashboard',
+            requiredPermissions: ['system.Dashboard']
           },
-          { 
-            label: 'Branch', 
-            icon: 'tablerBuilding', 
-            url: '/pages/basic-set-up/branch',
-            requiredPermissions: ['basicSetUp.Branch']
+          {
+            label: 'Live Monitoring',
+            icon: 'tablerActivity',
+            url: '/pages/live-monitoring',
+            requiredPermissions: ['system.LiveMonitoring']
           },
-          { 
-            label: 'Hub', 
-            icon: 'tablerNetwork', 
-            url: '/pages/basic-set-up/hub',
-            requiredPermissions: ['basicSetUp.Hub']
+          {
+            label: 'Basic Setup',
+            icon: 'tablerSettings',
+            isCollapsed: true,
+            requiredPermissions: ['basicSetUp.Cycle', 'basicSetUp.Branch', 'basicSetUp.Hub', 'basicSetUp.ReturnReason'],
+            children: [
+              { 
+                label: 'Cycle', 
+                icon: 'tablerRefresh', 
+                url: '/pages/basic-set-up/cycle',
+                requiredPermissions: ['basicSetUp.Cycle']
+              },
+              { 
+                label: 'Branch', 
+                icon: 'tablerBuilding', 
+                url: '/pages/basic-set-up/branch',
+                requiredPermissions: ['basicSetUp.Branch']
+              },
+              { 
+                label: 'Hub', 
+                icon: 'tablerNetwork', 
+                url: '/pages/basic-set-up/hub',
+                requiredPermissions: ['basicSetUp.Hub']
+              },
+              { 
+                label: 'Return Reason', 
+                icon: 'tablerArrowBackUp', 
+                url: '/pages/basic-set-up/return-reason',
+                requiredPermissions: ['basicSetUp.ReturnReason']
+              },
+            ]
           },
-          { 
-            label: 'Return Reason', 
-            icon: 'tablerArrowBackUp', 
-            url: '/pages/basic-set-up/return-reason',
-            requiredPermissions: ['basicSetUp.ReturnReason']
+          {
+            label: 'Cheque Process',
+            icon: 'tablerFileDescription',
+            isCollapsed: true,
+            requiredPermissions: ['chequeProcess.ManualImport', 'chequeProcess.UplaodFile', 'chequeProcess.pendingCheques', 'chequeProcess.callbackcheques', 'chequeProcess.ReturnTransactions'],
+            children: [
+              { 
+                label: 'Manual Import', 
+                icon: 'tablerUpload', 
+                url: '/pages/ChequeProcess/manual-import',
+                requiredPermissions: ['chequeProcess.ManualImport']
+              },
+              { 
+                label: 'Upload File', 
+                icon: 'tablerFileUpload', 
+                url: '/pages/ChequeProcess/upload-file',
+                requiredPermissions: ['chequeProcess.UplaodFile']
+              },
+              { 
+                label: 'Pending Cheques', 
+                icon: 'tablerClock', 
+                url: '/pages/ChequeProcess/pending-cheque',
+                requiredPermissions: ['chequeProcess.pendingCheques']
+              },
+              { 
+                label: 'Call back Cheques', 
+                icon: 'tablerPhoneCall', 
+                url: '/pages/ChequeProcess/callbackcheques',
+                requiredPermissions: ['chequeProcess.callbackcheques']
+              },
+              { 
+                label: 'Return Transactions', 
+                icon: 'tablerArrowBackUp', 
+                url: '/pages/ChequeProcess/return-transaction',
+                requiredPermissions: ['chequeProcess.ReturnTransactions']
+              },
+              { 
+                label: 'Branch return confirmations', 
+                icon: 'tablerCheck', 
+                url: '/pages/ChequeProcess/branch-return-confirmations',
+                requiredPermissions: ['chequeProcess.ReturnTransactions']
+              },
+              { 
+                label: 'Approved Transactions', 
+                icon: 'tablerChecklist', 
+                url: '/pages/ChequeProcess/approved-transactions',
+                requiredPermissions: ['chequeProcess.ReturnTransactions']
+              },
+              { 
+                label: 'UnAuthorized Transactions', 
+                icon: 'tablerShieldX', 
+                url: '/pages/ChequeProcess/unauthorize-transactions',
+                requiredPermissions: ['chequeProcess.ReturnTransactions']
+              },
+              { 
+                label: 'System Rejected Cheques', 
+                icon: 'tablerXboxX', 
+                url: '/pages/ChequeProcess/system-rejected-cheques',
+                requiredPermissions: ['chequeProcess.ReturnTransactions']
+              },
+              { 
+                label: 'In Process Cheques ', 
+                icon: 'tablerLoader', 
+                url: '/pages/ChequeProcess/in-process-cheques',
+                requiredPermissions: ['chequeProcess.ReturnTransactions']
+              },
+            ]
           },
+          {
+            label: 'Security',
+            icon: 'tablerShield',
+            isCollapsed: true,
+            requiredPermissions: ['Security.Users', 'Security.Groups'],
+            children: [
+              { 
+                label: 'Users', 
+                icon: 'tablerUsers', 
+                url: '/pages/user-management',
+                requiredPermissions: ['Security.Users']
+              },
+              { 
+                label: 'Groups', 
+                icon: 'tablerUsersGroup', 
+                url: '/pages/group',
+                requiredPermissions: ['Security.Groups']
+              },
+            ]
+          }
         ]
       },
       {
-        label: 'Cheque Process',
-        icon: 'tablerFileDescription',
+        label: 'Outward Clearing',
+        icon: 'tablerArrowBarToUp',
         isCollapsed: true,
-        requiredPermissions: ['chequeProcess.ManualImport', 'chequeProcess.UplaodFile', 'chequeProcess.pendingCheques', 'chequeProcess.callbackcheques', 'chequeProcess.ReturnTransactions'],
+        requiredPermissions: ['outwardClearing.StartBusinessDay', 'outwardClearing.ChequeLodgment'],
         children: [
-          { 
-            label: 'Manual Import', 
-            icon: 'tablerUpload', 
-            url: '/pages/ChequeProcess/manual-import',
-            requiredPermissions: ['chequeProcess.ManualImport']
+          {
+            label: 'Start Business Day',
+            icon: 'tablerCalendarEvent',
+            url: '/pages/outward-clearing/start-business-day',
+            requiredPermissions: ['outwardClearing.StartBusinessDay']
           },
-          { 
-            label: 'Upload File', 
-            icon: 'tablerFileUpload', 
-            url: '/pages/ChequeProcess/upload-file',
-            requiredPermissions: ['chequeProcess.UplaodFile']
-          },
-          { 
-            label: 'Pending Cheques', 
-            icon: 'tablerClock', 
-            url: '/pages/ChequeProcess/pending-cheque',
-            requiredPermissions: ['chequeProcess.pendingCheques']
-          },
-          { 
-            label: 'Call back Cheques', 
-            icon: 'tablerPhoneCall', 
-            url: '/pages/ChequeProcess/callbackcheques',
-            requiredPermissions: ['chequeProcess.callbackcheques']
-          },
-          { 
-            label: 'Return Transactions', 
-            icon: 'tablerArrowBackUp', 
-            url: '/pages/ChequeProcess/return-transaction',
-            requiredPermissions: ['chequeProcess.ReturnTransactions']
-          },
-          { 
-            label: 'Branch return confirmations', 
-            icon: 'tablerCheck', 
-            url: '/pages/ChequeProcess/branch-return-confirmations',
-            requiredPermissions: ['chequeProcess.ReturnTransactions']
-          },
-          { 
-            label: 'Approved Transactions', 
-            icon: 'tablerChecklist', 
-            url: '/pages/ChequeProcess/approved-transactions',
-            requiredPermissions: ['chequeProcess.ReturnTransactions']
-          },
-          { 
-            label: 'UnAuthorized Transactions', 
-            icon: 'tablerShieldX', 
-            url: '/pages/ChequeProcess/unauthorize-transactions',
-            requiredPermissions: ['chequeProcess.ReturnTransactions']
-          },
-          { 
-            label: 'System Rejected Cheques', 
-            icon: 'tablerXboxX', 
-            url: '/pages/ChequeProcess/system-rejected-cheques',
-            requiredPermissions: ['chequeProcess.ReturnTransactions']
-          },
-          { 
-            label: 'In Process Cheques ', 
-            icon: 'tablerLoader', 
-            url: '/pages/ChequeProcess/in-process-cheques',
-            requiredPermissions: ['chequeProcess.ReturnTransactions']
+          {
+            label: 'Cheque Lodgment',
+            icon: 'tablerFileInvoice',
+            url: '/pages/outward-clearing/cheque-lodgment',
+            requiredPermissions: ['outwardClearing.ChequeLodgment']
           },
         ]
       },
@@ -141,9 +189,15 @@ export class MenuPermissionService {
         label: 'Reports',
         icon: 'tablerFileReport',
         isCollapsed: true,
-        requiredPermissions: ['reports.Branchwise Report','reports.CBCReport','reports.FinalReport','reports.InwardClearingReport','reports.ReturnMemoReport','reports.ReturnRegisterReport'],
+        requiredPermissions: ['reports.Branchwise Report','reports.CBCReport','reports.FinalReport','reports.InwardClearingReport','reports.ReturnMemoReport','reports.ReturnRegisterReport','reports.ClearingLogReport'],
         children: [
-            {
+          {
+            label: 'Inward Reports',
+            icon: 'tablerArrowBarToDown',
+            isCollapsed: true,
+            requiredPermissions: ['reports.Branchwise Report','reports.CBCReport','reports.FinalReport','reports.InwardClearingReport','reports.ReturnMemoReport','reports.ReturnRegisterReport','reports.Audit.ClearingLogReport'],
+            children: [
+              {
                 label: 'ChequeDeposit',
                 icon: 'tablerFileReport',
                 isCollapsed: true,
@@ -186,8 +240,8 @@ export class MenuPermissionService {
                      requiredPermissions: ['reports.ReturnRegisterReport']
                    },
                 ]
-            },
-            {
+              },
+              {
                 label: 'Audit',
                 icon: 'tablerFileClock',
                 isCollapsed: true,
@@ -200,26 +254,17 @@ export class MenuPermissionService {
                      requiredPermissions: ['reports.Audit.ClearingLogReport']
                    },
                 ]
-            },
-        ]
-       },
-      {
-        label: 'Security',
-        icon: 'tablerShield',
-        isCollapsed: true,
-        requiredPermissions: ['Security.Users', 'Security.Groups'],
-        children: [
-          { 
-            label: 'Users', 
-            icon: 'tablerUsers', 
-            url: '/pages/user-management',
-            requiredPermissions: ['Security.Users']
+              },
+            ]
           },
-          { 
-            label: 'Groups', 
-            icon: 'tablerUsersGroup', 
-            url: '/pages/group',
-            requiredPermissions: ['Security.Groups']
+          {
+            label: 'Outward Reports',
+            icon: 'tablerArrowBarToUp',
+            isCollapsed: true,
+            requiredPermissions: [],
+            children: [
+              // Add Outward Reports here when available
+            ]
           },
         ]
       },
