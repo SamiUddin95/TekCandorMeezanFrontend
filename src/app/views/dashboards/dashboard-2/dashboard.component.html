@@ -1,17 +1,159 @@
 <div class="dashboard-container">
-    <app-page-title title="Dashboard" class="mb-3"/>
+  <app-page-title title="Dashboard" class="mb-2"/>
 
-    <div class="row g-3">
-        @if (isLoading) {
-            <div class="col-12 text-center py-5">
-                <app-spinner></app-spinner>
-            </div>
-        } @else {
-            @for (item of statistics; track $index) {
-            <div class="col-lg-4 col-md-4 col-sm-4">
-                <app-statistics-widget [item]="item"/>
-            </div>
-            }
-        }
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <app-spinner/>
     </div>
+  } @else {
+
+    <!-- ─── KPI SUMMARY CARDS ──────────────────────────────────────────── -->
+    <div class="row g-2 mb-2">
+
+      <!-- Total Cheques -->
+      <div class="col-xl-3 col-md-6">
+        <div class="kpi-card kpi-card--total">
+          <div class="kpi-card__icon"><i class="fas fa-file-invoice"></i></div>
+          <div class="kpi-card__body">
+            <p class="kpi-card__label">Total Cheques</p>
+            <h3 class="kpi-card__value"><span [countUp]="grandTotal">0</span></h3>
+            <p class="kpi-card__sub">Normal + Same Day combined</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total Amount -->
+      <div class="col-xl-3 col-md-6">
+        <div class="kpi-card kpi-card--amount">
+          <div class="kpi-card__icon"><i class="fas fa-coins"></i></div>
+          <div class="kpi-card__body">
+            <p class="kpi-card__label">Total Amount</p>
+            <h3 class="kpi-card__value">{{ formatAmt(grandAmount) }}</h3>
+            <p class="kpi-card__sub">Combined transactions value</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Normal Cheques -->
+      <div class="col-xl-3 col-md-6">
+        <div class="kpi-card kpi-card--normal">
+          <div class="kpi-card__icon"><i class="fas fa-layer-group"></i></div>
+          <div class="kpi-card__body">
+            <p class="kpi-card__label">Normal Cheques</p>
+            <h3 class="kpi-card__value"><span [countUp]="normalTotal">0</span></h3>
+            <p class="kpi-card__sub">{{ formatAmt(normalAmount) }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Same Day Cheques -->
+      <div class="col-xl-3 col-md-6">
+        <div class="kpi-card kpi-card--sameday">
+          <div class="kpi-card__icon"><i class="fas fa-bolt"></i></div>
+          <div class="kpi-card__body">
+            <p class="kpi-card__label">Same Day Cheques</p>
+            <h3 class="kpi-card__value"><span [countUp]="sameDayTotal">0</span></h3>
+            <p class="kpi-card__sub">{{ formatAmt(sameDayAmount) }}</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ─── STATUS DETAIL CARDS ────────────────────────────────────────── -->
+    <div class="row g-2 mb-2">
+
+      <!-- Normal Cheques Detail -->
+      <div class="col-xl-6 col-lg-6">
+        <div class="detail-card">
+          <div class="detail-card__header">
+            <h6 class="detail-card__title"><i class="fas fa-layer-group me-1"></i>Normal Cheques</h6>
+            <span class="detail-card__badge detail-card__badge--cyan">{{ normalTotal }} Cheques</span>
+          </div>
+          <div class="status-grid">
+            @for (item of normalItems; track $index) {
+              <div class="status-row">
+                <span class="status-dot" [style.background]="getStatusColor(item.status)"></span>
+                <span class="status-name">{{ item.status }}</span>
+                <span class="status-cheques">{{ item.cheques }}</span>
+                <span class="status-amount">{{ formatAmt(item.amount) }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Same Day Cheques Detail -->
+      <div class="col-xl-6 col-lg-6">
+        <div class="detail-card">
+          <div class="detail-card__header">
+            <h6 class="detail-card__title"><i class="fas fa-bolt me-1"></i>Same Day Cheques</h6>
+            <span class="detail-card__badge detail-card__badge--amber">{{ sameDayTotal }} Cheques</span>
+          </div>
+          <div class="status-grid">
+            @for (item of sameDayItems; track $index) {
+              <div class="status-row">
+                <span class="status-dot" [style.background]="getStatusColor(item.status)"></span>
+                <span class="status-name">{{ item.status }}</span>
+                <span class="status-cheques">{{ item.cheques }}</span>
+                <span class="status-amount">{{ formatAmt(item.amount) }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ─── CHARTS ROW ─────────────────────────────────────────────────── -->
+    <div class="row g-2">
+
+      <!-- Grouped Bar Chart -->
+      <div class="col-xl-6 col-lg-12">
+        <div class="chart-card">
+          <div class="chart-card__header">
+            <div>
+              <h6 class="chart-card__title">Cheques by Status</h6>
+              <p class="chart-card__subtitle">Normal vs Same Day comparison</p>
+            </div>
+            <div class="d-flex flex-column align-items-end gap-1">
+              <span class="total-pill total-pill--purple">Normal: {{ normalTotal }}</span>
+              <span class="total-pill total-pill--violet">SameDay: {{ sameDayTotal }}</span>
+            </div>
+          </div>
+          <app-echart [getOptions]="barChartOptions" height="210px"/>
+        </div>
+      </div>
+
+      <!-- Normal Cheques Pie -->
+      <div class="col-xl-3 col-md-6">
+        <div class="chart-card">
+          <div class="chart-card__header">
+            <div>
+              <h6 class="chart-card__title">Normal Cheques</h6>
+              <p class="chart-card__subtitle">Status breakdown</p>
+            </div>
+            <span class="chart-card__total">{{ normalTotal }}</span>
+          </div>
+          <app-echart [getOptions]="normalPieOptions" height="195px"/>
+        </div>
+      </div>
+
+      <!-- Same Day Cheques Pie -->
+      <div class="col-xl-3 col-md-6">
+        <div class="chart-card">
+          <div class="chart-card__header">
+            <div>
+              <h6 class="chart-card__title">Same Day Cheques</h6>
+              <p class="chart-card__subtitle">Status breakdown</p>
+            </div>
+            <span class="chart-card__total">{{ sameDayTotal }}</span>
+          </div>
+          <app-echart [getOptions]="sameDayPieOptions" height="195px"/>
+        </div>
+      </div>
+
+    </div>
+
+  }
 </div>

@@ -1,170 +1,221 @@
-.modern-dashboard-summary {
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  border-radius: 16px;
-  padding: 32px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05);
+// ─── Dashboard – Meezan Bank Theme ────────────────────────────────────────
+$meezan-deep:    #5a2181;
+$meezan-mid:     #9c59c3;
+$meezan-light:   #ede9fe;
+$success-green:  #16a34a;
+$info-cyan:      #0891b2;
+$pending-amber:  #f59e0b;
+$border:         #e5e7eb;
+$text-primary:   #1f2937;
+$text-secondary: #6b7280;
+$text-muted:     #9ca3af;
+
+// ── KPI CARDS ─────────────────────────────────────────────────────────────
+.kpi-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: #ffffff;
+  border: 1px solid $border;
+  border-radius: 12px;
   position: relative;
-  overflow: hidden;
-  
+  box-shadow: 0 1px 4px rgba(0,0,0,.06);
+  height: 100%;
+  transition: transform .2s ease, box-shadow .2s ease;
+
   &::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #8b5cf6 0%, #a855f7 50%, #9333ea 100%);
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+    border-radius: 12px 0 0 12px;
   }
-}
 
-.summary-header {
-  text-align: center;
-  margin-bottom: 32px;
-}
-
-.summary-title {
-  font-size: 24px;
-  font-weight: 700;
-  color: #111827;
-  margin-bottom: 8px;
-  background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.summary-subtitle {
-  font-size: 16px;
-  color: #6b7280;
-  font-weight: 500;
-}
-
-.summary-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 24px;
-}
-
-.summary-item {
-  background: rgba(139, 92, 246, 0.05);
-  border: 1px solid rgba(139, 92, 246, 0.1);
-  border-radius: 12px;
-  padding: 24px;
-  text-align: center;
-  transition: all 0.3s ease;
-  
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(139, 92, 246, 0.15);
-    border-color: rgba(139, 92, 246, 0.2);
+    box-shadow: 0 5px 16px rgba(90,33,129,.12);
   }
-}
 
-.summary-label {
-  display: block;
-  font-size: 14px;
-  font-weight: 500;
-  color: #6b7280;
-  margin-bottom: 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.summary-value {
-  display: block;
-  font-size: 28px;
-  font-weight: 700;
-  color: #111827;
-  
-  &.success {
-    color: #059669;
-  }
-}
-
-// Responsive design
-@media (max-width: 768px) {
-  .modern-dashboard-summary {
-    padding: 24px;
-  }
-  
-  .summary-stats {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-  
-  .summary-item {
-    padding: 20px;
-  }
-  
-  .summary-title {
-    font-size: 20px;
-  }
-  
-  .summary-value {
-    font-size: 24px;
-  }
-}
-
-@media (max-width: 576px) {
-  .modern-dashboard-summary {
-    padding: 20px;
-  }
-  
-  .summary-item {
-    padding: 16px;
-  }
-  
-  .summary-title {
+  &__icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
     font-size: 18px;
+    flex-shrink: 0;
   }
-  
-  .summary-value {
-    font-size: 20px;
+
+  &__body { flex: 1; min-width: 0; }
+
+  &__label {
+    margin: 0;
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .4px;
+    color: $text-secondary;
+  }
+
+  &__value {
+    margin: 3px 0 2px;
+    font-size: 24px; font-weight: 800; line-height: 1;
+  }
+
+  &__sub {
+    margin: 0;
+    font-size: 10px;
+    color: $text-muted;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  // ── colour variants ──
+  &--total {
+    &::before         { background: $meezan-deep; }
+    .kpi-card__icon   { background: $meezan-light; color: $meezan-deep; }
+    .kpi-card__value  { color: $meezan-deep; }
+  }
+
+  &--amount {
+    &::before         { background: $success-green; }
+    .kpi-card__icon   { background: #dcfce7; color: $success-green; }
+    .kpi-card__value  { color: $success-green; font-size: 20px; }
+  }
+
+  &--normal {
+    &::before         { background: $info-cyan; }
+    .kpi-card__icon   { background: #cffafe; color: $info-cyan; }
+    .kpi-card__value  { color: $info-cyan; }
+  }
+
+  &--sameday {
+    &::before         { background: $pending-amber; }
+    .kpi-card__icon   { background: #fef3c7; color: $pending-amber; }
+    .kpi-card__value  { color: $pending-amber; }
   }
 }
 
-// Animation for cards
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
+// ── STATUS DETAIL CARDS ───────────────────────────────────────────────────
+.detail-card {
+  background: #ffffff;
+  border: 1px solid $border;
+  border-radius: 12px;
+  padding: 10px 14px 8px;
+  height: 100%;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  &__title {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: $text-primary;
+    i { opacity: .6; }
+  }
+
+  &__badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 12px;
+
+    &--cyan  { background: #cffafe; color: #155e75; }
+    &--amber { background: #fef3c7; color: #92400e; }
   }
 }
 
-.container-fluid {
-  animation: fadeInUp 0.6s ease-out;
+.status-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 20px;
 }
 
-// Additional styling for better spacing
-.row.g-4 {
-  --bs-gutter-x: 1.5rem;
-  --bs-gutter-y: 1.5rem;
+.status-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+  border-bottom: 1px solid #f9fafb;
+
+  &:last-child { border-bottom: none; }
 }
 
-// Custom grid improvements
-.col-xxl-4, .col-xl-6, .col-lg-6, .col-md-6 {
-  margin-bottom: 0;
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 
-// Dashboard container for single page view
-.dashboard-container {
-  max-height: calc(100vh - 120px);
-  overflow: hidden;
-  padding: 0;
-  
-  .row {
-    margin-left: 0;
-    margin-right: 0;
+.status-name {
+  flex: 1;
+  font-size: 11px;
+  font-weight: 500;
+  color: $text-secondary;
+  white-space: nowrap;
+}
+
+.status-cheques {
+  font-size: 13px;
+  font-weight: 700;
+  color: $meezan-deep;
+  min-width: 22px;
+  text-align: right;
+}
+
+.status-amount {
+  font-size: 10px;
+  font-weight: 500;
+  color: $text-muted;
+  min-width: 60px;
+  text-align: right;
+}
+
+// ── CHART CARDS ───────────────────────────────────────────────────────────
+.chart-card {
+  background: #ffffff;
+  border: 1px solid $border;
+  border-radius: 12px;
+  padding: 12px 14px 8px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    gap: 8px;
   }
-  
-  // Compact spacing for cards
-  .g-3 {
-    --bs-gutter-x: 0.75rem;
-    --bs-gutter-y: 0.75rem;
+
+  &__title {
+    margin: 0;
+    font-size: 14px; font-weight: 700;
+    color: $text-primary;
   }
+
+  &__subtitle {
+    margin: 3px 0 0;
+    font-size: 11px;
+    color: $text-muted;
+  }
+
+  &__total {
+    font-size: 22px; font-weight: 700;
+    color: $meezan-deep;
+    line-height: 1; flex-shrink: 0;
+  }
+}
+
+.total-pill {
+  display: inline-block;
+  font-size: 11px; font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 20px;
+
+  &--purple { background: $meezan-light; color: $meezan-deep; }
+  &--violet { background: #f3e8ff;       color: $meezan-mid;  }
 }

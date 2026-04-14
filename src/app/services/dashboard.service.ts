@@ -3,16 +3,21 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
-export interface DashboardItem {
+export interface DashboardChequeItem {
   status: string;
   cheques: number;
   amount: number;
 }
 
+export interface DashboardItems {
+  normal: DashboardChequeItem[];
+  sameDay: DashboardChequeItem[];
+}
+
 export interface DashboardResponse {
   status: string;
   data: {
-    items: DashboardItem[];
+    items: DashboardItems;
   };
   statusCode: number;
   errorMessage: string | null;

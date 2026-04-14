@@ -6,7 +6,7 @@ export const environment = {
   //apiUrl: 'http://192.168.18.83:5223/api',
 
   // Auto logout inactivity timeout (milliseconds)
-  inactivityTimeout: 60 * 1000,          // 1 minute
+  inactivityTimeout: 5 * 60 * 1000,      // 5 minutes
   inactivityWarningBefore: 30 * 1000    // show warning 30 seconds before timeout
 };
 
