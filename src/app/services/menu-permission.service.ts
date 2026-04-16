@@ -169,7 +169,7 @@ export class MenuPermissionService {
         label: 'Outward Clearing',
         icon: 'tablerArrowBarToUp',
         isCollapsed: true,
-        requiredPermissions: ['outwardClearing.StartBusinessDay', 'outwardClearing.ChequeLodgment'],
+        requiredPermissions: ['outwardClearing.StartBusinessDay', 'outwardClearing.ChequeLodgment', 'outwardClearing.GenerateClearingFile', 'outwardClearing.OperationalOverview', 'outwardClearing.NiftReconciliation'],
         children: [
           {
             label: 'Start Business Day',
@@ -182,6 +182,36 @@ export class MenuPermissionService {
             icon: 'tablerFileInvoice',
             url: '/pages/outward-clearing/cheque-lodgment',
             requiredPermissions: ['outwardClearing.ChequeLodgment']
+          },
+          {
+            label: 'Generate Clearing File',
+            icon: 'tablerFileExport',
+            url: '/pages/outward-clearing/generate-clearing-file',
+            requiredPermissions: ['outwardClearing.GenerateClearingFile']
+          },
+          {
+            label: 'Operational Overview',
+            icon: 'tablerEye',
+            url: '/pages/outward-clearing/operational-overview',
+            requiredPermissions: ['outwardClearing.OperationalOverview']
+          },
+          {
+            label: 'NIFT Reconciliation',
+            icon: 'tablerFileSymlink',
+            url: '/pages/outward-clearing/nift-reconciliation',
+            requiredPermissions: ['outwardClearing.NiftReconciliation']
+          },
+          {
+            label: 'Fund Realization',
+            icon: 'tablerCoin',
+            url: '/pages/outward-clearing/fund-realization',
+            requiredPermissions: ['outwardClearing.FundRealization']
+          },
+          {
+            label: 'Return Marking Utility',
+            icon: 'tablerArrowBackUp',
+            url: '/pages/outward-clearing/return-marking-utility',
+            requiredPermissions: ['outwardClearing.ReturnMarkingUtility']
           },
         ]
       },

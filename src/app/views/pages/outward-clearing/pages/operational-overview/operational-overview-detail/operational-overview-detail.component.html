@@ -1,0 +1,286 @@
+<div class="ood-detail">
+
+  <!-- Header -->
+  <div class="ood-detail__header">
+    <div class="ood-detail__header-left">
+      <button class="ood-detail__back-btn" type="button" (click)="onBack()">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M19 12H5M12 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Back to List
+      </button>
+      <div>
+        <h5 class="ood-detail__title">Transaction Details</h5>
+        <div class="ood-detail__breadcrumb">
+          <span>Operational Overview</span>
+          <span class="ood-detail__breadcrumb-sep">›</span>
+          <span class="ood-detail__breadcrumb-active">Transaction Review</span>
+        </div>
+      </div>
+    </div>
+    @if (detailItem) {
+      <div class="ood-detail__ref-wrap">
+        <span class="ood-detail__ref-label">Reference No.</span>
+        <span class="ood-detail__ref-val">{{ detailItem.referenceNo || '—' }}</span>
+      </div>
+    }
+  </div>
+
+  <!-- Loading -->
+  @if (isLoading) {
+    <div class="ood-detail__state">Loading transaction details...</div>
+  }
+
+  <!-- Error -->
+  @if (!isLoading && loadError) {
+    <div class="ood-detail__state ood-detail__state--error">{{ loadError }}</div>
+  }
+
+  <!-- Content -->
+  @if (!isLoading && detailItem) {
+
+    <!-- Status Banner -->
+    <div class="ood-detail__banner"
+      [class.ood-detail__banner--pending]="mapStatus(detailItem.status) === 'Pending'"
+      [class.ood-detail__banner--returned]="mapStatus(detailItem.status) === 'Returned'"
+      [class.ood-detail__banner--cleared]="mapStatus(detailItem.status) === 'Cleared'">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.8"/>
+        <path d="M12 8v4l3 3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <strong>Status: {{ mapStatus(detailItem.status) }}</strong>
+        <span class="ood-detail__banner-sub">
+          Instrument: {{ detailItem.instrumentType }} &nbsp;·&nbsp;
+          OCR Engine: {{ detailItem.ocrEngine }} &nbsp;·&nbsp;
+          Accuracy: {{ detailItem.accuracy }}
+        </span>
+      </div>
+      <div class="ood-detail__banner-score">
+        <span class="ood-detail__score">{{ detailItem.accuracy }}</span>
+        <span class="ood-detail__score-lbl">ACCURACY</span>
+      </div>
+    </div>
+
+    <!-- Two-column grid -->
+    <div class="ood-detail__grid">
+
+      <!-- LEFT -->
+      <div class="ood-detail__left">
+
+        <!-- Cheque Preview -->
+        <div class="ood-detail__card">
+          <div class="ood-detail__card-header">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="2" y="5" width="20" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M2 10h20" fill="none" stroke="currentColor" stroke-width="1.8"/>
+            </svg>
+            Instrument Preview
+            <span class="ood-detail__confidence">{{ detailItem.processingTime }} processed</span>
+          </div>
+          <div class="ood-detail__cheque-mock">
+            <div class="ood-detail__mock-bank">{{ detailItem.drawerBank || 'Drawer Bank' }}</div>
+            <div class="ood-detail__mock-row">
+              <span>DATE: {{ detailItem.chequeDate }}</span>
+              <span class="ood-detail__mock-amt">{{ detailItem.currency }} {{ formatAmount(detailItem.amount) }}/-</span>
+            </div>
+            <div class="ood-detail__mock-payee">
+              PAY TO THE ORDER OF &nbsp;<strong>{{ detailItem.beneficiaryTitle }}</strong>
+            </div>
+            <div class="ood-detail__mock-micr">{{ detailItem.micr }}</div>
+            <div class="ood-detail__mock-footer">
+              <span>Cheque No: {{ detailItem.chequeNo }}</span>
+              <span>Branch: {{ detailItem.payingBranchCode }}</span>
+              <span>Received: {{ formatDate(detailItem.date) }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="ood-detail__card">
+          <div class="ood-detail__card-header">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="2" y="5" width="20" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M2 10h20" fill="none" stroke="currentColor" stroke-width="1.8"/>
+            </svg>
+            Instrument Preview Back
+            <span class="ood-detail__confidence">{{ detailItem.processingTime }} processed</span>
+          </div>
+          <div class="ood-detail__cheque-mock">
+            <div class="ood-detail__mock-bank">{{ detailItem.drawerBank || 'Drawer Bank' }}</div>
+            <div class="ood-detail__mock-row">
+              <span>DATE: {{ detailItem.chequeDate }}</span>
+              <span class="ood-detail__mock-amt">{{ detailItem.currency }} {{ formatAmount(detailItem.amount) }}/-</span>
+            </div>
+            <div class="ood-detail__mock-payee">
+              PAY TO THE ORDER OF &nbsp;<strong>{{ detailItem.beneficiaryTitle }}</strong>
+            </div>
+            <div class="ood-detail__mock-micr">{{ detailItem.micr }}</div>
+            <div class="ood-detail__mock-footer">
+              <span>Cheque No: {{ detailItem.chequeNo }}</span>
+              <span>Branch: {{ detailItem.payingBranchCode }}</span>
+              <span>Received: {{ formatDate(detailItem.date) }}</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT -->
+      <div class="ood-detail__right">
+        <div class="ood-detail__card">
+          <div class="ood-detail__card-header">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="none" stroke="currentColor" stroke-width="1.8"/>
+            </svg>
+            Digital Verification Data
+          </div>
+
+          <!-- Depositor Info -->
+          <div class="ood-detail__section">
+            <p class="ood-detail__section-title">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" fill="none" stroke="currentColor" stroke-width="1.8"/>
+                <circle cx="12" cy="7" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/>
+              </svg>
+              Depositor Info
+            </p>
+            <div class="ood-detail__row">
+              <span class="ood-detail__key">Account Name</span>
+              <span class="ood-detail__val">{{ detailItem.depositorTitle }}</span>
+            </div>
+            <div class="ood-detail__row">
+              <span class="ood-detail__key">Account Number</span>
+              <span class="ood-detail__val ood-detail__val--mono">{{ detailItem.accountNo }}</span>
+            </div>
+            <div class="ood-detail__row">
+              <span class="ood-detail__key">Depositor Type</span>
+              <span class="ood-detail__val">{{ detailItem.depositorType }}</span>
+            </div>
+            <div class="ood-detail__row">
+              <span class="ood-detail__key">Account Status</span>
+              <span class="ood-detail__val">{{ detailItem.accountStatus }}</span>
+            </div>
+          </div>
+
+          <!-- Beneficiary Info -->
+          <div class="ood-detail__section">
+            <p class="ood-detail__section-title">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" fill="none" stroke="currentColor" stroke-width="1.8"/>
+                <circle cx="9" cy="7" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" fill="none" stroke="currentColor" stroke-width="1.8"/>
+              </svg>
+              Beneficiary Info
+            </p>
+            <div class="ood-detail__row">
+              <span class="ood-detail__key">Beneficiary Name</span>
+              <span class="ood-detail__val">{{ detailItem.beneficiaryTitle }}</span>
+            </div>
+            <div class="ood-detail__row">
+              <span class="ood-detail__key">Beneficiary Branch</span>
+              <span class="ood-detail__val ood-detail__val--mono">{{ detailItem.beneficiaryBranchCode }}</span>
+            </div>
+          </div>
+
+          <!-- Instrument Details -->
+          <div class="ood-detail__section">
+            <p class="ood-detail__section-title">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="3" y="3" width="18" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M3 9h18M9 21V9" fill="none" stroke="currentColor" stroke-width="1.8"/>
+              </svg>
+              Instrument Details
+            </p>
+            <div class="ood-detail__row">
+              <span class="ood-detail__key">Cheque Number</span>
+              <span class="ood-detail__val ood-detail__val--mono">{{ detailItem.chequeNo }}</span>
+            </div>
+            <div class="ood-detail__row">
+              <span class="ood-detail__key">MICR Code</span>
+              <span class="ood-detail__val ood-detail__val--mono">{{ detailItem.micr }}</span>
+            </div>
+            <div class="ood-detail__row">
+              <span class="ood-detail__key">Instrument Date</span>
+              <span class="ood-detail__val">{{ detailItem.chequeDate }}</span>
+            </div>
+            <div class="ood-detail__row">
+              <span class="ood-detail__key">Drawer Bank</span>
+              <span class="ood-detail__val">{{ detailItem.drawerBank }}</span>
+            </div>
+            <div class="ood-detail__row">
+              <span class="ood-detail__key">Paying Bank Code</span>
+              <span class="ood-detail__val ood-detail__val--mono">{{ detailItem.payingBankCode }}</span>
+            </div>
+            <div class="ood-detail__row">
+              <span class="ood-detail__key">Receiver Branch</span>
+              <span class="ood-detail__val ood-detail__val--mono">{{ detailItem.receiverBranchCode }}</span>
+            </div>
+          </div>
+
+          <!-- Financial Settlement -->
+          <div class="ood-detail__section">
+            <p class="ood-detail__section-title">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <line x1="12" y1="1" x2="12" y2="23" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+              Financial Settlement
+            </p>
+            <div class="ood-detail__row">
+              <span class="ood-detail__key">Total Amount</span>
+              <span class="ood-detail__val ood-detail__val--amount">{{ detailItem.currency }} {{ formatAmount(detailItem.amount) }}</span>
+            </div>
+            <div class="ood-detail__row">
+              <span class="ood-detail__key">Amount in Words</span>
+              <span class="ood-detail__val">{{ detailItem.amountInWords }}</span>
+            </div>
+            <div class="ood-detail__row">
+              <span class="ood-detail__key">Currency</span>
+              <span class="ood-detail__val">{{ detailItem.currency }}</span>
+            </div>
+          </div>
+
+          <p class="ood-detail__sync">
+            Created: {{ formatDate(detailItem.createdOn) }} by {{ detailItem.createdBy }}
+            @if (detailItem.updatedOn) {
+              &nbsp;·&nbsp; Updated: {{ formatDate(detailItem.updatedOn) }}
+            }
+          </p>
+
+        </div>
+      </div>
+
+    </div>
+
+    <div class="ood-detail__decision">
+      <div class="ood-detail__decision-row">
+        <button class="ood-detail__decision-btn ood-detail__decision-btn--send-back" type="button" (click)="onSendBack()">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M9 7l-5 5 5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M20 7v10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            <path d="M4 12h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+          Send Back
+        </button>
+
+        <button class="ood-detail__decision-btn ood-detail__decision-btn--reject" type="button" (click)="onRejectInstrument()">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2" />
+            <path d="M9 9l6 6M15 9l-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+          Reject
+        </button>
+      </div>
+
+      <button class="ood-detail__decision-btn ood-detail__decision-btn--approve" type="button" (click)="onApproveInstrument()">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2" />
+          <path d="M8.5 12.5l2.5 2.5 4.5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        Approve Instrument
+      </button>
+
+      <p class="ood-detail__decision-note">AUTHORIZED DECISION REQUIRED</p>
+    </div>
+  }
+
+</div>

@@ -71,7 +71,10 @@
 
 <ng-template #MenuItemWithChildren let-item="item">
     <li class="side-nav-item" [class.active]="isChildActive(item)">
-        <button (click)="item.isCollapsed = !item.isCollapsed" class="side-nav-link"
+        <button (click)="toggleMenuItem(item)" class="side-nav-link"
+                [class.disabled]="item.isDisabled"
+                [disabled]="item.isDisabled"
+                [attr.aria-disabled]="item.isDisabled"
                 [attr.aria-expanded]="!item.isCollapsed">
             @if (item.icon) {
                 <ng-icon class="menu-icon" [name]="item.icon"></ng-icon>
@@ -108,9 +111,11 @@
     <li class="side-nav-item" [class.active]="isActive(item)">
         @if (item.url) {
             <a [routerLink]="item.url" [target]="item.target" class="side-nav-link"
+               (click)="onMenuItemClick($event, item)"
                [class.disabled]="item.isDisabled"
                [class.special-menu]="item.isSpecial"
                [class.active]="isActive(item)"
+               [attr.aria-disabled]="item.isDisabled"
                [attr.data-active-link]="isActive(item)"
             >
                 @if (item.icon) {

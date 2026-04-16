@@ -1,0 +1,253 @@
+<div class="rmu-page mt-2 me-2">
+
+  <!-- ═══ HEADER ════════════════════════════════════════════════════════ -->
+  <div class="card rmu-top-card">
+    <div class="rmu-header">
+      <div>
+        <p class="rmu-header__breadcrumb">OPERATIONS &gt; CLEARING &amp; RETURN</p>
+        <h5 class="rmu-header__title">Return Marking Utility</h5>
+        <p class="rmu-header__subtitle">Validate clearing instruments and apply regulatory return codes.</p>
+      </div>
+    </div>
+      <!-- ═══ SEARCH BAR ═══════════════════════════════════════════════════ -->
+  <div class="card rmu-search-card">
+    <p class="rmu-search-card__label">ENTER CHEQUE / INSTRUMENT NUMBER</p>
+    <div class="rmu-search-card__row">
+      <input
+        type="text"
+        class="form-control form-control-sm rmu-search-card__input"
+        placeholder="e.g. 77452168"
+        [(ngModel)]="instrumentNumber" />
+      <button
+        class="btn btn-sm rmu-search-card__btn"
+        type="button"
+        [disabled]="isSearching"
+        (click)="onFindInstrument()">
+        @if (isSearching) {
+          <span class="spinner-border spinner-border-sm me-1"></span> Searching...
+        } @else {
+          Find Instrument
+        }
+      </button>
+    </div>
+  </div>
+  </div>
+
+
+
+  @if (instrumentFound) {
+
+  <!-- ═══ MAIN CONTENT: two columns ═══════════════════════════════════ -->
+  <div class="rmu-body">
+
+    <!-- ── LEFT COLUMN ─────────────────────────────────────────────── -->
+    <div class="rmu-body__left">
+
+      <!-- Instrument Metadata card -->
+      <div class="card rmu-meta-card">
+        <div class="rmu-meta-card__header">
+          <div class="rmu-meta-card__header-left">
+            <svg viewBox="0 0 24 24" class="rmu-meta-card__header-icon" aria-hidden="true">
+              <rect x="3" y="5" width="18" height="14" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="1.8"/>
+              <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" stroke-width="1.8"/>
+            </svg>
+            <div>
+              <p class="rmu-meta-card__title">Instrument Metadata</p>
+              <p class="rmu-meta-card__sub">Verified record from Centralized Clearing System</p>
+            </div>
+          </div>
+          <span class="rmu-meta-card__badge">{{ instrument.statusLabel }}</span>
+        </div>
+
+        <!-- Info grid -->
+        <div class="rmu-meta-grid">
+          <div class="rmu-meta-grid__item">
+            <p class="rmu-meta-grid__label">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="7" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+              DRAWER NAME
+            </p>
+            <p class="rmu-meta-grid__value">{{ instrument.drawerName }}</p>
+          </div>
+          <div class="rmu-meta-grid__item">
+            <p class="rmu-meta-grid__label">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><line x1="2" y1="10" x2="22" y2="10" stroke="currentColor" stroke-width="1.8"/></svg>
+              ACCOUNT NUMBER
+            </p>
+            <p class="rmu-meta-grid__value">{{ instrument.accountNumber }}</p>
+          </div>
+          <div class="rmu-meta-grid__item">
+            <p class="rmu-meta-grid__label">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="1.8"/><line x1="16" y1="2" x2="16" y2="6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="8" y1="2" x2="8" y2="6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" stroke-width="1.8"/></svg>
+              ISSUE DATE
+            </p>
+            <p class="rmu-meta-grid__value">{{ instrument.issueDate }}</p>
+          </div>
+          <div class="rmu-meta-grid__item">
+            <p class="rmu-meta-grid__label">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" fill="none" stroke="currentColor" stroke-width="1.8"/><polyline points="9 22 9 12 15 12 15 22" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+              BRANCH NAME
+            </p>
+            <p class="rmu-meta-grid__value">{{ instrument.branchName }}</p>
+          </div>
+          <div class="rmu-meta-grid__item">
+            <p class="rmu-meta-grid__label">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="16 18 22 12 16 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><polyline points="8 6 2 12 8 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              PROCESSING CODE
+            </p>
+            <p class="rmu-meta-grid__value">{{ instrument.processingCode }}</p>
+          </div>
+          <div class="rmu-meta-grid__item">
+            <p class="rmu-meta-grid__label">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.8"/><polyline points="12 6 12 12 16 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              CLEARING CYCLE
+            </p>
+            <p class="rmu-meta-grid__value">{{ instrument.clearingCycle }}</p>
+          </div>
+        </div>
+
+        <!-- Digital Scan Preview -->
+        <div class="rmu-scan">
+          <p class="rmu-scan__label">DIGITAL SCAN PREVIEW <span class="text-muted">(for visual verification only)</span></p>
+          <div class="rmu-scan__preview">
+            <div class="rmu-scan__placeholder">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="2" y="4" width="20" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                <line x1="2" y1="9" x2="22" y2="9" stroke="currentColor" stroke-width="1"/>
+                <line x1="5" y1="14" x2="12" y2="14" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+                <line x1="5" y1="17" x2="10" y2="17" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+                <line x1="15" y1="14" x2="19" y2="14" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+              </svg>
+              <p>Cheque Image Preview</p>
+              <span class="rmu-scan__acct">ACCOUNT # {{ instrument.accountNumber }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Session History -->
+      <div class="card rmu-session-card">
+        <div class="rmu-session-card__header">
+          <div class="rmu-session-card__header-left">
+            <svg viewBox="0 0 24 24" class="rmu-session-card__icon" aria-hidden="true">
+              <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.8"/>
+              <polyline points="12 6 12 12 16 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            <span class="rmu-session-card__title">Session History</span>
+          </div>
+          <button class="btn btn-link btn-sm rmu-session-card__view-all" type="button">View All Logs</button>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-hover table-sm rmu-table">
+            <thead class="bg-light">
+              <tr>
+                <th>TIME</th>
+                <th>CHEQUE #</th>
+                <th>AMOUNT</th>
+                <th>RETURN REASON</th>
+                <th>STATUS</th>
+              </tr>
+            </thead>
+            <tbody class="table-group-divider">
+              @for (item of sessionHistory; track item.chequeNo) {
+                <tr>
+                  <td class="rmu-table__time">{{ item.time }}</td>
+                  <td class="rmu-table__cheque">{{ item.chequeNo }}</td>
+                  <td class="rmu-table__amount">PKR {{ formatAmount(item.amount) }}</td>
+                  <td>{{ item.returnReason }}</td>
+                  <td>
+                    <span class="rmu-badge rmu-badge--{{ item.status.toLowerCase().replace(' ', '-') }}">{{ item.status }}</span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── RIGHT COLUMN ────────────────────────────────────────────── -->
+    <div class="rmu-body__right">
+
+      <!-- Settlement Amount -->
+      <div class="rmu-settle-card">
+        <p class="rmu-settle-card__label">SETTLEMENT AMOUNT</p>
+        <p class="rmu-settle-card__amount">PKR {{ formatAmount(instrument.settlementAmount) }}</p>
+        <p class="rmu-settle-card__duty">Stamp Duty {{ instrument.stampDutyPercent }}%<span class="rmu-settle-card__duty-val">PKR {{ formatAmount(instrument.stampDutyAmount) }}</span></p>
+      </div>
+
+      <!-- Mark for Return -->
+      <div class="card rmu-return-card">
+        <div class="rmu-return-card__header">
+          <svg viewBox="0 0 24 24" class="rmu-return-card__icon" aria-hidden="true">
+            <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.8"/>
+            <line x1="15" y1="9" x2="9" y2="15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="9" y1="9" x2="15" y2="15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          <div>
+            <p class="rmu-return-card__title">Mark for Return</p>
+            <p class="rmu-return-card__sub">Select a valid SBP return code to proceed</p>
+          </div>
+        </div>
+
+        <!-- Primary Reason Code -->
+        <div class="rmu-return-card__field">
+          <label class="rmu-return-card__label">PRIMARY REASON CODE</label>
+          <select class="form-select form-select-sm" [(ngModel)]="selectedReasonCode">
+            @for (reason of reasonCodes; track reason.code) {
+              <option [value]="reason.code">{{ reason.code }}: {{ reason.label }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Officer Remarks -->
+        <div class="rmu-return-card__field">
+          <div class="rmu-return-card__label-row">
+            <label class="rmu-return-card__label">OFFICER REMARKS</label>
+            <div class="form-check form-switch rmu-return-card__switch">
+              <input class="form-check-input" type="checkbox" id="internalSwitch" [(ngModel)]="isInternal" />
+              <label class="form-check-label" for="internalSwitch">Internal use only</label>
+            </div>
+          </div>
+          <textarea
+            class="form-control form-control-sm rmu-return-card__textarea"
+            rows="3"
+            placeholder="Provide specific details about the return (e.g. signature variation noted)..."
+            [(ngModel)]="officerRemarks"></textarea>
+        </div>
+
+        <!-- Warning -->
+        <div class="rmu-return-card__warning">
+          <svg viewBox="0 0 24 24" class="rmu-return-card__warning-icon" aria-hidden="true">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" fill="none" stroke="currentColor" stroke-width="1.8"/>
+            <line x1="12" y1="9" x2="12" y2="13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="12" y1="17" x2="12.01" y2="17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          <div>
+            <strong>Final Confirmation Required</strong>
+            <p>Marking this instrument as a return will initiate the process and cannot be easily reversed.</p>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="rmu-return-card__actions">
+          <button class="btn btn-sm rmu-return-card__finalize-btn" type="button" (click)="onFinalizeReturn()">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 12h14M12 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Finalize &amp; Mark Return
+          </button>
+          <button class="btn btn-outline-secondary btn-sm rmu-return-card__hold-btn" type="button" (click)="onHoldForAudit()">
+            Hold for Manual Audit
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  }
+
+</div>

@@ -10,6 +10,7 @@ import {scrollToElement} from '@/app/utils/layout-utils';
 import {menuItems} from '@layouts/components/data';
 import {LayoutStoreService} from '@core/services/layout-store.service';
 import {MenuPermissionService} from '@/app/services/menu-permission.service';
+import { StartBusinessDayService } from '../../../../../views/pages/outward-clearing/services/start-business-day.service';
 
 @Component({
     selector: 'app-menu',
@@ -22,6 +23,7 @@ export class AppMenuComponent implements OnInit {
     router = inject(Router)
     layout = inject(LayoutStoreService)
     menuPermissionService = inject(MenuPermissionService)
+    startBusinessDayService = inject(StartBusinessDayService)
 
     @ViewChild('MenuItemWithChildren', {static: true})
     menuItemWithChildren!: TemplateRef<{ item: MenuItemType }>;
@@ -35,10 +37,16 @@ export class AppMenuComponent implements OnInit {
     searchQuery: string = '';
     filteredItems: any[] = [];
     displayItems: MenuItemType[] = [];
+    isBusinessDayStarted: boolean | null = null;
 
     ngOnInit(): void {
         // Load filtered menu items based on user permissions
         this.loadMenuItems();
+        this.startBusinessDayService.businessDayStarted$.subscribe((started) => {
+            this.isBusinessDayStarted = started;
+            this.applyBusinessDayLock();
+        });
+        this.startBusinessDayService.syncBusinessDayStatus();
 
         this.router.events
             .pipe(filter(event => event instanceof NavigationEnd))
@@ -54,12 +62,53 @@ export class AppMenuComponent implements OnInit {
     loadMenuItems() {
         // Get filtered menu items based on user permissions
         this.menuItems = this.menuPermissionService.getFilteredMenuItems();
+        this.applyBusinessDayLock();
         this.displayItems = [...this.menuItems];
         console.log('Sidebar Menu Items (Filtered):', this.menuItems);
     }
 
+    private applyBusinessDayLock(): void {
+        this.applyLockToItems(this.menuItems);
+        this.displayItems = [...this.menuItems];
+    }
+
+    private applyLockToItems(items: MenuItemType[], isOutwardLocked = false): void {
+        for (const item of items) {
+            const isOutwardClearingRoot = item.label === 'Outward Clearing';
+            const isStartBusinessDay = item.label === 'Start Business Day';
+
+            const shouldLockOutwardChildren = isOutwardLocked || (isOutwardClearingRoot && this.isBusinessDayStarted === false);
+            const isLocked = shouldLockOutwardChildren && !isOutwardClearingRoot && !isStartBusinessDay;
+
+            item.isDisabled = isLocked;
+
+            if (item.children && item.children.length > 0) {
+                this.applyLockToItems(item.children, shouldLockOutwardChildren && !isStartBusinessDay);
+            }
+
+            if (isLocked) {
+                item.isCollapsed = true;
+            }
+        }
+    }
+
     hasSubMenu(item: MenuItemType): boolean {
         return !!item.children;
+    }
+
+    toggleMenuItem(item: MenuItemType): void {
+        if (item.isDisabled) {
+            return;
+        }
+        item.isCollapsed = !item.isCollapsed;
+    }
+
+    onMenuItemClick(event: Event, item: MenuItemType): void {
+        if (!item.isDisabled) {
+            return;
+        }
+        event.preventDefault();
+        event.stopPropagation();
     }
 
     expandActivePaths(items: MenuItemType[]) {
@@ -157,7 +206,7 @@ export class AppMenuComponent implements OnInit {
     }
 
     navigateToItem(item: any): void {
-        if (item.url) {
+        if (item.url && !item.isDisabled) {
             this.router.navigate([item.url]);
             this.clearSearch();
         }

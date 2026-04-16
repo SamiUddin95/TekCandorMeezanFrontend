@@ -35,19 +35,35 @@
           @if (!isWalkIn) {
             <div class="cln-field">
               <label class="cln-label">Account Number</label>
-              <input type="text" class="cln-input" placeholder="0102-099283-001" [(ngModel)]="depositorAccount" (blur)="onDepositorAccountBlur()"/>
+              <div class="cln-fetch-group">
+                <input type="text" class="cln-input" placeholder="0102-099283-001" [(ngModel)]="depositorAccount"/>
+                <button type="button" class="cln-fetch-btn" [disabled]="!depositorAccount || isFetchingDepositor" (click)="onFetchDepositor()">
+                  @if (isFetchingDepositor) {
+                    <span class="spinner-border spinner-border-sm"></span>
+                  } @else {
+                    <i class="fas fa-search"></i>
+                  }
+                  Fetch
+                </button>
+              </div>
             </div>
           } @else {
             <div class="cln-field">
               <label class="cln-label">CNIC</label>
-              <input type="text" class="cln-input" placeholder="00000-0000000-0" [(ngModel)]="cnic" (blur)="onCnicBlur()"/>
+              <input type="text" class="cln-input" placeholder="00000-0000000-0" [(ngModel)]="cnic"/>
             </div>
           }
         </div>
 
         <div class="cln-field">
           <label class="cln-label">Title</label>
-          <input type="text" class="cln-input" placeholder="Auto fetched" [(ngModel)]="fullName" readonly/>
+          <input
+            type="text"
+            class="cln-input"
+            [placeholder]="isWalkIn ? 'Enter title manually' : 'Auto fetched via Fetch button'"
+            [(ngModel)]="fullName"
+            [readonly]="!isWalkIn"
+          />
         </div>
       </div>
 
@@ -56,20 +72,91 @@
         <div class="cln-section__header">
           <i class="fas fa-file-invoice cln-section__icon"></i>
           <div>
-            <h6 class="cln-section__title">Beneficiary &amp; Instrument</h6>
+            <h6 class="cln-section__title">Beneficiary</h6>
             <p class="cln-section__subtitle">Information regarding the clearing instrument.</p>
           </div>
         </div>
 
         <div class="cln-field">
-          <label class="cln-label">Beneficiary Account / Title</label>
-          <input type="text" class="cln-input" placeholder="Enter beneficiary name or account number" [(ngModel)]="beneficiaryAccount"/>
+          <label class="cln-label">Beneficiary Account</label>
+          <div class="cln-fetch-group">
+            <input type="text" class="cln-input" placeholder="Enter beneficiary account number" [(ngModel)]="beneficiaryAccount"/>
+            <button type="button" class="cln-fetch-btn" [disabled]="!beneficiaryAccount || isFetchingBeneficiary" (click)="onFetchBeneficiary()">
+              @if (isFetchingBeneficiary) {
+                <span class="spinner-border spinner-border-sm"></span>
+              } @else {
+                <i class="fas fa-search"></i>
+              }
+              Fetch
+            </button>
+          </div>
+        </div>
+
+        <div class="cln-field">
+          <label class="cln-label">Beneficiary Title</label>
+          <input type="text" class="cln-input" placeholder="Auto fetched via Fetch" [(ngModel)]="beneficiaryTitle" readonly/>
+        </div>
+
+        <div class="cln-field-row">
+          <div class="cln-field">
+            <label class="cln-label">Account Status</label>
+            <input type="text" class="cln-input" placeholder="Auto fetched via Fetch" [(ngModel)]="accountStatus" readonly/>
+          </div>
+
+          <div class="cln-field">
+            <label class="cln-label">Beneficiary Branch Code</label>
+            <input type="text" class="cln-input" placeholder="Auto fetched via Fetch" [(ngModel)]="beneficiaryBranchCode" readonly/>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="cln-section">
+        <div class="cln-section__header">
+          <i class="fas fa-file-invoice cln-section__icon"></i>
+          <div>
+            <h6 class="cln-section__title">Instrument</h6>
+            <p class="cln-section__subtitle">Auto-populated from scan data. Manual editing is disabled.</p>
+          </div>
+        </div>
+
+        <div class="cln-field-row">
+
+           <div class="cln-field">
+            <label class="cln-label">Cheque Number</label>
+            <div class="cln-amount-wrap">
+              <input type="text" class="cln-input" placeholder="Cheque Number" [(ngModel)]="chequeNumber" readonly/>
+            </div>
+          </div>
+
+          <div class="cln-field">
+            <label class="cln-label">Instrument Type</label>
+            <div class="cln-amount-wrap">
+              <input type="text" class="cln-input" placeholder="Instrument Type" [(ngModel)]="instrumentType" readonly/>
+            </div>
+          </div>
+        </div>
+
+        <div class="cln-field-row">
+           <div class="cln-field">
+            <label class="cln-label">Paying Bank Code</label>
+            <div class="cln-amount-wrap">
+              <input type="text" class="cln-input" placeholder="Paying Bank Code" [(ngModel)]="payingBankCode" readonly/>
+            </div>
+          </div>
+
+          <div class="cln-field">
+            <label class="cln-label">Paying Branch Code</label>
+            <div class="cln-amount-wrap">
+              <input type="text" class="cln-input" placeholder="Paying Branch Code" [(ngModel)]="payingBranchCode" readonly/>
+            </div>
+          </div>
         </div>
 
         <div class="cln-field-row">
           <div class="cln-field">
             <label class="cln-label">Currency</label>
-            <select class="cln-input" [(ngModel)]="currency">
+            <select class="cln-input" [(ngModel)]="currency" disabled>
               <option>PKR - Pak Rupee</option>
               <option>USD - US Dollar</option>
             </select>
@@ -78,10 +165,14 @@
             <label class="cln-label">Instrument Amount</label>
             <div class="cln-amount-wrap">
               <span class="cln-amount-prefix">Rs.</span>
-              <input type="number" class="cln-input cln-input--amount" placeholder="0.00" [(ngModel)]="instrumentAmount"/>
+              <input type="number" class="cln-input cln-input--amount" placeholder="0.00" [(ngModel)]="instrumentAmount" readonly/>
             </div>
           </div>
         </div>
+
+        <p class="cln-manual-note">
+          <i class="fas fa-circle-info me-1"></i>Instrument details are loaded from scan module data automatically.
+        </p>
 
         <div class="cln-field">
           <label class="cln-label">Remarks (Optional)</label>
@@ -92,7 +183,7 @@
       <!-- Actions -->
       <div class="cln-actions">
         <button class="cln-btn-cancel" (click)="onCancel()">Cancel</button>
-        <button class="cln-btn-scan" [disabled]="!isFormValid" (click)="onScanCheque()">
+        <button class="cln-btn-scan"  (click)="onScanCheque()">
           <i class="fas fa-qrcode me-2"></i>Scan Cheque
         </button>
       </div>

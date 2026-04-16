@@ -187,6 +187,31 @@ export const PAGES_ROUTES: Routes = [
                         loadComponent: () => import('./outward-clearing/pages/cheque-lodgment/cheque-lodgment-deposit-slip/cheque-lodgment-deposit-slip.component').then(mod => mod.ChequeLodgmentDepositSlipComponent),
                         data: { title: 'Deposit Slip' }
                     },
+                    {
+                        path: 'generate-clearing-file',
+                        loadComponent: () => import('./outward-clearing/pages/generate-clearing-file/generate-clearing-file.component').then(mod => mod.GenerateClearingFileComponent),
+                        data: { title: 'Generate Clearing File' }
+                    },
+                    {
+                        path: 'operational-overview',
+                        loadComponent: () => import('./outward-clearing/pages/operational-overview/operational-overview.component').then(mod => mod.OperationalOverviewComponent),
+                        data: { title: 'Operational Overview' }
+                    },
+                    {
+                        path: 'nift-reconciliation',
+                        loadComponent: () => import('./outward-clearing/pages/nift-reconciliation/nift-reconciliation.component').then(mod => mod.NiftReconciliationComponent),
+                        data: { title: 'NIFT Reconciliation' }
+                    },
+                    {
+                        path: 'fund-realization',
+                        loadComponent: () => import('./outward-clearing/pages/fund-realization/fund-realization.component').then(mod => mod.FundRealizationComponent),
+                        data: { title: 'Fund Realization' }
+                    },
+                    {
+                        path: 'return-marking-utility',
+                        loadComponent: () => import('./outward-clearing/pages/return-marking-utility/return-marking-utility.component').then(mod => mod.ReturnMarkingUtilityComponent),
+                        data: { title: 'Return Marking Utility' }
+                    },
                 ]
             },
             {

@@ -1,0 +1,416 @@
+﻿// ─── Generate Clearing File – Meezan Bank Theme ───────────────────────────
+$meezan-deep:    #5a2181;
+$meezan-mid:     #9c59c3;
+$meezan-light:   #ede9fe;
+$success-green:  #16a34a;
+$danger-red:     #dc2626;
+$amber:          #f59e0b;
+$border:         #e5e7eb;
+$text-primary:   #1f2937;
+$text-secondary: #6b7280;
+$text-muted:     #9ca3af;
+
+// ── Page wrapper ──────────────────────────────────────────────────────────
+.gcf-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 0 0 8px;
+}
+
+// ── Header ────────────────────────────────────────────────────────────────
+.gcf-header {
+  padding: 0 2px 12px;
+  border-bottom: 1px solid $border;
+
+  &__title {
+    font-size: 18px;
+    font-weight: 700;
+    color: $text-primary;
+    margin: 0 0 4px;
+  }
+
+  &__subtitle {
+    font-size: 12px;
+    color: $text-secondary;
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
+// ── Two-column grid ───────────────────────────────────────────────────────
+.gcf-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+// ── Section card ──────────────────────────────────────────────────────────
+.gcf-section {
+  background: #ffffff;
+  border: 1px solid $border;
+  border-radius: 10px;
+  padding: 18px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid $border;
+  }
+
+  &__icon {
+    font-size: 16px;
+    color: $meezan-deep;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+
+  &__title {
+    font-size: 13px;
+    font-weight: 700;
+    color: $text-primary;
+    margin: 0 0 2px;
+  }
+
+  &__subtitle {
+    font-size: 11px;
+    color: $text-secondary;
+    margin: 0;
+  }
+
+  &__tag {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: $meezan-deep;
+    background: $meezan-light;
+    padding: 2px 8px;
+    border-radius: 20px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    align-self: center;
+  }
+}
+
+// ── Field ─────────────────────────────────────────────────────────────────
+.gcf-field {
+  margin-bottom: 16px;
+  &:last-of-type { margin-bottom: 0; }
+}
+
+.gcf-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: $text-primary;
+  margin-bottom: 6px;
+}
+
+.gcf-required { color: $danger-red; margin-left: 2px; }
+
+// ── Quick date buttons ────────────────────────────────────────────────────
+.gcf-quick-btns {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.gcf-quick-btn {
+  padding: 4px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid $border;
+  border-radius: 20px;
+  background: #ffffff;
+  color: $text-secondary;
+  cursor: pointer;
+  transition: all 0.18s ease;
+
+  &:hover { border-color: $meezan-mid; color: $meezan-deep; }
+
+  &--active {
+    background: $meezan-deep;
+    border-color: $meezan-deep;
+    color: #ffffff;
+    &:hover { opacity: 0.9; }
+  }
+}
+
+// ── Input with icon ───────────────────────────────────────────────────────
+.gcf-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.gcf-input-ico {
+  position: absolute;
+  left: 11px;
+  font-size: 12px;
+  color: $text-muted;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.gcf-input {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: $text-primary;
+  border: 1px solid $border;
+  border-radius: 8px;
+  background: #ffffff;
+  outline: none;
+  transition: border-color 0.18s ease;
+
+  &:focus {
+    border-color: $meezan-mid;
+    box-shadow: 0 0 0 3px rgba(90, 33, 129, 0.08);
+  }
+
+  &--padded { padding-left: 34px; }
+
+  &--select {
+    appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%236b7280'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+    padding-right: 32px;
+  }
+}
+
+// ── Info note ─────────────────────────────────────────────────────────────
+.gcf-info-note {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  background: #f8f6fc;
+  border: 1px solid rgba(90, 33, 129, 0.10);
+  border-left: 3px solid $meezan-deep;
+  border-radius: 8px;
+  padding: 10px 12px;
+
+  &__icon {
+    font-size: 12px;
+    color: $meezan-deep;
+    margin-top: 1px;
+    flex-shrink: 0;
+  }
+
+  &__text {
+    font-size: 11px;
+    color: $text-secondary;
+    line-height: 1.6;
+    margin: 0;
+  }
+}
+
+// ── Summary column ────────────────────────────────────────────────────────
+.gcf-summary-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.gcf-sum-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  &__title {
+    font-size: 13px;
+    font-weight: 700;
+    color: $text-primary;
+  }
+
+  &__updated {
+    font-size: 11px;
+    color: $text-muted;
+  }
+}
+
+// ── Stat cards ────────────────────────────────────────────────────────────
+.gcf-stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.gcf-stat-card {
+  background: #ffffff;
+  border: 1px solid $border;
+  border-radius: 10px;
+  padding: 18px 20px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+
+  &__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  &__label {
+    font-size: 11px;
+    font-weight: 600;
+    color: $text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  &__icon {
+    font-size: 16px;
+    color: $text-muted;
+    &--amber { color: $amber; }
+  }
+
+  &__value {
+    font-size: 28px;
+    font-weight: 800;
+    color: $text-primary;
+    display: block;
+    line-height: 1;
+    letter-spacing: -0.5px;
+
+    &--sm {
+      font-size: 17px;
+      letter-spacing: -0.3px;
+    }
+  }
+}
+
+// ── Validation banner ─────────────────────────────────────────────────────
+.gcf-valid-banner {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  background: #ffffff;
+  border: 1px solid $border;
+  border-left: 4px solid $border;
+  border-radius: 10px;
+  padding: 16px 18px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+
+  &--ok  { border-left-color: $success-green; background: #f0fdf4; }
+  &--err { border-left-color: $danger-red;    background: #fef2f2; }
+
+  &__icon-wrap {
+    font-size: 22px;
+    flex-shrink: 0;
+    margin-top: 1px;
+
+    .gcf-valid-banner--ok  & { color: $success-green; }
+    .gcf-valid-banner--err & { color: $danger-red; }
+  }
+
+  &__body { flex: 1; }
+
+  &__title {
+    font-size: 13px;
+    font-weight: 700;
+    color: $text-primary;
+    margin: 0 0 5px;
+  }
+
+  &__text {
+    font-size: 12px;
+    color: $text-secondary;
+    line-height: 1.6;
+    margin: 0;
+  }
+}
+
+// ── Footer bar ────────────────────────────────────────────────────────────
+.gcf-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: #ffffff;
+  border: 1px solid $border;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+
+  &__status {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    font-weight: 500;
+    color: $text-secondary;
+  }
+
+  &__dot {
+    font-size: 8px;
+    color: $text-muted;
+    &--ready { color: $success-green; }
+  }
+
+  &__actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+}
+
+.gcf-btn-reset {
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: $text-secondary;
+  background: transparent;
+  border: 1px solid $border;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+
+  &:hover {
+    border-color: $meezan-mid;
+    color: $meezan-deep;
+  }
+}
+
+.gcf-btn-generate {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  background: linear-gradient(135deg, $meezan-deep 0%, $meezan-mid 100%);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(90, 33, 129, 0.28);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+
+  &:hover:not(:disabled) {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+    box-shadow: none;
+  }
+}
+
+// ── Responsive ────────────────────────────────────────────────────────────
+@media (max-width: 900px) {
+  .gcf-grid      { grid-template-columns: 1fr; }
+  .gcf-stat-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 600px) {
+  .gcf-stat-grid { grid-template-columns: 1fr; }
+  .gcf-footer    { flex-direction: column; align-items: flex-start; gap: 12px; }
+}

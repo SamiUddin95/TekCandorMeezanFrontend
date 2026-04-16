@@ -1,21 +1,38 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 
-export interface BusinessDayResponse {
+export interface BusinessDateItem {
+    id: number;
+    businessDate: string;
+    isActive: boolean;
+    startedBy: string;
+    startedAt: string;
+}
+
+export interface BusinessDateRequest {
+    id: number;
+    businessDate: string;
+    isActive: boolean;
+    startedBy: string;
+    startedAt: string;
+}
+
+export interface BusinessDateGetResponse {
     status: string;
     data: {
-        businessDate: string;
-        isDayStarted: boolean;
+        items: BusinessDateItem[];
+        totalCount: number;
     };
     statusCode: number;
     errorMessage: string | null;
 }
 
-export interface StartDayResponse {
+export interface BusinessDatePostResponse {
     status: string;
-    data: string;
+    data: BusinessDateItem;
     statusCode: number;
     errorMessage: string | null;
 }
@@ -26,29 +43,33 @@ export interface StartDayResponse {
 export class StartBusinessDayService {
 
     private apiUrl = environment.apiUrl;
+    private businessDayStartedSubject = new BehaviorSubject<boolean | null>(null);
+
+    businessDayStarted$ = this.businessDayStartedSubject.asObservable();
 
     constructor(private http: HttpClient) { }
 
-    private getHeaders(): HttpHeaders {
-        const token = localStorage.getItem('token');
-        return new HttpHeaders({
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+    getBusinessDate(): Observable<BusinessDateGetResponse> {
+        return this.http.get<BusinessDateGetResponse>(`${this.apiUrl}/outward/BusinessDate`);
+    }
+
+    startBusinessDate(payload: BusinessDateRequest): Observable<BusinessDatePostResponse> {
+        return this.http.post<BusinessDatePostResponse>(`${this.apiUrl}/outward/BusinessDate`, payload);
+    }
+
+    setBusinessDayStatus(isStarted: boolean): void {
+        this.businessDayStartedSubject.next(isStarted);
+    }
+
+    syncBusinessDayStatus(): void {
+        this.getBusinessDate().subscribe({
+            next: (response) => {
+                const latest = response?.data?.items?.[0];
+                this.businessDayStartedSubject.next(!!latest?.isActive);
+            },
+            error: () => {
+                this.businessDayStartedSubject.next(null);
+            }
         });
-    }
-
-    getBusinessDay(): Observable<BusinessDayResponse> {
-        return this.http.get<BusinessDayResponse>(
-            `${this.apiUrl}/api/OutwardClearing/business-day`,
-            { headers: this.getHeaders() }
-        );
-    }
-
-    startBusinessDay(): Observable<StartDayResponse> {
-        return this.http.post<StartDayResponse>(
-            `${this.apiUrl}/api/OutwardClearing/start-business-day`,
-            {},
-            { headers: this.getHeaders() }
-        );
     }
 }

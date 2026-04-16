@@ -1,0 +1,127 @@
+<div class="oo-page mt-2 me-2">
+
+  <!-- ═══════════════════ LIST VIEW ═══════════════════ -->
+  @if (!showDetail) {
+    <div class="card oo-card">
+      <!-- Header -->
+      <div class="oo-header mt-2">
+        <div>
+          <h5 class="oo-header__title">Operational Overview</h5>
+          <p class="oo-header__subtitle">Review and manage pending cheque clearances for today.</p>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="row g-2 mb-3 align-items-end">
+          <div class="col-md-4">
+            <label class="form-label mb-1">Search</label>
+            <input
+              type="text"
+              class="form-control form-control-sm"
+              placeholder="Cheque no / Payee / Txn ID"
+              [(ngModel)]="searchTerm"
+              (ngModelChange)="onFilterChange()" />
+          </div>
+          <div class="col-md-3">
+            <label class="form-label mb-1">Branch</label>
+            <select
+              class="form-select form-select-sm"
+              [(ngModel)]="selectedBranch"
+              (ngModelChange)="onFilterChange()">
+              @for (branch of branchOptions; track branch) {
+                <option [value]="branch">{{ branch === 'all' ? 'All Branches' : branch }}</option>
+              }
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label mb-1">Status</label>
+            <select
+              class="form-select form-select-sm"
+              [(ngModel)]="selectedStatus"
+              (ngModelChange)="onFilterChange()">
+              <option value="all">All Statuses</option>
+              <option value="Pending">Pending</option>
+              <option value="Priority">Priority</option>
+              <option value="Critical">Critical</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-hover table-striped table-sm">
+            <thead class="bg-light">
+              <tr>
+                <th>Cheque No.</th>
+                <th>Payee Name</th>
+                <th>Amount (PKR)</th>
+                <th>Branch Name</th>
+                <th>Date Received</th>
+                <th>Status</th>
+                <th class="oo-table__th-actions">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="table-group-divider">
+              @if (isLoading) {
+                <tr><td colspan="7" class="text-center text-muted py-3">Loading records...</td></tr>
+              }
+              @if (!isLoading && loadError) {
+                <tr><td colspan="7" class="text-center text-danger py-3">{{ loadError }}</td></tr>
+              }
+              @for (txn of filteredTransactions; track txn.id) {
+                <tr>
+                  <td><span class="oo-cheque-no">{{ txn.chequeNo }}</span></td>
+                  <td>
+                    <div class="oo-payee">
+                      <span class="oo-payee__name">{{ txn.payeeName }}</span>
+                      <span class="oo-payee__txn">{{ txn.txnId }}</span>
+                    </div>
+                  </td>
+                  <td><strong>{{ formatAmount(txn.amount) }}</strong></td>
+                  <td>{{ txn.branchName }}</td>
+                  <td>{{ txn.timeReceived }}</td>
+                  <td>
+                    <span class="oo-status"
+                      [class.oo-status--pending]="txn.status === 'Pending'"
+                      [class.oo-status--priority]="txn.status === 'Priority'"
+                      [class.oo-status--critical]="txn.status === 'Critical'">
+                      {{ txn.status }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="oo-actions">
+                      <button class="oo-action-btn oo-action-btn--icon oo-action-btn--view" type="button" title="View" aria-label="View" (click)="onView(txn)">
+                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                          <path d="M1.5 12s3.8-6.5 10.5-6.5S22.5 12 22.5 12s-3.8 6.5-10.5 6.5S1.5 12 1.5 12z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+                          <circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="1.8"></circle>
+                        </svg>
+                      </button>
+                      <button class="oo-action-btn oo-action-btn--icon oo-action-btn--approve" type="button" title="Approve" aria-label="Approve" (click)="onApprove(txn)">
+                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                          <path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                      </button>
+                      <button class="oo-action-btn oo-action-btn--icon oo-action-btn--reject" type="button" title="Reject" aria-label="Reject" (click)="onReject(txn)">
+                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                          <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+              @if (!isLoading && !loadError && filteredTransactions.length === 0) {
+                <tr><td colspan="7" class="text-center text-muted py-3">No records found</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ═══════════════════ DETAIL VIEW ═══════════════════ -->
+  @if (showDetail && selectedId !== null) {
+    <app-oo-detail [chequeId]="selectedId" (backClicked)="backToList()"></app-oo-detail>
+  }
+
+</div>

@@ -1,0 +1,128 @@
+<div class="gcf-page mt-2 me-2">
+
+  <!-- Header -->
+  <div class="gcf-header">
+    <div>
+      <h5 class="gcf-header__title">Generate Clearing File</h5>
+      <p class="gcf-header__subtitle">Create a clearing file for settlement based on selected business date and branch. Review the summary before initiating the run.</p>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="gcf-grid">
+
+    <!-- LEFT: Filters -->
+    <div class="gcf-filters-col">
+      <div class="gcf-section">
+        <div class="gcf-section__header">
+          <i class="fas fa-sliders gcf-section__icon"></i>
+          <div>
+            <h6 class="gcf-section__title">Filters</h6>
+            <p class="gcf-section__subtitle">Configure clearing run parameters.</p>
+          </div>
+          <span class="gcf-section__tag ms-auto">Config</span>
+        </div>
+
+        <!-- Business Date -->
+        <div class="gcf-field">
+          <label class="gcf-label">Business Date <span class="gcf-required">*</span></label>
+          <div class="gcf-quick-btns">
+            <button type="button" class="gcf-quick-btn" [class.gcf-quick-btn--active]="dateMode === 'today'" (click)="setDate('today')">Today</button>
+            <button type="button" class="gcf-quick-btn" [class.gcf-quick-btn--active]="dateMode === 'yesterday'" (click)="setDate('yesterday')">Yesterday</button>
+          </div>
+          <div class="gcf-input-wrap">
+            <i class="fas fa-calendar-alt gcf-input-ico"></i>
+            <input type="date" class="gcf-input gcf-input--padded"
+                   [(ngModel)]="businessDate" (ngModelChange)="onDateChange()"/>
+          </div>
+        </div>
+
+        <!-- Branch -->
+        <div class="gcf-field">
+          <label class="gcf-label">Branch <span class="gcf-required">*</span></label>
+          <div class="gcf-input-wrap">
+            <i class="fas fa-building gcf-input-ico"></i>
+            <select class="gcf-input gcf-input--padded gcf-input--select"
+                    [(ngModel)]="selectedBranch" (ngModelChange)="onBranchChange()">
+              @for (branch of branches; track branch.code) {
+                <option [value]="branch.code">{{ branch.label }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <!-- Info note -->
+        <div class="gcf-info-note">
+          <i class="fas fa-circle-info gcf-info-note__icon"></i>
+          <p class="gcf-info-note__text">Select business date and branch for the clearing run. The summary data on the right will update in real-time as you modify these parameters.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Run Summary -->
+    <div class="gcf-summary-col">
+
+      <div class="gcf-sum-header">
+        <span class="gcf-sum-header__title">Run Summary</span>
+        <span class="gcf-sum-header__updated"><i class="fas fa-clock me-1"></i>Last updated: {{ lastUpdated }}</span>
+      </div>
+
+      <!-- Stat cards -->
+      <div class="gcf-stat-grid">
+        <div class="gcf-stat-card">
+          <div class="gcf-stat-card__top">
+            <span class="gcf-stat-card__label">Total Instruments</span>
+            <i class="fas fa-file-lines gcf-stat-card__icon"></i>
+          </div>
+          <span class="gcf-stat-card__value">{{ summary.totalInstruments | number }}</span>
+        </div>
+        <div class="gcf-stat-card">
+          <div class="gcf-stat-card__top">
+            <span class="gcf-stat-card__label">Total Settled Amount</span>
+            <i class="fas fa-coins gcf-stat-card__icon gcf-stat-card__icon--amber"></i>
+          </div>
+          <span class="gcf-stat-card__value gcf-stat-card__value--sm">{{ summary.currency }} {{ formatAmount(summary.totalSettledAmount) }}</span>
+        </div>
+      </div>
+
+      <!-- Validation banner -->
+      <div class="gcf-valid-banner"
+           [class.gcf-valid-banner--ok]="summary.validationPassed"
+           [class.gcf-valid-banner--err]="!summary.validationPassed">
+        <div class="gcf-valid-banner__icon-wrap">
+          <i [class]="summary.validationPassed ? 'fas fa-circle-check' : 'fas fa-circle-xmark'"></i>
+        </div>
+        <div class="gcf-valid-banner__body">
+          <p class="gcf-valid-banner__title">{{ summary.validationPassed ? 'Validation Successful' : 'Validation Failed' }}</p>
+          <p class="gcf-valid-banner__text">
+            @if (summary.validationPassed) {
+              Data reflects selected date and branch. All instruments are verified and ready for generation. The clearing file will be generated in .txt format following ISO-20022 standards.
+            } @else {
+              One or more instruments failed validation. Please review and correct records before generating the clearing file.
+            }
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="gcf-footer">
+    <span class="gcf-footer__status">
+      <i class="fas fa-circle gcf-footer__dot" [class.gcf-footer__dot--ready]="summary.validationPassed"></i>
+      {{ summary.validationPassed ? 'System ready for generation' : 'Validation errors detected' }}
+    </span>
+    <div class="gcf-footer__actions">
+      <button class="gcf-btn-reset" (click)="onResetFilters()">Reset filters</button>
+      <button class="gcf-btn-generate" [disabled]="isGenerating || !summary.validationPassed" (click)="onGenerate()">
+        @if (isGenerating) {
+          <span class="spinner-border spinner-border-sm me-2"></span>Generating...
+        } @else {
+          <i class="fas fa-file-export me-2"></i>Generate Clearing File
+        }
+      </button>
+    </div>
+  </div>
+
+</div>

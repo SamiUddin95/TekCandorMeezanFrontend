@@ -4,6 +4,7 @@ import {userDropdownItems} from '@layouts/components/data';
 import {NgIcon} from '@ng-icons/core';
 import {AuthService, User} from '../../../../../services/auth.service';
 import {CommonModule} from '@angular/common';
+import { ThemeTogglerComponent } from '../theme-toggler/theme-toggler.component';
 
 @Component({
   selector: 'app-user-profile-topbar',
@@ -11,7 +12,8 @@ import {CommonModule} from '@angular/common';
     NgbDropdown,
     NgbDropdownMenu,
     NgIcon,
-    CommonModule
+    CommonModule,
+    ThemeTogglerComponent
   ],
   templateUrl: './user-profile.component.html',
   styleUrl: './user-profile.component.scss'
@@ -21,6 +23,8 @@ export class UserProfileComponent implements OnInit {
   currentUser: User | null = null;
   displayName: string = 'Administrator';
   initials: string = 'AD';
+  branchOrHub: string = '';
+  hubNames: string[] = [];
 
   constructor(private authService: AuthService) {}
 
@@ -38,6 +42,29 @@ export class UserProfileComponent implements OnInit {
       this.displayName = 'Administrator';
       this.initials = 'AD';
     }
+
+    this.branchOrHub = this.authService.getBranchOrHub();
+    this.hubNames = this.authService.getHubNames();
+  }
+
+  get scopeLabel(): string {
+    if (this.branchOrHub === 'HubWise') return 'Hub Wise';
+    if (this.branchOrHub === 'BranchWise') return 'Branch Wise';
+    return this.branchOrHub;
+  }
+
+  get isHubWise(): boolean {
+    return this.branchOrHub === 'HubWise';
+  }
+
+  get scopeNamesDisplay(): string {
+    if (this.hubNames.length === 0) return 'No assignment';
+    if (this.hubNames.length <= 2) return this.hubNames.join(', ');
+    return `${this.hubNames.slice(0, 2).join(', ')} +${this.hubNames.length - 2}`;
+  }
+
+  get scopeNamesTooltip(): string {
+    return this.hubNames.join(', ');
   }
 
   private getInitials(name: string): string {

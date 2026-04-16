@@ -1,0 +1,347 @@
+<div class="nr-page mt-2 me-2">
+
+  <!-- ═══ TOP CARD: Header + Stats ══════════════════════════════════════ -->
+  <div class="card nr-top-card">
+
+    <div class="nr-header">
+      <div>
+        <h5 class="nr-header__title">NIFT Reconciliation</h5>
+        <p class="nr-header__subtitle">NIFT operation team process the outward clearing financial instruments</p>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <div class="nr-stats">
+
+        <div class="nr-stat-card">
+          <div class="nr-stat-card__icon nr-stat-card__icon--blue">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M9 11l3 3L22 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="nr-stat-card__body">
+            <p class="nr-stat-card__label">Total Lodgments</p>
+            <p class="nr-stat-card__value">{{ stats.totalLodgments.toLocaleString() }}</p>
+            <p class="nr-stat-card__sub">Retail Total: 16.00 PKR</p>
+          </div>
+        </div>
+
+        <div class="nr-stat-card">
+          <div class="nr-stat-card__icon nr-stat-card__icon--green">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="nr-stat-card__body">
+            <p class="nr-stat-card__label">Auto Matched</p>
+            <p class="nr-stat-card__value">{{ stats.autoMatched.toLocaleString() }}</p>
+            <p class="nr-stat-card__sub">57.7% Business Rate</p>
+          </div>
+        </div>
+
+        <div class="nr-stat-card">
+          <div class="nr-stat-card__icon nr-stat-card__icon--red">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/>
+              <path d="M12 8v4m0 4h.01" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="nr-stat-card__body">
+            <p class="nr-stat-card__label">Action Required</p>
+            <p class="nr-stat-card__value nr-stat-card__value--red">{{ stats.actionRequired }}</p>
+            <p class="nr-stat-card__sub">Pending Resolution</p>
+          </div>
+        </div>
+
+        <div class="nr-stat-card">
+          <div class="nr-stat-card__icon nr-stat-card__icon--purple">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="nr-stat-card__body">
+            <p class="nr-stat-card__label">Reconciled Value</p>
+            <p class="nr-stat-card__value">{{ stats.reconciledValue }}</p>
+            <p class="nr-stat-card__sub">PKR Reconciled today</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ FILE UPLOAD ══════════════════════════════════════════════════ -->
+  <div class="nr-upload card">
+    <div class="nr-upload__inner">
+
+      <!-- Icon -->
+      @if (!isUploading && !uploadSuccess) {
+        <div class="nr-upload__icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <polyline points="14,2 14,8 20,8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="12" y1="18" x2="12" y2="12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            <polyline points="9,15 12,12 15,15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      }
+
+      <!-- Uploading spinner -->
+      @if (isUploading) {
+        <div class="nr-upload__icon nr-upload__icon--uploading">
+          <div class="nr-upload__spinner"></div>
+        </div>
+      }
+
+      <!-- Success icon -->
+      @if (!isUploading && uploadSuccess) {
+        <div class="nr-upload__icon nr-upload__icon--success">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      }
+
+      <h5 class="nr-upload__title">
+        @if (isUploading) { Uploading… }
+        @else if (uploadSuccess) { Upload Complete }
+        @else { Upload NIFT File }
+      </h5>
+
+      <p class="nr-upload__hint">
+        @if (isUploading) {
+          Processing <strong class="nr-upload__filename">{{ selectedFileName }}</strong>, please wait…
+        } @else if (uploadSuccess) {
+          <strong class="nr-upload__filename--success">{{ selectedFileName }}</strong> was uploaded successfully.
+        } @else {
+          Drag and drop your Daily Clearing Settlement File
+          <span class="nr-upload__hint-ext">(.txt, .xls)</span>
+          here to begin reconciliation.
+        }
+      </p>
+
+      @if (uploadError) {
+        <p class="nr-upload__error">
+          <svg viewBox="0 0 24 24" class="nr-upload__error-icon" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M12 8v4m0 4h.01" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          {{ uploadError }}
+        </p>
+      }
+
+      <div class="nr-upload__actions">
+        <label class="btn btn-primary btn-sm nr-upload__select-btn" [class.disabled]="isUploading">
+          @if (isUploading) { Uploading… } @else { Select File }
+          <input type="file" accept=".txt,.xls,.xlsx" hidden [disabled]="isUploading" (change)="onFileSelected($event)"/>
+        </label>
+        @if (!isUploading) {
+          <button class="btn btn-link btn-sm nr-upload__archive-btn" type="button">Browse Archive</button>
+        }
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ RECONCILIATION WORKSPACE ═════════════════════════════════════ -->
+  <div class="card nr-workspace">
+
+    <!-- Workspace header -->
+    <div class="nr-workspace__header">
+      <div>
+        <h5 class="nr-workspace__title">Reconciliation Workspace</h5>
+        <p class="nr-workspace__subtitle">Review and resolve discrepancies in current NIFT batch</p>
+      </div>
+      <div class="nr-workspace__search-wrap">
+        <div class="nr-workspace__search">
+          <svg viewBox="0 0 24 24" class="nr-workspace__search-icon" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+            <path d="m21 21-4.35-4.35" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <input
+            type="text"
+            class="form-control form-control-sm nr-workspace__search-input"
+            placeholder="Search Cheque No..."
+            [(ngModel)]="searchQuery" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs row -->
+    <div class="nr-workspace__tabs-row">
+      <div class="nr-tabs">
+        <button
+          class="nr-tab"
+          [class.nr-tab--active]="activeTab === 'matched'"
+          (click)="setTab('matched')">
+          Matched Records
+          <span class="nr-tab__badge nr-tab__badge--green">{{ stats.autoMatched.toLocaleString() }}</span>
+        </button>
+        <button
+          class="nr-tab"
+          [class.nr-tab--active]="activeTab === 'unmatched'"
+          (click)="setTab('unmatched')">
+          Unmatched
+          <span class="nr-tab__badge nr-tab__badge--red">{{ stats.actionRequired }}</span>
+        </button>
+      </div>
+      <p class="nr-workspace__logic-label">
+        <svg viewBox="0 0 24 24" class="nr-icon nr-icon--muted" aria-hidden="true">
+          <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M12 8v4m0 4h.01" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        Matching Logic: Cheque No + Exact Amount + MICR
+      </p>
+    </div>
+
+    <!-- Warning note -->
+    @if (activeTab === 'unmatched') {
+      <div class="nr-warning">
+        <svg viewBox="0 0 24 24" class="nr-icon nr-icon--warn" aria-hidden="true">
+          <path d="m10.29 3.86-8.44 14.6A2 2 0 0 0 3.57 21h16.86a2 2 0 0 0 1.72-3.54l-8.44-14.6a2 2 0 0 0-3.42 0z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 9v4m0 4h.01" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <span>Requires manual intervention. Correct OCR errors or link internal references.</span>
+      </div>
+    }
+
+    <!-- Unmatched Table -->
+    @if (activeTab === 'unmatched') {
+      @if (unmatchedRecords.length === 0 && !uploadSuccess) {
+        <div class="nr-workspace__empty">
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="nr-workspace__empty-icon nr-workspace__empty-icon--gray">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <polyline points="14,2 14,8 20,8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <p>No data yet</p>
+          <span>Upload a NIFT file above to begin reconciliation.</span>
+        </div>
+      } @else {
+        <div class="table-responsive">
+          <table class="table table-hover table-striped table-sm">
+            <thead class="bg-light">
+              <tr>
+                <th>Cheque No.</th>
+                <th>Branch</th>
+                <th class="text-end">Amount (PKR)</th>
+                <th>Date</th>
+                <th>Discrepancy</th>
+                <th class="nr-th-actions">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="table-group-divider">
+              @if (filteredUnmatched.length === 0) {
+                <tr>
+                  <td colspan="6" class="text-center py-4 text-muted">No records match your search.</td>
+                </tr>
+              }
+              @for (rec of filteredUnmatched; track rec.chequeNo) {
+                <tr>
+                  <td><span class="nr-cheque-no">{{ rec.chequeNo }}</span></td>
+                  <td>
+                    <span class="nr-branch-cell__name">{{ rec.branchName || '—' }}</span>
+                  </td>
+                  <td class="text-end"><strong>{{ formatAmount(rec.amount) }}</strong></td>
+                  <td>{{ rec.date }}</td>
+                  <td>
+                    @if (rec.discrepancy) {
+                      <span class="nr-discrepancy nr-discrepancy--amount-mismatch">
+                        <svg viewBox="0 0 24 24" class="nr-discrepancy__icon" aria-hidden="true">
+                          <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/>
+                          <path d="M12 8v4m0 4h.01" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                        </svg>
+                        {{ rec.discrepancy }}
+                      </span>
+                    } @else {
+                      <span class="text-muted">—</span>
+                    }
+                  </td>
+                  <td>
+                    <div class="nr-actions">
+                      <button class="nr-action-btn nr-action-btn--force" (click)="onForceMatch(rec)" type="button" title="Force Match">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                          <path d="M5 12h14M12 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Force Match
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <div class="nr-workspace__footer">
+          <span class="text-muted">SHOWING {{ filteredUnmatched.length }} OF {{ unmatchedRecords.length }} RECORDS</span>
+        </div>
+      }
+    }
+
+    <!-- Matched Table -->
+    @if (activeTab === 'matched') {
+      @if (matchedRecords.length === 0 && !uploadSuccess) {
+        <div class="nr-workspace__empty">
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="nr-workspace__empty-icon nr-workspace__empty-icon--gray">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <polyline points="14,2 14,8 20,8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <p>No data yet</p>
+          <span>Upload a NIFT file above to begin reconciliation.</span>
+        </div>
+      } @else if (matchedRecords.length === 0) {
+        <div class="nr-workspace__empty">
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="nr-workspace__empty-icon">
+            <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <p>No matched records found.</p>
+          <span>All records may require manual action.</span>
+        </div>
+      } @else {
+        <div class="table-responsive">
+          <table class="table table-hover table-striped table-sm">
+            <thead class="bg-light">
+              <tr>
+                <th>Cheque No.</th>
+                <th>Branch</th>
+                <th class="text-end">Amount (PKR)</th>
+                <th>Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody class="table-group-divider">
+              @if (filteredMatched.length === 0) {
+                <tr>
+                  <td colspan="5" class="text-center py-4 text-muted">No records match your search.</td>
+                </tr>
+              }
+              @for (rec of filteredMatched; track rec.chequeNo) {
+                <tr>
+                  <td><span class="nr-cheque-no">{{ rec.chequeNo }}</span></td>
+                  <td>
+                    <span class="nr-branch-cell__name">{{ rec.branchName || '—' }}</span>
+                  </td>
+                  <td class="text-end"><strong>{{ formatAmount(rec.amount) }}</strong></td>
+                  <td>{{ rec.date }}</td>
+                  <td>
+                    <span class="nr-discrepancy nr-discrepancy--stale-date" style="background:#f0fdf4;color:#15803d;border-color:#bbf7d0">
+                      <svg viewBox="0 0 24 24" class="nr-discrepancy__icon" aria-hidden="true">
+                        <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                      Matched
+                    </span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <div class="nr-workspace__footer">
+          <span class="text-muted">SHOWING {{ filteredMatched.length }} OF {{ matchedRecords.length }} RECORDS</span>
+        </div>
+      }
+    }
+
+  </div>
+
+</div>

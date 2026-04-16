@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import Swal from 'sweetalert2';
+import { ChequeInfoItem, ChequeInfoService } from '../../../services/cheque-info.service';
 
 export interface ChequeLodgmentItem {
     id: number;
@@ -21,23 +23,70 @@ export interface ChequeLodgmentItem {
     templateUrl: './cheque-lodgment-list.component.html',
     styleUrl: './cheque-lodgment-list.component.scss'
 })
-export class ChequeLodgmentListComponent {
+export class ChequeLodgmentListComponent implements OnInit {
 
     searchTerm = '';
     filterStatus = '';
+    isLoading = false;
+    lodgments: ChequeLodgmentItem[] = [];
 
-    mockData: ChequeLodgmentItem[] = [
-        { id: 1, depositorName: 'Ahmed Raza', accountNumber: '0102-010244556', beneficiaryName: 'Siddique Trading Co.', amount: 150000, currency: 'PKR', status: 'Completed', date: '2026-04-14', trackingNumber: 'TRX-99283-MZB' },
-        { id: 2, depositorName: 'Pakistan Textile Corp', accountNumber: '0102-910558490', beneficiaryName: 'Al-Baraka Textiles Pvt Ltd', amount: 450000, currency: 'PKR', status: 'Pending Review', date: '2026-04-14', trackingNumber: 'TRX-99284-MZB' },
-        { id: 3, depositorName: 'Fatima Enterprises', accountNumber: '0102-776655443', beneficiaryName: 'Habib Bank Limited', amount: 275000, currency: 'PKR', status: 'Scanning', date: '2026-04-13', trackingNumber: 'TRX-99280-MZB' },
-        { id: 4, depositorName: 'Ali Muhammad Khan', accountNumber: '0102-334455667', beneficiaryName: 'National Foods Ltd', amount: 89000, currency: 'PKR', status: 'Completed', date: '2026-04-13', trackingNumber: 'TRX-99278-MZB' },
-        { id: 5, depositorName: 'Karachi Steel Works', accountNumber: '0102-112233445', beneficiaryName: 'Fauji Cement Co.', amount: 620000, currency: 'PKR', status: 'Draft', date: '2026-04-12', trackingNumber: 'TRX-99275-MZB' },
-    ];
+    constructor(
+        private router: Router,
+        private chequeInfoService: ChequeInfoService
+    ) {}
 
-    constructor(private router: Router) {}
+    ngOnInit(): void {
+        this.loadChequeLodgments();
+    }
+
+    private mapStatus(status: string): string {
+        if (!status) return 'Draft';
+        const normalized = status.toUpperCase();
+        if (normalized === 'P') return 'Pending Review';
+        if (normalized === 'C') return 'Cleared';
+        if (normalized === 'S') return 'Scanning';
+        if (normalized === 'RE') return 'Reject';
+        if (normalized === 'A') return 'Approved';
+
+        return status;
+    }
+
+    private mapToListItem(item: ChequeInfoItem): ChequeLodgmentItem {
+        return {
+            id: item.id,
+            depositorName: item.depositorTitle || '—',
+            accountNumber: item.accountNo || '—',
+            beneficiaryName: item.beneficiaryTitle || '—',
+            amount: item.amount || 0,
+            currency: item.currency || 'PKR',
+            status: this.mapStatus(item.status),
+            date: item.date ? item.date.split('T')[0] : '—',
+            trackingNumber: item.referenceNo || `REF-${item.id}`
+        };
+    }
+
+    loadChequeLodgments(): void {
+        this.isLoading = true;
+        this.chequeInfoService.getChequeInfos().subscribe({
+            next: (response) => {
+                this.isLoading = false;
+                this.lodgments = (response?.data?.items || []).map((item) => this.mapToListItem(item));
+            },
+            error: () => {
+                this.isLoading = false;
+                this.lodgments = [];
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Load Failed',
+                    text: 'Unable to load cheque lodgment records.',
+                    confirmButtonColor: '#5a2181'
+                });
+            }
+        });
+    }
 
     get filteredData(): ChequeLodgmentItem[] {
-        return this.mockData.filter(item => {
+        return this.lodgments.filter(item => {
             const matchSearch = !this.searchTerm ||
                 item.depositorName.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
                 item.accountNumber.includes(this.searchTerm) ||

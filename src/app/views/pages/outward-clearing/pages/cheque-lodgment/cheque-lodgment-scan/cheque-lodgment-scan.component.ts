@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { CHEQUE_LODGMENT_SCAN_DATA } from '../cheque-lodgment-scan.data';
 
 @Component({
     selector: 'app-cheque-lodgment-scan',
@@ -8,29 +9,39 @@ import { Router } from '@angular/router';
     templateUrl: './cheque-lodgment-scan.component.html',
     styleUrl: './cheque-lodgment-scan.component.scss'
 })
-export class ChequeLodgmentScanComponent {
+export class ChequeLodgmentScanComponent implements OnInit {
 
-    chequeNumber = '00129485';
-    micrCode = '043002008: 00129485: 01';
-    amount = 145000;
-    chequeDate = '2026-04-08';
-    beneficiary = 'AL-BARAKA TEXTILES PVT LTD';
-    ocrEngine = 'Vision-v4.0';
-    processingTime = '0.8s';
-    confidenceScore = 98.4;
+    chequeNumber = CHEQUE_LODGMENT_SCAN_DATA.chequeNumber;
+    micrCode = CHEQUE_LODGMENT_SCAN_DATA.micrCode;
+    amount = CHEQUE_LODGMENT_SCAN_DATA.amount;
+    chequeDate = CHEQUE_LODGMENT_SCAN_DATA.chequeDate;
+    beneficiary = CHEQUE_LODGMENT_SCAN_DATA.beneficiary;
+    ocrEngine = CHEQUE_LODGMENT_SCAN_DATA.ocrEngine;
+    processingTime = CHEQUE_LODGMENT_SCAN_DATA.processingTime;
+    confidenceScore = CHEQUE_LODGMENT_SCAN_DATA.confidenceScore;
     isReady = true;
+    chequeInfoId = 0;
 
-    constructor(private router: Router) {}
+    constructor(
+        private router: Router,
+        private route: ActivatedRoute
+    ) {}
+
+    ngOnInit(): void {
+        this.chequeInfoId = Number(this.route.snapshot.paramMap.get('id')) || 0;
+    }
 
     formatAmount(val: number): string {
         return val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
 
     onProceedToReview(): void {
-        this.router.navigate(['/pages/outward-clearing/cheque-lodgment/review', 1]);
+        this.router.navigate(['/pages/outward-clearing/cheque-lodgment/review', this.chequeInfoId]);
     }
 
     onDiscard(): void {
-        this.router.navigate(['/pages/outward-clearing/cheque-lodgment/new']);
+        this.router.navigate(['/pages/outward-clearing/cheque-lodgment/new'], {
+            queryParams: { id: this.chequeInfoId }
+        });
     }
 }

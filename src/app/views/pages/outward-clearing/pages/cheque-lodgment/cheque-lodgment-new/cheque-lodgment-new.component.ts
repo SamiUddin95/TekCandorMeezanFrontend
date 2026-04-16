@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import Swal from 'sweetalert2';
+import { ChequeInfoItem, ChequeInfoService } from '../../../services/cheque-info.service';
 
 @Component({
     selector: 'app-cheque-lodgment-new',
@@ -9,18 +11,28 @@ import { Router } from '@angular/router';
     templateUrl: './cheque-lodgment-new.component.html',
     styleUrl: './cheque-lodgment-new.component.scss'
 })
-export class ChequeLodgmentNewComponent {
+export class ChequeLodgmentNewComponent implements OnInit {
 
     depositorType: 'Self' | 'MBL Account Holder' | 'Walk-in' = 'Self';
     depositorAccount = '';
     cnic = '';
     fullName = '';
     beneficiaryAccount = '';
+    beneficiaryBranchCode = '';
+    beneficiaryTitle = '';
     currency = 'PKR - Pak Rupee';
+    accountStatus = '';
     instrumentAmount: number | null = null;
     remarks = '';
+    chequeNumber = '';
+    payingBankCode = '';
+    payingBranchCode = '';
+    instrumentType = '';
+    chequeInfoId = 0;
 
     currentStep = 1;
+    isFetchingDepositor = false;
+    isFetchingBeneficiary = false;
 
     preScanChecks = [
         { label: 'Verify instrument is not stale (within 6 months).', checked: false },
@@ -28,7 +40,19 @@ export class ChequeLodgmentNewComponent {
         { label: 'Confirm presence of drawer signature.', checked: false },
     ];
 
-    constructor(private router: Router) {}
+    constructor(
+        private router: Router,
+        private route: ActivatedRoute,
+        private chequeInfoService: ChequeInfoService
+    ) {}
+
+    ngOnInit(): void {
+        const id = Number(this.route.snapshot.queryParamMap.get('id')) || 0;
+        this.chequeInfoId = id;
+        if (id > 0) {
+            this.loadChequeInfoById(id);
+        }
+    }
 
     get isWalkIn(): boolean {
         return this.depositorType === 'Walk-in';
@@ -40,7 +64,7 @@ export class ChequeLodgmentNewComponent {
 
     get isFormValid(): boolean {
         const depositorFieldValid = this.isWalkIn ? !!this.cnic : !!this.depositorAccount;
-        return depositorFieldValid && !!this.fullName && !!this.beneficiaryAccount && !!this.instrumentAmount;
+        return depositorFieldValid && !!this.fullName && !!this.beneficiaryAccount;
     }
 
     onDepositorTypeChange(): void {
@@ -49,16 +73,68 @@ export class ChequeLodgmentNewComponent {
         this.fullName = '';
     }
 
-    onDepositorAccountBlur(): void {
-        if (this.depositorAccount) {
-            this.fullName = 'Auto fetched title';
-        }
+    onFetchDepositor(): void {
+        if (!this.depositorAccount) return;
+        this.isFetchingDepositor = true;
+        setTimeout(() => {
+            this.fullName = 'Muhammad Ahmed Khan';
+            this.isFetchingDepositor = false;
+        }, 800);
     }
 
-    onCnicBlur(): void {
-        if (this.cnic) {
-            this.fullName = 'Auto fetched title';
+    private loadChequeInfoById(id: number): void {
+        this.chequeInfoService.getChequeInfoById(id).subscribe({
+            next: (response) => {
+                const item = response?.data;
+                if (!item) return;
+                this.applyChequeInfo(item);
+            },
+            error: () => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Load Failed',
+                    text: 'Unable to load cheque details for editing.',
+                    confirmButtonColor: '#5a2181'
+                });
+            }
+        });
+    }
+
+    private applyChequeInfo(item: ChequeInfoItem): void {
+        this.depositorType = (item.depositorType as 'Self' | 'MBL Account Holder' | 'Walk-in') || 'Self';
+        this.depositorAccount = item.accountNo || '';
+        this.cnic = item.cnic || '';
+        this.fullName = item.depositorTitle || '';
+
+        this.beneficiaryAccount = item.beneficiaryAccountNumber || '';
+        this.beneficiaryTitle = item.beneficiaryTitle || '';
+        this.accountStatus = item.accountStatus || '';
+        this.beneficiaryBranchCode = item.beneficiaryBranchCode || '';
+
+        this.chequeNumber = item.chequeNo || '';
+        this.payingBankCode = item.payingBankCode || '';
+        this.payingBranchCode = item.payingBranchCode || '';
+        this.instrumentType = item.instrumentType || '';
+        this.instrumentAmount = item.amount || null;
+
+        if (item.currency === 'PKR') {
+            this.currency = 'PKR - Pak Rupee';
+        } else if (item.currency) {
+            this.currency = item.currency;
         }
+
+        this.remarks = item.remarks || '';
+    }
+
+    onFetchBeneficiary(): void {
+        if (!this.beneficiaryAccount) return;
+        this.isFetchingBeneficiary = true;
+        setTimeout(() => {
+            this.beneficiaryTitle = 'Faisal Industries Ltd.';
+            this.accountStatus = 'Active';
+            this.beneficiaryBranchCode = '0145';
+            this.isFetchingBeneficiary = false;
+        }, 800);
     }
 
     formatAmount(val: number | null): string {
@@ -71,6 +147,6 @@ export class ChequeLodgmentNewComponent {
     }
 
     onScanCheque(): void {
-        this.router.navigate(['/pages/outward-clearing/cheque-lodgment/scan', 1]);
+        this.router.navigate(['/pages/outward-clearing/cheque-lodgment/scan', this.chequeInfoId]);
     }
 }

@@ -8,11 +8,28 @@
         </div>
 
         <div class="d-flex align-items-center gap-2">
-            <app-theme-toggler/>
+            <button
+                type="button"
+                class="btn btn-sm d-flex align-items-center gap-2 px-2"
+                [class.btn-outline-success]="(businessDayStarted$ | async) === true"
+                [class.btn-outline-danger]="(businessDayStarted$ | async) === false"
+                [class.btn-outline-secondary]="(businessDayStarted$ | async) === null"
+                (click)="openStartBusinessDay()"
+                title="Open Start Business Day">
+                <span class="fw-semibold">Business Day:</span>
+                <span>
+                    @if ((businessDayStarted$ | async) === true) {
+                        Started
+                    } @else if ((businessDayStarted$ | async) === false) {
+                        Not Started
+                    } @else {
+                        Checking...
+                    }
+                </span>
+            </button>
 
-            <!-- User Dropdown -->  
+            <!-- User Dropdown -->
             <app-user-profile-topbar/>
-
         </div>
     </div>
 </header>

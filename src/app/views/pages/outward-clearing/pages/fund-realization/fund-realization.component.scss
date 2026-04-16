@@ -1,0 +1,356 @@
+// ── Fund Realization – Meezan Bank Theme ──────────────────────────────────
+$meezan-deep:    #5a2181;
+$meezan-mid:     #9c59c3;
+$success-green:  #16a34a;
+$danger-red:     #dc2626;
+$border:         #e5e7eb;
+$text-primary:   #1f2937;
+$text-secondary: #6b7280;
+$text-muted:     #9ca3af;
+
+// ── Page wrapper ──────────────────────────────────────────────────────────
+.fr-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 32px;
+}
+
+// ── Top card ──────────────────────────────────────────────────────────────
+.fr-top-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+// ── Header ────────────────────────────────────────────────────────────────
+.fr-header {
+  padding: 16px 20px 10px;
+  border-bottom: 1px solid $border;
+
+  &__title {
+    font-size: 18px;
+    font-weight: 700;
+    color: $text-primary;
+    margin: 0 0 4px;
+  }
+
+  &__subtitle {
+    font-size: 12px;
+    color: $text-secondary;
+    margin: 0;
+    line-height: 1.55;
+    max-width: 680px;
+  }
+}
+
+// ── Toolbar ───────────────────────────────────────────────────────────────
+.fr-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-bottom: 1px solid $border;
+  flex-wrap: wrap;
+
+  &__spacer { flex: 1; }
+
+  &__search {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  &__search-icon {
+    position: absolute;
+    left: 9px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 14px;
+    height: 14px;
+    color: $text-muted;
+    pointer-events: none;
+  }
+
+  &__search-input {
+    padding-left: 30px;
+    width: 220px;
+    font-size: 12px;
+  }
+
+  &__date-wrap {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  &__date-icon {
+    position: absolute;
+    left: 9px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 14px;
+    height: 14px;
+    color: $text-muted;
+    pointer-events: none;
+  }
+
+  &__date-input {
+    padding-left: 30px;
+    width: 155px;
+    font-size: 12px;
+  }
+
+  &__icon-btn {
+    padding: 5px 8px;
+    display: inline-flex;
+    align-items: center;
+
+    svg {
+      width: 15px;
+      height: 15px;
+    }
+  }
+
+  &__filters-btn,
+  &__export-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 500;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+  }
+}
+
+// ── Selection bar ─────────────────────────────────────────────────────────
+.fr-selection-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  border-bottom: 1px solid $border;
+  min-height: 42px;
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    background: $meezan-deep;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  &__reset {
+    font-size: 12px;
+    font-weight: 500;
+    color: $text-secondary;
+    padding: 0;
+
+    &:hover { color: $meezan-deep; }
+  }
+
+  &__process-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    background: $meezan-deep;
+    border-color: $meezan-deep;
+    padding: 5px 16px;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    &:hover:not(:disabled) {
+      background: darken(#5a2181, 8%);
+      border-color: darken(#5a2181, 8%);
+    }
+
+    &:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// ── Table ─────────────────────────────────────────────────────────────────
+.fr-table {
+  margin: 0;
+  font-size: 12px;
+
+  thead th {
+    font-size: 11px;
+    font-weight: 700;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    white-space: nowrap;
+    padding: 9px 12px;
+    vertical-align: middle;
+  }
+
+  tbody td {
+    padding: 10px 12px;
+    vertical-align: middle;
+  }
+}
+
+.fr-th-check,
+.fr-td-check {
+  width: 36px;
+  padding-left: 16px !important;
+}
+
+.fr-row--selected {
+  background: #faf5ff !important;
+}
+
+.fr-count {
+  font-weight: 600;
+  color: $text-secondary;
+}
+
+.fr-sort-icon {
+  width: 12px;
+  height: 12px;
+  color: $text-muted;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+
+// ── Status badge ──────────────────────────────────────────────────────────
+.fr-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 20px;
+  white-space: nowrap;
+
+  &__icon {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+  }
+
+  &--ready      { background: #f0fdf4; color: $success-green;  border: 1px solid #bbf7d0; }
+  &--processing { background: #eff6ff; color: #2563eb;         border: 1px solid #bfdbfe; }
+  &--completed  { background: #faf5ff; color: $meezan-deep;    border: 1px solid #e9d5ff; }
+}
+
+// ── Three-dot menu button ─────────────────────────────────────────────────
+.fr-menu-btn {
+  color: $text-muted;
+  padding: 2px 6px;
+  line-height: 1;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  &:hover { color: $text-primary; }
+}
+
+// ── Table footer / pagination ─────────────────────────────────────────────
+.fr-table-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-top: 1px solid $border;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  &__info {
+    font-size: 12px;
+    color: $text-muted;
+  }
+}
+
+.fr-pagination {
+  display: flex;
+  gap: 6px;
+
+  &__btn {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 14px;
+  }
+}
+
+// ── Summary cards ─────────────────────────────────────────────────────────
+.fr-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.fr-summary-card {
+  background: #fff;
+  border: 1px solid $border;
+  border-radius: 10px;
+  padding: 18px 20px;
+
+  &__label {
+    font-size: 11px;
+    font-weight: 700;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 0 6px;
+  }
+
+  &__value {
+    font-size: 28px;
+    font-weight: 800;
+    color: $text-primary;
+    margin: 0 0 4px;
+    line-height: 1.1;
+
+    &--connected { color: $success-green; }
+  }
+
+  &__sub {
+    font-size: 12px;
+    color: $text-muted;
+    margin: 0;
+  }
+
+  &--status {
+    background: linear-gradient(135deg, #f5f3ff 0%, #fff 60%);
+  }
+}
+
+// ── Responsive ────────────────────────────────────────────────────────────
+@media (max-width: 900px) {
+  .fr-summary { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 768px) {
+  .fr-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+
+    &__spacer { display: none; }
+    &__search-input { width: 100%; }
+    &__date-input   { width: 100%; }
+  }
+
+  .fr-summary { grid-template-columns: 1fr; }
+}

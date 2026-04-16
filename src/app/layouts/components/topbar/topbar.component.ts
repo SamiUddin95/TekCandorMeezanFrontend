@@ -1,9 +1,12 @@
-import {Component} from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import {NgIcon} from '@ng-icons/core';
 import {LayoutStoreService} from '@core/services/layout-store.service';
 import {LucideAngularModule, Search} from 'lucide-angular';
 import {ThemeTogglerComponent} from '@layouts/components/topbar/components/theme-toggler/theme-toggler.component';
 import {UserProfileComponent} from '@layouts/components/topbar/components/user-profile/user-profile.component';
+import { StartBusinessDayService } from '../../../views/pages/outward-clearing/services/start-business-day.service';
+import { Router } from '@angular/router';
  
 
 @Component({
@@ -13,11 +16,24 @@ import {UserProfileComponent} from '@layouts/components/topbar/components/user-p
         LucideAngularModule,
         ThemeTogglerComponent,
         UserProfileComponent,
+        AsyncPipe,
     ],
     templateUrl: './topbar.component.html'
 })
-export class TopbarComponent {
-    constructor(public layout: LayoutStoreService) {
+export class TopbarComponent implements OnInit {
+    constructor(
+        public layout: LayoutStoreService,
+        private startBusinessDayService: StartBusinessDayService,
+        private router: Router
+    ) {
+    }
+
+    get businessDayStarted$() {
+        return this.startBusinessDayService.businessDayStarted$;
+    }
+
+    ngOnInit(): void {
+        this.startBusinessDayService.syncBusinessDayStatus();
     }
 
     toggleSidebar() {
@@ -34,6 +50,10 @@ export class TopbarComponent {
         } else {
             this.layout.setSidenavSize(currentSize === 'condensed' ? 'default' : 'condensed');
         }
+    }
+
+    openStartBusinessDay(): void {
+        this.router.navigate(['/pages/outward-clearing/start-business-day']);
     }
 
     Search = Search;

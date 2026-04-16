@@ -1,5 +1,18 @@
 <div class="topbar-item nav-user">
     <div class="d-lg-flex align-items-center gap-3 d-none">
+
+        <!-- Hub / Branch Scope Badge -->
+        @if (branchOrHub) {
+            <div class="scope-badge" [class.scope-badge--hub]="isHubWise" [class.scope-badge--branch]="!isHubWise">
+                <span class="scope-badge__dot"></span>
+                <span class="scope-badge__type">{{ scopeLabel }}</span>
+                <span class="scope-badge__divider"></span>
+                <span class="scope-badge__names" [title]="scopeNamesTooltip">{{ scopeNamesDisplay }}</span>
+            </div>
+        }
+
+        <app-theme-toggler/>
+
         <!-- User Info Card -->
         <div class="user-info-card">
             <div class="user-avatar">

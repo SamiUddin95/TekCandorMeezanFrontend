@@ -212,6 +212,20 @@ export class AuthService {
     }
   }
 
+  // Get BranchorHub type from token claims (e.g., "HubWise" or "BranchWise")
+  getBranchOrHub(): string {
+    const claims = this.getTokenClaims();
+    return claims['BranchorHub'] || claims['BranchOrHub'] || '';
+  }
+
+  // Get assigned Hub/Branch names from token claims as a string array
+  getHubNames(): string[] {
+    const claims = this.getTokenClaims();
+    const raw = claims['HubNames'] || claims['BranchNames'] || '';
+    if (!raw) return [];
+    return raw.split(',').map((n: string) => n.trim()).filter((n: string) => n.length > 0);
+  }
+
   // Clear permissions on logout
   clearPermissions(): void {
     localStorage.removeItem('user_permissions');
