@@ -117,4 +117,8 @@ export class ChequeLodgmentListComponent implements OnInit {
     onView(item: ChequeLodgmentItem): void {
         this.router.navigate(['/pages/outward-clearing/cheque-lodgment/review', item.id]);
     }
+
+    onDepositSlip(item: ChequeLodgmentItem): void {
+        this.router.navigate(['/pages/outward-clearing/cheque-lodgment/deposit-slip', item.id]);
+    }
 }

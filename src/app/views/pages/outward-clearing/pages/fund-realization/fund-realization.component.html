@@ -77,7 +77,7 @@
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M5 12h14M12 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        Process Realization
+        Commit
       </button>
     </div>
 
@@ -111,7 +111,17 @@
           </tr>
         </thead>
         <tbody class="table-group-divider">
-          @if (pagedBranches.length === 0) {
+          @if (isLoading) {
+            <tr>
+              <td colspan="8" class="text-center py-4 text-muted">Loading branches...</td>
+            </tr>
+          }
+          @if (!isLoading && loadError) {
+            <tr>
+              <td colspan="8" class="text-center py-4 text-danger">{{ loadError }}</td>
+            </tr>
+          }
+          @if (!isLoading && !loadError && pagedBranches.length === 0) {
             <tr>
               <td colspan="8" class="text-center py-4 text-muted">No branches match your search.</td>
             </tr>

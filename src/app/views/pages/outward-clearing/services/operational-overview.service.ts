@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 
@@ -104,7 +104,12 @@ export class OperationalOverviewService {
         return this.http.put<ChequeActionResponse>(`${this.apiUrl}/outward/ChequeInfo/approve/${id}`, {});
     }
 
-    rejectCheque(id: number): Observable<ChequeActionResponse> {
-        return this.http.put<ChequeActionResponse>(`${this.apiUrl}/outward/ChequeInfo/reject/${id}`, {});
+    rejectCheque(id: number, remarks?: string): Observable<ChequeActionResponse> {
+        const cleanedRemarks = (remarks ?? '').trim();
+        const params = cleanedRemarks
+            ? new HttpParams().set('remarks', cleanedRemarks)
+            : undefined;
+
+        return this.http.put<ChequeActionResponse>(`${this.apiUrl}/outward/ChequeInfo/reject/${id}`, {}, { params });
     }
 }

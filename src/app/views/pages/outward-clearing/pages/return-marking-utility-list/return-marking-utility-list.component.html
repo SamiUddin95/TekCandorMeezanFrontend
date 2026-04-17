@@ -1,0 +1,98 @@
+<div class="row mt-2">
+  <div class="col-lg-12">
+    <div class="card rml-card">
+      <div class="card-header bg-light d-flex justify-content-between align-items-center">
+        <div>
+          <h5 class="card-title mb-0">Return Marking Utility List</h5>
+          <small class="text-muted">Review returned instruments and open item for edit.</small>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="row mb-3">
+          <div class="col-md-5">
+            <label class="form-label mb-1">Search</label>
+            <input
+              type="text"
+              class="form-control form-control-sm"
+              placeholder="Cheque #, depositor, account or reason..."
+              [(ngModel)]="searchTerm" />
+          </div>
+          <div class="col-md-3">
+            <label class="form-label mb-1">Status</label>
+            <select class="form-select form-select-sm" [(ngModel)]="filterStatus">
+              <option value="">All Status</option>
+              @for (status of statusOptions; track status) {
+                <option [value]="status">{{ status }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-hover table-striped table-sm">
+            <thead class="bg-light">
+              <tr>
+                <th style="width: 10%;">Cheque #</th>
+                <th style="width: 17%;">Depositor</th>
+                <th style="width: 14%;">Account</th>
+                <th style="width: 16%;">Branch</th>
+                <th style="width: 11%;">Amount</th>
+                <th style="width: 9%;">Date</th>
+                <th style="width: 8%;">Status</th>
+                <th style="width: 7%;">Code</th>
+                <th style="width: 14%;">Reason</th>
+                <th style="width: 4%;">Action</th>
+              </tr>
+            </thead>
+            <tbody class="table-group-divider">
+              @if (isLoading) {
+                <tr>
+                  <td colspan="10" class="text-center text-muted py-3">Loading records...</td>
+                </tr>
+              }
+              @if (!isLoading && loadError) {
+                <tr>
+                  <td colspan="10" class="text-center text-danger py-3">{{ loadError }}</td>
+                </tr>
+              }
+              @for (item of filteredRows; track item.id) {
+                <tr>
+                  <td class="font-monospace fw-semibold">{{ item.chequeNo }}</td>
+                  <td>{{ item.depositor }}</td>
+                  <td class="font-monospace">{{ item.accountNo }}</td>
+                  <td>{{ item.branchName }}</td>
+                  <td class="text-end fw-bold">PKR {{ formatAmount(item.amount) }}</td>
+                  <td>{{ item.date }}</td>
+                  <td>
+                    <span class="rml-status">{{ item.status }}</span>
+                  </td>
+                  <td class="font-monospace">{{ item.returnCode }}</td>
+                  <td class="rml-reason" [title]="item.returnReason">{{ item.returnReason }}</td>
+                  <td>
+                    <button
+                      class="btn btn-outline-primary btn-sm d-inline-flex align-items-center justify-content-center"
+                      type="button"
+                      title="Edit"
+                      aria-label="Edit"
+                      (click)="onEdit(item)">
+                      <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" focusable="false">
+                        <path d="M12 20h9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                        <path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+              }
+              @if (!isLoading && !loadError && filteredRows.length === 0) {
+                <tr>
+                  <td colspan="10" class="text-center text-muted py-3">No records found</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

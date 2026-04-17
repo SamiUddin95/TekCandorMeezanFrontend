@@ -231,11 +231,30 @@ export class OperationalOverviewComponent implements OnInit {
         });
     }
 
-    onReject(txn: Transaction): void {
+    async onReject(txn: Transaction): Promise<void> {
         if (this.actionInProgressId !== null) return;
 
+        const { isConfirmed, value } = await Swal.fire({
+            title: 'Reject Cheque',
+            text: 'You can add an optional rejection reason.',
+            input: 'textarea',
+            inputLabel: 'Reason (Optional)',
+            inputPlaceholder: 'Type reason here (optional)...',
+            inputAttributes: {
+                maxlength: '300'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Reject',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: '#dc2626'
+        });
+
+        if (!isConfirmed) return;
+
+        const remarks = typeof value === 'string' ? value.trim() : '';
+
         this.actionInProgressId = txn.id;
-        this.operationalOverviewService.rejectCheque(txn.id).subscribe({
+        this.operationalOverviewService.rejectCheque(txn.id, remarks).subscribe({
             next: (response) => {
                 this.actionInProgressId = null;
                 Swal.fire({

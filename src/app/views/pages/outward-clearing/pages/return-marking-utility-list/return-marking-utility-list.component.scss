@@ -1,0 +1,48 @@
+$meezan-deep: #5a2181;
+$border: #e5e7eb;
+$text-primary: #1f2937;
+$text-secondary: #6b7280;
+
+.rml-card {
+  border: 1px solid $border;
+
+  .card-title {
+    color: $text-primary;
+    font-weight: 700;
+  }
+
+  thead th {
+    font-size: 11px;
+    font-weight: 700;
+    color: $meezan-deep;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+    white-space: nowrap;
+  }
+
+  tbody td {
+    vertical-align: middle;
+    font-size: 12px;
+    color: $text-primary;
+  }
+}
+
+.rml-status {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.rml-reason {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: $text-secondary;
+}

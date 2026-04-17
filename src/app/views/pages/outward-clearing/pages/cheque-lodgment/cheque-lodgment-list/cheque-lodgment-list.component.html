@@ -39,7 +39,7 @@
                 <th style="width: 12%;">Amount</th>
                 <th style="width: 10%;">Date</th>
                 <th style="width: 8%;">Status</th>
-                <th style="width: 5%;">Action</th>
+                <th style="width: 12%;">Action</th>
               </tr>
             </thead>
             <tbody class="table-group-divider">
@@ -56,7 +56,19 @@
                   </td>
                   <td>
                     <div class="btn-group btn-group-sm" role="group">
-                      <button class="btn btn-outline-primary btn-sm" (click)="onView(item)">VIEW</button>
+                      <button class="btn btn-outline-primary btn-sm d-inline-flex align-items-center justify-content-center" (click)="onView(item)" title="View" aria-label="View">
+                        <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" focusable="false">
+                          <path d="M1.5 12s3.8-6.5 10.5-6.5S22.5 12 22.5 12s-3.8 6.5-10.5 6.5S1.5 12 1.5 12z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+                          <circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="1.8"></circle>
+                        </svg>
+                      </button>
+                      <button class="btn btn-outline-success btn-sm d-inline-flex align-items-center justify-content-center" (click)="onDepositSlip(item)" title="Deposit Slip" aria-label="Deposit Slip">
+                        <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" focusable="false">
+                          <path d="M7 3h8l4 4v14H7z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path>
+                          <path d="M15 3v5h5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path>
+                          <path d="M10 13h6M10 17h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+                        </svg>
+                      </button>
                     </div>
                   </td>
                 </tr>

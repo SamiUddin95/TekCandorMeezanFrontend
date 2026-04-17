@@ -5,6 +5,7 @@ import { EchartComponent } from '@app/components/echart.component';
 import { CountUpModule } from 'ngx-countup';
 import { DashboardService, DashboardChequeItem } from '@app/services/dashboard.service';
 import { EChartsOption } from 'echarts';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-dashboard-2',
@@ -21,7 +22,10 @@ export class Dashboard2Component implements OnInit {
     normalPieOptions!: () => EChartsOption;
     sameDayPieOptions!: () => EChartsOption;
 
-    constructor(private dashboardService: DashboardService) {}
+    constructor(
+        private dashboardService: DashboardService,
+        private router: Router
+    ) {}
 
     ngOnInit() { this.loadDashboardData(); }
 
@@ -51,6 +55,37 @@ export class Dashboard2Component implements OnInit {
             'Return': '#2563eb', 'System Rejected': '#dc2626', 'Un Authorized': '#6b7280'
         };
         return c[status] || '#9ca3af';
+    }
+
+    getStatusRoute(status: string): string | null {
+        const normalized = status.trim().toLowerCase().replace(/\s+/g, ' ');
+
+        if (normalized === 'approved') {
+            return '/pages/ChequeProcess/approved-transactions';
+        }
+        if (normalized === 'in process') {
+            return '/pages/ChequeProcess/in-process-cheques';
+        }
+        if (normalized === 'pending') {
+            return '/pages/ChequeProcess/pending-cheque';
+        }
+        if (normalized === 'return') {
+            return '/pages/ChequeProcess/return-transaction';
+        }
+        if (normalized === 'system rejected') {
+            return '/pages/ChequeProcess/system-rejected-cheques';
+        }
+        if (normalized === 'un authorized' || normalized === 'unauthorized') {
+            return '/pages/ChequeProcess/unauthorize-transactions';
+        }
+
+        return null;
+    }
+
+    onStatusClick(status: string): void {
+        const route = this.getStatusRoute(status);
+        if (!route) return;
+        this.router.navigate([route]);
     }
 
     formatAmt(val: number): string {

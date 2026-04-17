@@ -1,6 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ReturnDetailData, ReturnMarkingUtilityService } from '../../services/return-marking-utility.service';
+import Swal from 'sweetalert2';
 
 export interface SessionHistoryItem {
     time: string;
@@ -11,16 +14,16 @@ export interface SessionHistoryItem {
 }
 
 export interface InstrumentMetadata {
-    drawerName: string;
+    beneficiaryTitle: string;
+    chequeNo: string;
     accountNumber: string;
-    issueDate: string;
+    chequeDate: string;
     branchName: string;
-    processingCode: string;
-    clearingCycle: string;
+    returnReason: string;
     settlementAmount: number;
-    stampDutyPercent: number;
-    stampDutyAmount: number;
-    statusLabel: string;
+    imageF: string;
+    imageB: string;
+    imageU: string;
 }
 
 @Component({
@@ -29,11 +32,14 @@ export interface InstrumentMetadata {
     templateUrl: './return-marking-utility.component.html',
     styleUrl: './return-marking-utility.component.scss'
 })
-export class ReturnMarkingUtilityComponent {
+export class ReturnMarkingUtilityComponent implements OnInit {
 
     instrumentNumber = '77452168';
+    chequeInfoId: number | null = null;
     isSearching = false;
     instrumentFound = true;
+    isLoading = false;
+    isSubmitting = false;
 
     selectedReasonCode = 'SBP-01';
     officerRemarks = '';
@@ -51,16 +57,16 @@ export class ReturnMarkingUtilityComponent {
     ];
 
     instrument: InstrumentMetadata = {
-        drawerName: 'Hassan Ahmed Khan',
-        accountNumber: '0010-0062744-010',
-        issueDate: '22-OCT-2024',
-        branchName: 'I.I Chundrigar Road 00011',
-        processingCode: '0042-C',
-        clearingCycle: 'Day-1 (Morning)',
-        settlementAmount: 85750.00,
-        stampDutyPercent: 0.75,
-        stampDutyAmount: 85.76,
-        statusLabel: 'ACTIVE IN CLEARING'
+        beneficiaryTitle: '—',
+        chequeNo: '—',
+        accountNumber: '—',
+        chequeDate: '—',
+        branchName: '—',
+        returnReason: '—',
+        settlementAmount: 0,
+        imageF: '',
+        imageB: '',
+        imageU: ''
     };
 
     sessionHistory: SessionHistoryItem[] = [
@@ -73,6 +79,71 @@ export class ReturnMarkingUtilityComponent {
 
     sessionId = 'SHK-8';
 
+    constructor(
+        private route: ActivatedRoute,
+        private router: Router,
+        private returnMarkingUtilityService: ReturnMarkingUtilityService
+    ) {}
+
+    ngOnInit(): void {
+        this.route.paramMap.subscribe((params) => {
+            const idParam = params.get('id');
+            const id = idParam ? Number(idParam) : NaN;
+
+            if (!Number.isNaN(id) && id > 0) {
+                this.loadReturnDetail(id);
+            }
+        });
+    }
+
+    private loadReturnDetail(id: number): void {
+        this.chequeInfoId = id;
+        this.isLoading = true;
+        this.instrumentFound = false;
+
+        this.returnMarkingUtilityService.getReturnDetail(id).subscribe({
+            next: (response) => {
+                this.isLoading = false;
+                const data = response?.data;
+                if (!data) {
+                    this.instrumentFound = false;
+                    return;
+                }
+
+                this.instrument = this.mapDetailToInstrument(data);
+                this.instrumentNumber = data.chequeNo || '';
+                this.officerRemarks = data.returnReason || '';
+                this.instrumentFound = true;
+            },
+            error: () => {
+                this.isLoading = false;
+                this.instrumentFound = false;
+            }
+        });
+    }
+
+    private mapDetailToInstrument(data: ReturnDetailData): InstrumentMetadata {
+        return {
+            beneficiaryTitle: data.beneficiaryTitle || '—',
+            chequeNo: data.chequeNo || '—',
+            accountNumber: data.accountNo || '—',
+            chequeDate: this.formatDate(data.chequeDate),
+            branchName: data.branchName || '—',
+            returnReason: data.returnReason || '—',
+            settlementAmount: data.amount || 0,
+            imageF: data.imageF || '',
+            imageB: data.imageB || '',
+            imageU: data.imageU || ''
+        };
+    }
+
+    private formatDate(dateTime: string): string {
+        if (!dateTime) return '—';
+        const d = new Date(dateTime);
+        if (Number.isNaN(d.getTime())) return '—';
+        return d.toLocaleDateString('en-GB');
+    }
+
     onFindInstrument(): void {
         if (!this.instrumentNumber.trim()) return;
         this.isSearching = true;
@@ -83,16 +154,60 @@ export class ReturnMarkingUtilityComponent {
     }
 
     onFinalizeReturn(): void {
-        console.log('Finalize Return:', {
-            instrumentNumber: this.instrumentNumber,
-            reasonCode: this.selectedReasonCode,
-            remarks: this.officerRemarks,
-            isInternal: this.isInternal
+        if (!this.chequeInfoId || this.isSubmitting) {
+            return;
+        }
+
+        this.isSubmitting = true;
+
+        this.returnMarkingUtilityService.markReturn(this.chequeInfoId).subscribe({
+            next: (response) => {
+                this.isSubmitting = false;
+                if (response?.status === 'success' || response?.statusCode === 200) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response?.data || 'Cheque marked as return successfully',
+                        confirmButtonText: 'OK',
+                        customClass: {
+                            confirmButton: 'btn btn-primary'
+                        },
+                        buttonsStyling: false
+                    }).then(() => {
+                        this.router.navigate(['/pages/outward-clearing/return-marking-utility']);
+                    });
+                    return;
+                }
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Unable to Mark Return',
+                    text: response?.errorMessage || 'Something went wrong while marking return.',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        confirmButton: 'btn btn-primary'
+                    },
+                    buttonsStyling: false
+                });
+            },
+            error: () => {
+                this.isSubmitting = false;
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Request Failed',
+                    text: 'Unable to mark return right now. Please try again.',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        confirmButton: 'btn btn-primary'
+                    },
+                    buttonsStyling: false
+                });
+            }
         });
     }
 
     onHoldForAudit(): void {
-        console.log('Hold for Manual Audit:', this.instrumentNumber);
+                this.router.navigate(['/pages/outward-clearing/return-marking-utility']);
     }
 
     get selectedReasonLabel(): string {

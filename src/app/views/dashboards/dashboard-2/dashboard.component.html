@@ -72,7 +72,13 @@
           </div>
           <div class="status-grid">
             @for (item of normalItems; track $index) {
-              <div class="status-row">
+              <div
+                class="status-row"
+                [class.status-row--clickable]="getStatusRoute(item.status)"
+                role="button"
+                tabindex="0"
+                (click)="onStatusClick(item.status)"
+                (keydown.enter)="onStatusClick(item.status)">
                 <span class="status-dot" [style.background]="getStatusColor(item.status)"></span>
                 <span class="status-name">{{ item.status }}</span>
                 <span class="status-cheques">{{ item.cheques }}</span>
@@ -92,7 +98,13 @@
           </div>
           <div class="status-grid">
             @for (item of sameDayItems; track $index) {
-              <div class="status-row">
+              <div
+                class="status-row"
+                [class.status-row--clickable]="getStatusRoute(item.status)"
+                role="button"
+                tabindex="0"
+                (click)="onStatusClick(item.status)"
+                (keydown.enter)="onStatusClick(item.status)">
                 <span class="status-dot" [style.background]="getStatusColor(item.status)"></span>
                 <span class="status-name">{{ item.status }}</span>
                 <span class="status-cheques">{{ item.cheques }}</span>

@@ -140,6 +140,22 @@ $text-muted:     #9ca3af;
   border-bottom: 1px solid #f9fafb;
 
   &:last-child { border-bottom: none; }
+
+  &--clickable {
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color .15s ease;
+
+    &:hover {
+      background: #f8fafc;
+    }
+
+    &:focus {
+      outline: 2px solid rgba(90, 33, 129, .25);
+      outline-offset: 1px;
+      background: #f8fafc;
+    }
+  }
 }
 
 .status-dot {

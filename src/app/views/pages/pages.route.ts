@@ -209,6 +209,11 @@ export const PAGES_ROUTES: Routes = [
                     },
                     {
                         path: 'return-marking-utility',
+                        loadComponent: () => import('./outward-clearing/pages/return-marking-utility-list/return-marking-utility-list.component').then(mod => mod.ReturnMarkingUtilityListComponent),
+                        data: { title: 'Return Marking Utility List' }
+                    },
+                    {
+                        path: 'return-marking-utility/:id',
                         loadComponent: () => import('./outward-clearing/pages/return-marking-utility/return-marking-utility.component').then(mod => mod.ReturnMarkingUtilityComponent),
                         data: { title: 'Return Marking Utility' }
                     },

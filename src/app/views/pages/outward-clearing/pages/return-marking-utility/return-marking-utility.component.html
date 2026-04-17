@@ -32,10 +32,11 @@
     </div>
   </div>
   </div>
+  @if (isLoading) {
+    <div class="card p-4 text-center text-muted">Loading return detail...</div>
+  }
 
-
-
-  @if (instrumentFound) {
+  @if (!isLoading && instrumentFound) {
 
   <!-- ═══ MAIN CONTENT: two columns ═══════════════════════════════════ -->
   <div class="rmu-body">
@@ -56,7 +57,7 @@
               <p class="rmu-meta-card__sub">Verified record from Centralized Clearing System</p>
             </div>
           </div>
-          <span class="rmu-meta-card__badge">{{ instrument.statusLabel }}</span>
+          <span class="rmu-meta-card__badge">RETURNED</span>
         </div>
 
         <!-- Info grid -->
@@ -64,9 +65,9 @@
           <div class="rmu-meta-grid__item">
             <p class="rmu-meta-grid__label">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="7" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
-              DRAWER NAME
+              BENEFICIARY
             </p>
-            <p class="rmu-meta-grid__value">{{ instrument.drawerName }}</p>
+            <p class="rmu-meta-grid__value">{{ instrument.beneficiaryTitle }}</p>
           </div>
           <div class="rmu-meta-grid__item">
             <p class="rmu-meta-grid__label">
@@ -78,9 +79,9 @@
           <div class="rmu-meta-grid__item">
             <p class="rmu-meta-grid__label">
               <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="1.8"/><line x1="16" y1="2" x2="16" y2="6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="8" y1="2" x2="8" y2="6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" stroke-width="1.8"/></svg>
-              ISSUE DATE
+              CHEQUE DATE
             </p>
-            <p class="rmu-meta-grid__value">{{ instrument.issueDate }}</p>
+            <p class="rmu-meta-grid__value">{{ instrument.chequeDate }}</p>
           </div>
           <div class="rmu-meta-grid__item">
             <p class="rmu-meta-grid__label">
@@ -92,16 +93,16 @@
           <div class="rmu-meta-grid__item">
             <p class="rmu-meta-grid__label">
               <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="16 18 22 12 16 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><polyline points="8 6 2 12 8 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              PROCESSING CODE
+              CHEQUE NUMBER
             </p>
-            <p class="rmu-meta-grid__value">{{ instrument.processingCode }}</p>
+            <p class="rmu-meta-grid__value">{{ instrument.chequeNo }}</p>
           </div>
           <div class="rmu-meta-grid__item">
             <p class="rmu-meta-grid__label">
               <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.8"/><polyline points="12 6 12 12 16 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-              CLEARING CYCLE
+              RETURN REASON
             </p>
-            <p class="rmu-meta-grid__value">{{ instrument.clearingCycle }}</p>
+            <p class="rmu-meta-grid__value">{{ instrument.returnReason }}</p>
           </div>
         </div>
 
@@ -124,47 +125,6 @@
         </div>
       </div>
 
-      <!-- Session History -->
-      <div class="card rmu-session-card">
-        <div class="rmu-session-card__header">
-          <div class="rmu-session-card__header-left">
-            <svg viewBox="0 0 24 24" class="rmu-session-card__icon" aria-hidden="true">
-              <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.8"/>
-              <polyline points="12 6 12 12 16 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-            </svg>
-            <span class="rmu-session-card__title">Session History</span>
-          </div>
-          <button class="btn btn-link btn-sm rmu-session-card__view-all" type="button">View All Logs</button>
-        </div>
-
-        <div class="table-responsive">
-          <table class="table table-hover table-sm rmu-table">
-            <thead class="bg-light">
-              <tr>
-                <th>TIME</th>
-                <th>CHEQUE #</th>
-                <th>AMOUNT</th>
-                <th>RETURN REASON</th>
-                <th>STATUS</th>
-              </tr>
-            </thead>
-            <tbody class="table-group-divider">
-              @for (item of sessionHistory; track item.chequeNo) {
-                <tr>
-                  <td class="rmu-table__time">{{ item.time }}</td>
-                  <td class="rmu-table__cheque">{{ item.chequeNo }}</td>
-                  <td class="rmu-table__amount">PKR {{ formatAmount(item.amount) }}</td>
-                  <td>{{ item.returnReason }}</td>
-                  <td>
-                    <span class="rmu-badge rmu-badge--{{ item.status.toLowerCase().replace(' ', '-') }}">{{ item.status }}</span>
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-      </div>
-
     </div>
 
     <!-- ── RIGHT COLUMN ────────────────────────────────────────────── -->
@@ -174,7 +134,7 @@
       <div class="rmu-settle-card">
         <p class="rmu-settle-card__label">SETTLEMENT AMOUNT</p>
         <p class="rmu-settle-card__amount">PKR {{ formatAmount(instrument.settlementAmount) }}</p>
-        <p class="rmu-settle-card__duty">Stamp Duty {{ instrument.stampDutyPercent }}%<span class="rmu-settle-card__duty-val">PKR {{ formatAmount(instrument.stampDutyAmount) }}</span></p>
+        <p class="rmu-settle-card__duty">Cheque Number<span class="rmu-settle-card__duty-val">{{ instrument.chequeNo }}</span></p>
       </div>
 
       <!-- Mark for Return -->
@@ -232,14 +192,19 @@
 
         <!-- Actions -->
         <div class="rmu-return-card__actions">
-          <button class="btn btn-sm rmu-return-card__finalize-btn" type="button" (click)="onFinalizeReturn()">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M5 12h14M12 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            Finalize &amp; Mark Return
+          <button class="btn btn-sm rmu-return-card__finalize-btn" type="button" [disabled]="isSubmitting" (click)="onFinalizeReturn()">
+            @if (isSubmitting) {
+              <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
+              Submitting...
+            } @else {
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M5 12h14M12 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Finalize &amp; Mark Return
+            }
           </button>
-          <button class="btn btn-outline-secondary btn-sm rmu-return-card__hold-btn" type="button" (click)="onHoldForAudit()">
-            Hold for Manual Audit
+          <button class="btn btn-outline-secondary btn-sm rmu-return-card__hold-btn" type="button" [disabled]="isSubmitting" (click)="onHoldForAudit()">
+            Back to list
           </button>
         </div>
       </div>
@@ -248,6 +213,10 @@
 
   </div>
 
+  }
+
+  @if (!isLoading && !instrumentFound) {
+    <div class="card p-4 text-center text-muted">No return detail found.</div>
   }
 
 </div>
