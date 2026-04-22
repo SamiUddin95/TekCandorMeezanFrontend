@@ -158,6 +158,11 @@ export const PAGES_ROUTES: Routes = [
                 path: 'outward-clearing',
                 children: [
                     {
+                        path: 'dashboard',
+                        loadComponent: () => import('./outward-clearing/pages/outward-dashboard/outward-dashboard.component').then(mod => mod.OutwardDashboardComponent),
+                        data: { title: 'Outward Dashboard' }
+                    },
+                    {
                         path: 'start-business-day',
                         loadComponent: () => import('./outward-clearing/pages/start-business-day/start-business-day.component').then(mod => mod.StartBusinessDayComponent),
                         data: { title: 'Start Business Day' }

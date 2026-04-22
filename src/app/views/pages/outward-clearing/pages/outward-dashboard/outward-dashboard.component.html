@@ -1,0 +1,237 @@
+<div class="od-page mt-2 me-2">
+
+  <!-- Hero header -->
+  <div class="od-hero">
+    <div class="od-hero__bg"></div>
+    <div class="od-hero__body">
+      <div class="od-hero__left">
+        <span class="od-hero__eyebrow"><i class="fas fa-circle-dot me-1"></i>Outward Clearing Desk</span>
+        <h3 class="od-hero__title">Welcome back, {{ operator }}</h3>
+        <p class="od-hero__subtitle">{{ businessDate }} &middot; Live snapshot of every cheque flowing out of your branches.</p>
+      </div>
+      <div class="od-hero__right">
+        <div class="od-hero__meta">
+          <div class="od-hero__meta-item">
+            <span class="od-hero__meta-label">Branches</span>
+            <span class="od-hero__meta-value">{{ totalBranches }}</span>
+          </div>
+          <div class="od-hero__meta-divider"></div>
+          <div class="od-hero__meta-item">
+            <span class="od-hero__meta-label">Hubs</span>
+            <span class="od-hero__meta-value">{{ totalHubs }}</span>
+          </div>
+          <div class="od-hero__meta-divider"></div>
+          <div class="od-hero__meta-item">
+            <span class="od-hero__meta-label">Last Sync</span>
+            <span class="od-hero__meta-value"><i class="fas fa-clock me-1"></i>{{ lastUpdated || '—' }}</span>
+          </div>
+        </div>
+        <button type="button" class="od-hero__refresh" (click)="refresh()" [disabled]="isLoading">
+          @if (isLoading) {
+            <span class="spinner-border spinner-border-sm me-2"></span>Refreshing
+          } @else {
+            <i class="fas fa-rotate me-2"></i>Refresh
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="od-kpi-grid">
+    @for (kpi of kpis; track kpi.key) {
+      <div class="od-kpi">
+        <div class="od-kpi__icon" [style.background]="kpi.gradient">
+          <i [class]="kpi.icon"></i>
+        </div>
+        <div class="od-kpi__body">
+          <span class="od-kpi__label">{{ kpi.label }}</span>
+          <span class="od-kpi__value">{{ formatKpi(kpi) }}</span>
+          <span class="od-kpi__trend"
+                [class.od-kpi__trend--up]="kpi.trend === 'up'"
+                [class.od-kpi__trend--down]="kpi.trend === 'down'"
+                [class.od-kpi__trend--flat]="kpi.trend === 'flat'">
+            <i [class]="kpi.trend === 'up' ? 'fas fa-arrow-trend-up' : kpi.trend === 'down' ? 'fas fa-arrow-trend-down' : 'fas fa-minus'"></i>
+            {{ kpi.delta }}% <span class="od-kpi__trend-period">vs last week</span>
+          </span>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Charts row 1 -->
+  <div class="od-grid od-grid--2">
+
+    <div class="od-card od-card--chart">
+      <div class="od-card__header">
+        <div>
+          <h6 class="od-card__title">Weekly Lodgment Trend</h6>
+          <p class="od-card__subtitle">Instruments captured vs settlement amount (last 7 days)</p>
+        </div>
+        <span class="od-chip od-chip--purple"><i class="fas fa-chart-area me-1"></i>Live</span>
+      </div>
+      <div class="od-card__body">
+        <apx-chart
+          [series]="trendChart.series!"
+          [chart]="trendChart.chart!"
+          [colors]="trendChart.colors!"
+          [stroke]="trendChart.stroke!"
+          [fill]="trendChart.fill!"
+          [dataLabels]="trendChart.dataLabels!"
+          [xaxis]="trendChart.xaxis!"
+          [yaxis]="trendChart.yaxis!"
+          [grid]="trendChart.grid!"
+          [legend]="trendChart.legend!"
+          [tooltip]="trendChart.tooltip!"></apx-chart>
+      </div>
+    </div>
+
+    <div class="od-card od-card--chart">
+      <div class="od-card__header">
+        <div>
+          <h6 class="od-card__title">Instrument Status</h6>
+          <p class="od-card__subtitle">Distribution across the clearing pipeline</p>
+        </div>
+        <span class="od-chip od-chip--green"><i class="fas fa-circle-check me-1"></i>{{ statusBuckets.length }} states</span>
+      </div>
+      <div class="od-card__body">
+        <apx-chart
+          [series]="statusChart.series!"
+          [chart]="statusChart.chart!"
+          [labels]="statusChart.labels!"
+          [colors]="statusChart.colors!"
+          [stroke]="statusChart.stroke!"
+          [legend]="statusChart.legend!"
+          [dataLabels]="statusChart.dataLabels!"
+          [plotOptions]="statusChart.plotOptions!"></apx-chart>
+      </div>
+      <div class="od-status-chip-list">
+        @for (bucket of statusBuckets; track bucket.code) {
+          <div class="od-status-chip">
+            <span class="od-status-chip__dot" [style.background]="bucket.color"></span>
+            <span class="od-status-chip__label">{{ bucket.label }}</span>
+            <span class="od-status-chip__count">{{ bucket.count }}</span>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts row 2 -->
+  <div class="od-grid od-grid--3-2">
+
+    <div class="od-card od-card--chart">
+      <div class="od-card__header">
+        <div>
+          <h6 class="od-card__title">Top Branches by Settlement Amount</h6>
+          <p class="od-card__subtitle">Leading receiving branches in today's clearing pool</p>
+        </div>
+        <span class="od-chip od-chip--purple"><i class="fas fa-building-columns me-1"></i>Top 6</span>
+      </div>
+      <div class="od-card__body">
+        <apx-chart
+          [series]="branchChart.series!"
+          [chart]="branchChart.chart!"
+          [colors]="branchChart.colors!"
+          [plotOptions]="branchChart.plotOptions!"
+          [dataLabels]="branchChart.dataLabels!"
+          [xaxis]="branchChart.xaxis!"
+          [yaxis]="branchChart.yaxis!"
+          [grid]="branchChart.grid!"
+          [tooltip]="branchChart.tooltip!"
+          [legend]="branchChart.legend!"></apx-chart>
+      </div>
+    </div>
+
+    <div class="od-card">
+      <div class="od-card__header">
+        <div>
+          <h6 class="od-card__title">Recent Activity</h6>
+          <p class="od-card__subtitle">Latest cheque lodgments & status changes</p>
+        </div>
+        <a class="od-link" [routerLink]="['/pages/outward-clearing/transaction-history']">
+          View all <i class="fas fa-arrow-right ms-1"></i>
+        </a>
+      </div>
+      <div class="od-card__body od-card__body--flush">
+        @if (recentActivity.length === 0) {
+          <div class="od-empty">
+            <i class="fas fa-folder-open"></i>
+            <p>No recent activity yet.</p>
+          </div>
+        } @else {
+          <ul class="od-activity">
+            @for (item of recentActivity; track item.id) {
+              <li class="od-activity__item">
+                <div class="od-activity__icon">
+                  <i class="fas fa-file-invoice"></i>
+                </div>
+                <div class="od-activity__body">
+                  <span class="od-activity__title">{{ item.title }}</span>
+                  <span class="od-activity__sub">{{ item.subtitle }}</span>
+                </div>
+                <div class="od-activity__right">
+                  <span class="od-activity__amount">Rs. {{ formatAmount(item.amount) }}</span>
+                  <div class="od-activity__meta">
+                    <span class="od-status" [class]="item.statusClass">{{ item.status }}</span>
+                    <span class="od-activity__time">{{ item.time }}</span>
+                  </div>
+                </div>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Hourly processing + Quick Actions -->
+  <div class="od-grid od-grid--3-2">
+
+    <div class="od-card od-card--chart">
+      <div class="od-card__header">
+        <div>
+          <h6 class="od-card__title">Processing Throughput</h6>
+          <p class="od-card__subtitle">Hourly cheque processing with return breakdown</p>
+        </div>
+        <span class="od-chip od-chip--amber"><i class="fas fa-stopwatch me-1"></i>Today</span>
+      </div>
+      <div class="od-card__body">
+        <apx-chart
+          [series]="hourlyChart.series!"
+          [chart]="hourlyChart.chart!"
+          [colors]="hourlyChart.colors!"
+          [plotOptions]="hourlyChart.plotOptions!"
+          [dataLabels]="hourlyChart.dataLabels!"
+          [xaxis]="hourlyChart.xaxis!"
+          [yaxis]="hourlyChart.yaxis!"
+          [grid]="hourlyChart.grid!"
+          [legend]="hourlyChart.legend!"></apx-chart>
+      </div>
+    </div>
+
+    <div class="od-card">
+      <div class="od-card__header">
+        <div>
+          <h6 class="od-card__title">Quick Actions</h6>
+          <p class="od-card__subtitle">Jump into common workflows</p>
+        </div>
+      </div>
+      <div class="od-card__body">
+        <div class="od-actions">
+          @for (action of quickActions; track action.label) {
+            <button type="button" class="od-action" [class]="'od-action--' + action.accent" (click)="goTo(action.route)">
+              <span class="od-action__icon"><i [class]="action.icon"></i></span>
+              <span class="od-action__body">
+                <span class="od-action__label">{{ action.label }}</span>
+                <span class="od-action__desc">{{ action.description }}</span>
+              </span>
+              <i class="fas fa-chevron-right od-action__chevron"></i>
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

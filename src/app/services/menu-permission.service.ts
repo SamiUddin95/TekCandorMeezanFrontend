@@ -169,8 +169,14 @@ export class MenuPermissionService {
         label: 'Outward Clearing',
         icon: 'tablerArrowBarToUp',
         isCollapsed: true,
-        requiredPermissions: ['outwardClearing.StartBusinessDay', 'outwardClearing.ChequeLodgment', 'outwardClearing.GenerateClearingFile', 'outwardClearing.OperationalOverview', 'outwardClearing.NiftReconciliation'],
+        requiredPermissions: ['outwardClearing.Dashboard', 'outwardClearing.StartBusinessDay', 'outwardClearing.ChequeLodgment', 'outwardClearing.GenerateClearingFile', 'outwardClearing.OperationalOverview', 'outwardClearing.NiftReconciliation'],
         children: [
+          {
+            label: 'Dashboard',
+            icon: 'tablerDashboard',
+            url: '/pages/outward-clearing/dashboard',
+            requiredPermissions: ['outwardClearing.Dashboard']
+          },
           {
             label: 'Start Business Day',
             icon: 'tablerCalendarEvent',
