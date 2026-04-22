@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { ChequeInfoItem, ChequeInfoService } from '../../../services/cheque-info.service';
+import { PaginationComponent } from '@app/components/pagination/pagination.component';
 
 export interface ChequeLodgmentItem {
     id: number;
@@ -19,7 +20,7 @@ export interface ChequeLodgmentItem {
 
 @Component({
     selector: 'app-cheque-lodgment-list',
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule, PaginationComponent],
     templateUrl: './cheque-lodgment-list.component.html',
     styleUrl: './cheque-lodgment-list.component.scss'
 })
@@ -27,6 +28,10 @@ export class ChequeLodgmentListComponent implements OnInit {
 
     searchTerm = '';
     filterStatus = '';
+    selectedDate = '';
+    currentPage = 1;
+    pageSize = 10;
+    totalRecords = 0;
     isLoading = false;
     lodgments: ChequeLodgmentItem[] = [];
 
@@ -36,7 +41,27 @@ export class ChequeLodgmentListComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
+        this.selectedDate = this.today();
         this.loadChequeLodgments();
+    }
+
+    private today(): string {
+        const d = new Date();
+        return d.toISOString().split('T')[0];
+    }
+
+    private getNextDate(dateStr: string): string {
+        if (!dateStr) {
+            return '';
+        }
+
+        const date = new Date(dateStr);
+        if (Number.isNaN(date.getTime())) {
+            return '';
+        }
+
+        date.setDate(date.getDate() + 1);
+        return date.toISOString().split('T')[0];
     }
 
     private mapStatus(status: string): string {
@@ -67,14 +92,21 @@ export class ChequeLodgmentListComponent implements OnInit {
 
     loadChequeLodgments(): void {
         this.isLoading = true;
-        this.chequeInfoService.getChequeInfos().subscribe({
+        this.chequeInfoService.getChequeInfos(
+            this.currentPage,
+            this.pageSize,
+            this.selectedDate,
+            this.getNextDate(this.selectedDate)
+        ).subscribe({
             next: (response) => {
                 this.isLoading = false;
                 this.lodgments = (response?.data?.items || []).map((item) => this.mapToListItem(item));
+                this.totalRecords = response?.data?.totalCount || 0;
             },
             error: () => {
                 this.isLoading = false;
                 this.lodgments = [];
+                this.totalRecords = 0;
                 Swal.fire({
                     icon: 'error',
                     title: 'Load Failed',
@@ -83,6 +115,29 @@ export class ChequeLodgmentListComponent implements OnInit {
                 });
             }
         });
+    }
+
+    onFilterChange(): void {
+        this.currentPage = 1;
+    }
+
+    onSearch(): void {
+        this.currentPage = 1;
+        this.loadChequeLodgments();
+    }
+
+    onPageChange(event: { page: number; pageSize: number }): void {
+        this.currentPage = event.page;
+        this.pageSize = event.pageSize;
+        this.loadChequeLodgments();
+    }
+
+    clearFilters(): void {
+        this.searchTerm = '';
+        this.filterStatus = '';
+        this.selectedDate = this.today();
+        this.currentPage = 1;
+        this.loadChequeLodgments();
     }
 
     get filteredData(): ChequeLodgmentItem[] {

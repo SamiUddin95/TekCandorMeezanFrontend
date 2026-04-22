@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FundRealizationItem, FundRealizationService } from '../../services/fund-realization.service';
+import { PaginationComponent } from '@app/components/pagination/pagination.component';
 
 export interface BranchRealizationItem {
     id: number;
@@ -15,7 +16,7 @@ export interface BranchRealizationItem {
 
 @Component({
     selector: 'app-fund-realization',
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule, PaginationComponent],
     templateUrl: './fund-realization.component.html',
     styleUrl: './fund-realization.component.scss'
 })
@@ -24,7 +25,8 @@ export class FundRealizationComponent implements OnInit {
     searchTerm = '';
     selectedDate = '';
     currentPage = 1;
-    pageSize = 7;
+    pageSize = 10;
+    totalRecords = 0;
     isLoading = false;
     loadError = '';
 
@@ -41,16 +43,22 @@ export class FundRealizationComponent implements OnInit {
         this.isLoading = true;
         this.loadError = '';
 
-        this.fundRealizationService.getFundRealizationList().subscribe({
+        this.fundRealizationService.getFundRealizationList(
+            this.currentPage,
+            this.pageSize,
+            this.selectedDate,
+            this.getNextDate(this.selectedDate)
+        ).subscribe({
             next: (response) => {
                 this.isLoading = false;
                 const items = response?.data?.items ?? [];
                 this.branches = items.map((item, index) => this.mapToBranch(item, index));
-                this.currentPage = 1;
+                this.totalRecords = response?.data?.totalCount || 0;
             },
             error: () => {
                 this.isLoading = false;
                 this.branches = [];
+                this.totalRecords = 0;
                 this.loadError = 'Unable to load fund realization list.';
             }
         });
@@ -73,6 +81,20 @@ export class FundRealizationComponent implements OnInit {
         return d.toISOString().split('T')[0];
     }
 
+    private getNextDate(dateStr: string): string {
+        if (!dateStr) {
+            return '';
+        }
+
+        const date = new Date(dateStr);
+        if (Number.isNaN(date.getTime())) {
+            return '';
+        }
+
+        date.setDate(date.getDate() + 1);
+        return date.toISOString().split('T')[0];
+    }
+
     get filtered(): BranchRealizationItem[] {
         const q = this.searchTerm.trim().toLowerCase();
         if (!q) return this.branches;
@@ -82,13 +104,8 @@ export class FundRealizationComponent implements OnInit {
         );
     }
 
-    get totalPages(): number {
-        return Math.max(1, Math.ceil(this.filtered.length / this.pageSize));
-    }
-
     get pagedBranches(): BranchRealizationItem[] {
-        const start = (this.currentPage - 1) * this.pageSize;
-        return this.filtered.slice(start, start + this.pageSize);
+        return this.filtered;
     }
 
     get selectedBranches(): BranchRealizationItem[] {
@@ -116,20 +133,26 @@ export class FundRealizationComponent implements OnInit {
         this.branches.forEach(b => b.selected = false);
     }
 
-    onSearch(): void {
+    onFilterChange(): void {
         this.currentPage = 1;
     }
 
-    prevPage(): void {
-        if (this.currentPage > 1) this.currentPage--;
+    onSearch(): void {
+        this.currentPage = 1;
+        this.loadFundRealizationList();
     }
 
-    nextPage(): void {
-        if (this.currentPage < this.totalPages) this.currentPage++;
+    onPageChange(event: { page: number; pageSize: number }): void {
+        this.currentPage = event.page;
+        this.pageSize = event.pageSize;
+        this.loadFundRealizationList();
     }
 
-    minVal(a: number, b: number): number {
-        return Math.min(a, b);
+    clearFilters(): void {
+        this.searchTerm = '';
+        this.selectedDate = this.today();
+        this.currentPage = 1;
+        this.loadFundRealizationList();
     }
 
     formatAmount(val: number): string {

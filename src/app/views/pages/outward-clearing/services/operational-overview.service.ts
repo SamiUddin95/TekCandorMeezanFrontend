@@ -83,6 +83,18 @@ export interface ChequeActionResponse {
     errorMessage: string | null;
 }
 
+export interface BulkApproveResponse {
+    status: string;
+    data: {
+        totalRequested: number;
+        successCount: number;
+        failedCount: number;
+        failedIds: number[];
+    };
+    statusCode: number;
+    errorMessage: string | null;
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -92,8 +104,19 @@ export class OperationalOverviewService {
 
     constructor(private http: HttpClient) { }
 
-    getSupervisorList(): Observable<SupervisorListResponse> {
-        return this.http.get<SupervisorListResponse>(`${this.apiUrl}/outward/ChequeInfo/supervisorList`);
+    getSupervisorList(pageNumber: number = 1, pageSize: number = 10, fromDate?: string, toDate?: string): Observable<SupervisorListResponse> {
+        let params = new HttpParams()
+            .set('pageNumber', pageNumber.toString())
+            .set('pageSize', pageSize.toString());
+
+        if (fromDate) {
+            params = params.set('fromDate', fromDate);
+        }
+        if (toDate) {
+            params = params.set('toDate', toDate);
+        }
+
+        return this.http.get<SupervisorListResponse>(`${this.apiUrl}/outward/ChequeInfo/supervisorList`, { params });
     }
 
     getById(id: number): Observable<ChequeDetailResponse> {
@@ -111,5 +134,9 @@ export class OperationalOverviewService {
             : undefined;
 
         return this.http.put<ChequeActionResponse>(`${this.apiUrl}/outward/ChequeInfo/reject/${id}`, {}, { params });
+    }
+
+    bulkSupervisorApprove(chequeIds: number[]): Observable<BulkApproveResponse> {
+        return this.http.post<BulkApproveResponse>(`${this.apiUrl}/outward/ChequeInfo/bulk-supervisor-approve`, { chequeIds });
     }
 }

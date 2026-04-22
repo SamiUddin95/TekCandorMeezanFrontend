@@ -2,9 +2,17 @@
 
   <!-- Header -->
   <div class="cln-header">
-    <div>
+    <button class="cln-btn-cancel" (click)="onCancel()">Back to List</button>
+
+    <div class="cln-header__content">
       <h5 class="cln-header__title">New Cheque Lodgment</h5>
       <p class="cln-header__subtitle">Capture depositor information and beneficiary details to initiate instrument scanning.</p>
+    </div>
+
+    <div class="cln-actions">
+      <button class="cln-btn-scan" (click)="onScanCheque()">
+        <i class="fas fa-qrcode me-2"></i>Scan Cheque
+      </button>
     </div>
   </div>
 
@@ -97,6 +105,16 @@
           <input type="text" class="cln-input" placeholder="Auto fetched via Fetch" [(ngModel)]="beneficiaryTitle" readonly/>
         </div>
 
+        <div class="cln-field">
+          <label class="cln-label">Paying Bank</label>
+          <select class="cln-input" [(ngModel)]="payingBankCode" [disabled]="isLoadingBanks">
+            <option value="">Select Bank</option>
+            @for (bank of banks; track bank.value) {
+              <option [value]="bank.value">{{ bank.text }}</option>
+            }
+          </select>
+        </div>
+
         <div class="cln-field-row">
           <div class="cln-field">
             <label class="cln-label">Account Status</label>
@@ -180,13 +198,7 @@
         </div>
       </div>
 
-      <!-- Actions -->
-      <div class="cln-actions">
-        <button class="cln-btn-cancel" (click)="onCancel()">Cancel</button>
-        <button class="cln-btn-scan"  (click)="onScanCheque()">
-          <i class="fas fa-qrcode me-2"></i>Scan Cheque
-        </button>
-      </div>
+      
 
     </div>
 

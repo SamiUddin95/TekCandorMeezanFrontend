@@ -10,23 +10,31 @@
         <div class="d-flex align-items-center gap-2">
             <button
                 type="button"
-                class="btn btn-sm d-flex align-items-center gap-2 px-2"
-                [class.btn-outline-success]="(businessDayStarted$ | async) === true"
-                [class.btn-outline-danger]="(businessDayStarted$ | async) === false"
-                [class.btn-outline-secondary]="(businessDayStarted$ | async) === null"
+                class="biz-pill"
+                [class.biz-pill--started]="(businessDayStarted$ | async) === true"
+                [class.biz-pill--stopped]="(businessDayStarted$ | async) === false"
+                [class.biz-pill--idle]="(businessDayStarted$ | async) === null"
                 (click)="openStartBusinessDay()"
                 title="Open Start Business Day">
-                <span class="fw-semibold">Business Day:</span>
-                <span>
-                    @if ((businessDayStarted$ | async) === true) {
-                        Started
-                    } @else if ((businessDayStarted$ | async) === false) {
-                        Not Started
-                    } @else {
-                        Checking...
+                <span class="biz-pill__label">Business Day:</span>
+                @if ((businessDayStarted$ | async) === true) {
+                    <span class="biz-pill__status">Started</span>
+                    @if (businessDate$ | async; as bDate) {
+                        <span class="biz-pill__date">{{ bDate | date:'dd MMM yyyy' }}</span>
                     }
-                </span>
+                } @else if ((businessDayStarted$ | async) === false) {
+                    <span class="biz-pill__status">Not Started</span>
+                } @else {
+                    <span class="biz-pill__status">Checking...</span>
+                }
             </button>
+
+            @if ((businessDayStarted$ | async) === true && (clearingDate$ | async); as cDate) {
+                <div class="biz-pill biz-pill--clearing" title="Clearing Date (2 working days after Business Day)">
+                    <span class="biz-pill__label">Clearing Date:</span>
+                    <span class="biz-pill__date">{{ cDate | date:'dd MMM yyyy' }}</span>
+                </div>
+            }
 
             <!-- User Dropdown -->
             <app-user-profile-topbar/>

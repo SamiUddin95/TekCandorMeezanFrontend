@@ -92,75 +92,15 @@
     <div class="card">
       <div class="card-body p-0">
 
-        <!-- Spinner -->
-        <div *ngIf="isLoading" class="text-center py-5">
-          <app-spinner></app-spinner>
-        </div>
-
-        <!-- Empty State -->
-        <div *ngIf="!isLoading && paginatedReportData.length === 0" class="text-center text-muted py-5">
+        <!-- Info message -->
+        <div class="text-center text-muted py-5">
           <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#dee2e6" stroke-width="1.5" class="mb-3 d-block mx-auto">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
             <polyline points="14,2 14,8 20,8"/>
             <line x1="16" y1="13" x2="8" y2="13"/>
             <line x1="16" y1="17" x2="8" y2="17"/>
           </svg>
-          <p class="mb-0">Please apply filters and click <strong>Search</strong> to view the report</p>
-        </div>
-
-        <!-- SSRS-Style Report Preview -->
-        <div *ngIf="!isLoading && paginatedReportData.length > 0" class="report-preview">
-
-          <!-- Report Header -->
-          <div class="report-header">
-            <div class="report-header-left">
-              <div class="report-title">Branch Wise Cheque Deposit Report</div>
-              <div class="report-subtitle">
-                <strong>Branch:</strong> {{ selectedBranchId ? selectedBranchId : 'All Branches' }}
-                <span *ngIf="fromDate" class="ms-3"><strong>From:</strong> {{ fromDate }}</span>
-                <span *ngIf="toDate" class="ms-3"><strong>To:</strong> {{ toDate }}</span>
-              </div>
-            </div>
-            <div class="report-header-right">
-              <div class="bank-logo-text">
-                <span class="bank-name-main">Meezan Bank</span>
-                <span class="bank-name-sub">The Premier Islamic Bank</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Report Table -->
-          <div class="report-table-wrapper">
-            <table class="report-table">
-              <thead>
-                <tr>
-                  <th *ngFor="let column of tableColumns">{{ columnHeaders[column] }}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let item of paginatedReportData; let i = index" [class.row-alt]="i % 2 === 1">
-                  <td *ngFor="let column of tableColumns" [class.text-end]="isAmountColumn(column)">
-                    {{ getColumnValue(item, column) }}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <!-- Report Footer: record count -->
-          <div class="report-footer">
-            Showing {{ paginatedReportData.length }} of {{ totalRecords }} records
-          </div>
-        </div>
-
-        <!-- Pagination -->
-        <div class="px-3 pb-3" *ngIf="!isLoading && totalRecords > 0">
-          <app-pagination
-            [currentPage]="currentPage"
-            [pageSize]="pageSize"
-            [totalRecords]="totalRecords"
-            (pageChange)="onPageChange($event)">
-          </app-pagination>
+          <p class="mb-0">Apply filters and click <strong>Search</strong> to open the SSRS report</p>
         </div>
 
       </div>

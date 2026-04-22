@@ -1,4 +1,4 @@
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {NgIcon} from '@ng-icons/core';
 import {LayoutStoreService} from '@core/services/layout-store.service';
@@ -7,7 +7,8 @@ import {ThemeTogglerComponent} from '@layouts/components/topbar/components/theme
 import {UserProfileComponent} from '@layouts/components/topbar/components/user-profile/user-profile.component';
 import { StartBusinessDayService } from '../../../views/pages/outward-clearing/services/start-business-day.service';
 import { Router } from '@angular/router';
- 
+import { map } from 'rxjs/operators';
+
 
 @Component({
     selector: 'app-topbar',
@@ -17,6 +18,7 @@ import { Router } from '@angular/router';
         ThemeTogglerComponent,
         UserProfileComponent,
         AsyncPipe,
+        DatePipe,
     ],
     templateUrl: './topbar.component.html'
 })
@@ -30,6 +32,16 @@ export class TopbarComponent implements OnInit {
 
     get businessDayStarted$() {
         return this.startBusinessDayService.businessDayStarted$;
+    }
+
+    get businessDate$() {
+        return this.startBusinessDayService.businessDate$;
+    }
+
+    get clearingDate$() {
+        return this.startBusinessDayService.businessDate$.pipe(
+            map((date) => this.startBusinessDayService.getClearingDate(date))
+        );
     }
 
     ngOnInit(): void {

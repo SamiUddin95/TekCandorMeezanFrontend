@@ -176,7 +176,7 @@ export const menuItems: MenuItemType[] = [
                 requiredPermissions: ['outwardClearing.ChequeLodgment']
             },
             {
-                label: 'Generate Clearing File',
+                label: 'Generate Lodgment File',
                 icon: 'tablerFileExport',
                 url: '/pages/outward-clearing/generate-clearing-file',
                 requiredPermissions: ['outwardClearing.GenerateClearingFile']

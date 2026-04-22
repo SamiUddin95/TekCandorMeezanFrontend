@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { ChequeInfoItem, ChequeInfoService } from '../../../services/cheque-info.service';
+import { BankItem, FilterService } from '../../../services/filter.service';
 
 @Component({
     selector: 'app-cheque-lodgment-new',
@@ -29,6 +30,8 @@ export class ChequeLodgmentNewComponent implements OnInit {
     payingBranchCode = '';
     instrumentType = '';
     chequeInfoId = 0;
+    banks: BankItem[] = [];
+    isLoadingBanks = false;
 
     currentStep = 1;
     isFetchingDepositor = false;
@@ -43,10 +46,12 @@ export class ChequeLodgmentNewComponent implements OnInit {
     constructor(
         private router: Router,
         private route: ActivatedRoute,
-        private chequeInfoService: ChequeInfoService
+        private chequeInfoService: ChequeInfoService,
+        private filterService: FilterService
     ) {}
 
     ngOnInit(): void {
+        this.loadBanks();
         const id = Number(this.route.snapshot.queryParamMap.get('id')) || 0;
         this.chequeInfoId = id;
         if (id > 0) {
@@ -80,6 +85,32 @@ export class ChequeLodgmentNewComponent implements OnInit {
             this.fullName = 'Muhammad Ahmed Khan';
             this.isFetchingDepositor = false;
         }, 800);
+    }
+
+    private loadBanks(): void {
+        this.isLoadingBanks = true;
+        this.filterService.getBanks().subscribe({
+            next: (response) => {
+                this.isLoadingBanks = false;
+                const banks = response?.data?.banks || [];
+                const uniqueByValue = new Map<string, BankItem>();
+
+                banks.forEach((bank) => {
+                    const value = (bank?.value || '').trim();
+                    const text = (bank?.text || '').trim();
+                    if (!value || !text || uniqueByValue.has(value)) {
+                        return;
+                    }
+                    uniqueByValue.set(value, { value, text });
+                });
+
+                this.banks = Array.from(uniqueByValue.values());
+            },
+            error: () => {
+                this.isLoadingBanks = false;
+                this.banks = [];
+            }
+        });
     }
 
     private loadChequeInfoById(id: number): void {
@@ -147,6 +178,10 @@ export class ChequeLodgmentNewComponent implements OnInit {
     }
 
     onScanCheque(): void {
-        this.router.navigate(['/pages/outward-clearing/cheque-lodgment/scan', this.chequeInfoId]);
+        this.router.navigate(['/pages/outward-clearing/cheque-lodgment/scan', this.chequeInfoId], {
+            queryParams: {
+                payingBankCode: this.payingBankCode || null
+            }
+        });
     }
 }

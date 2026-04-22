@@ -42,7 +42,7 @@ export class ChequeLodgmentDepositSlipComponent {
     }
 
     onDashboard(): void {
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/pages/outward-clearing/cheque-lodgment/new']);
     }
 
     onPrint(): void {

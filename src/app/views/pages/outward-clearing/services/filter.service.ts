@@ -18,6 +18,20 @@ export interface BranchFilterResponse {
     errorMessage: string | null;
 }
 
+export interface BankItem {
+    text: string;
+    value: string;
+}
+
+export interface BankFilterResponse {
+    status: string;
+    data: {
+        banks: BankItem[];
+    };
+    statusCode: number;
+    errorMessage: string | null;
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -29,5 +43,9 @@ export class FilterService {
 
     getBranches(): Observable<BranchFilterResponse> {
         return this.http.get<BranchFilterResponse>(`${this.apiUrl}/Filter/branch`);
+    }
+
+    getBanks(): Observable<BankFilterResponse> {
+        return this.http.get<BankFilterResponse>(`${this.apiUrl}/Filter/bank`);
     }
 }

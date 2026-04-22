@@ -47,6 +47,49 @@ $text-muted:     #9ca3af;
   }
 }
 
+// ── Bulk Approve Button (Header) ─────────────────────────────────────────────
+.oo-bulk-approve-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid rgba(22, 163, 74, 0.25);
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(22, 163, 74, 0.15);
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #15803d 0%, #166534 100%);
+    border-color: rgba(22, 163, 74, 0.35);
+    box-shadow: 0 2px 6px rgba(22, 163, 74, 0.25);
+    transform: translateY(-1px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(22, 163, 74, 0.15);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #e5e7eb;
+    border-color: #d1d5db;
+    color: #6b7280;
+  }
+
+  .spinner-border {
+    width: 14px;
+    height: 14px;
+    border-width: 2px;
+  }
+}
+
 // ── Table ─────────────────────────────────────────────────────────────────
 .oo-table-wrap {
   overflow-x: auto;

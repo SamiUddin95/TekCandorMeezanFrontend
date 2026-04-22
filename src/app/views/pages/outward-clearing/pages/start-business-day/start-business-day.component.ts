@@ -41,14 +41,17 @@ export class StartBusinessDayComponent implements OnInit {
                     this.businessDate = new Date();
                     this.isDayStarted = false;
                     this.businessDateId = 0;
-                    this.startBusinessDayService.setBusinessDayStatus(false);
+                    this.startBusinessDayService.setBusinessDayState(false, null);
                     return;
                 }
 
                 this.businessDateId = latest.id || 0;
                 this.businessDate = latest.businessDate ? new Date(latest.businessDate) : new Date();
                 this.isDayStarted = !!latest.isActive;
-                this.startBusinessDayService.setBusinessDayStatus(this.isDayStarted);
+                this.startBusinessDayService.setBusinessDayState(
+                    this.isDayStarted,
+                    latest.businessDate || null
+                );
             },
             error: () => {
                 Swal.fire({
@@ -90,12 +93,16 @@ export class StartBusinessDayComponent implements OnInit {
                     next: (response) => {
                         this.isStarting = false;
                         this.isDayStarted = true;
-                        this.startBusinessDayService.setBusinessDayStatus(true);
 
                         if (response?.data) {
                             this.businessDateId = response.data.id || this.businessDateId;
                             this.businessDate = response.data.businessDate ? new Date(response.data.businessDate) : this.businessDate;
                         }
+
+                        this.startBusinessDayService.setBusinessDayState(
+                            true,
+                            this.businessDate ? this.businessDate.toISOString() : null
+                        );
 
                         Swal.fire({
                             icon: 'success',

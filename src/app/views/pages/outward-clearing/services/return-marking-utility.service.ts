@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 
@@ -70,8 +70,24 @@ export class ReturnMarkingUtilityService {
 
     constructor(private http: HttpClient) { }
 
-    getReturnList(): Observable<ReturnListResponse> {
-        return this.http.get<ReturnListResponse>(`${this.apiUrl}/outward/ChequeInfo/return-list`);
+    getReturnList(
+        pageNumber: number = 1,
+        pageSize: number = 10,
+        fromDate?: string,
+        toDate?: string
+    ): Observable<ReturnListResponse> {
+        let params = new HttpParams()
+            .set('pageNumber', pageNumber.toString())
+            .set('pageSize', pageSize.toString());
+
+        if (fromDate) {
+            params = params.set('fromDate', fromDate);
+        }
+        if (toDate) {
+            params = params.set('toDate', toDate);
+        }
+
+        return this.http.get<ReturnListResponse>(`${this.apiUrl}/outward/ChequeInfo/return-list`, { params });
     }
 
     getReturnDetail(id: number): Observable<ReturnDetailResponse> {

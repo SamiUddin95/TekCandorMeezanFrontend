@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ReturnListItem, ReturnMarkingUtilityService } from '../../services/return-marking-utility.service';
+import { PaginationComponent } from '@app/components/pagination/pagination.component';
 
 interface ReturnMarkingListItem {
     id: number;
@@ -19,7 +20,7 @@ interface ReturnMarkingListItem {
 
 @Component({
     selector: 'app-return-marking-utility-list',
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule, PaginationComponent],
     templateUrl: './return-marking-utility-list.component.html',
     styleUrl: './return-marking-utility-list.component.scss'
 })
@@ -27,6 +28,10 @@ export class ReturnMarkingUtilityListComponent implements OnInit {
 
     searchTerm = '';
     filterStatus = '';
+    selectedDate = '';
+    currentPage = 1;
+    pageSize = 10;
+    totalRecords = 0;
     isLoading = false;
     loadError = '';
 
@@ -38,6 +43,7 @@ export class ReturnMarkingUtilityListComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
+        this.selectedDate = this.today();
         this.loadReturnList();
     }
 
@@ -45,18 +51,44 @@ export class ReturnMarkingUtilityListComponent implements OnInit {
         this.isLoading = true;
         this.loadError = '';
 
-        this.returnMarkingUtilityService.getReturnList().subscribe({
+        this.returnMarkingUtilityService.getReturnList(
+            this.currentPage,
+            this.pageSize,
+            this.selectedDate,
+            this.getNextDate(this.selectedDate)
+        ).subscribe({
             next: (response) => {
                 this.isLoading = false;
                 const items = response?.data?.items || [];
                 this.rows = items.map((item) => this.mapToRow(item));
+                this.totalRecords = response?.data?.totalCount || 0;
             },
             error: () => {
                 this.isLoading = false;
                 this.rows = [];
+                this.totalRecords = 0;
                 this.loadError = 'Unable to load return marking records.';
             }
         });
+    }
+
+    private today(): string {
+        const d = new Date();
+        return d.toISOString().split('T')[0];
+    }
+
+    private getNextDate(dateStr: string): string {
+        if (!dateStr) {
+            return '';
+        }
+
+        const date = new Date(dateStr);
+        if (Number.isNaN(date.getTime())) {
+            return '';
+        }
+
+        date.setDate(date.getDate() + 1);
+        return date.toISOString().split('T')[0];
     }
 
     private mapToRow(item: ReturnListItem): ReturnMarkingListItem {
@@ -99,6 +131,29 @@ export class ReturnMarkingUtilityListComponent implements OnInit {
 
     get statusOptions(): string[] {
         return Array.from(new Set(this.rows.map((r) => r.status).filter(Boolean)));
+    }
+
+    onFilterChange(): void {
+        this.currentPage = 1;
+    }
+
+    onSearch(): void {
+        this.currentPage = 1;
+        this.loadReturnList();
+    }
+
+    onPageChange(event: { page: number; pageSize: number }): void {
+        this.currentPage = event.page;
+        this.pageSize = event.pageSize;
+        this.loadReturnList();
+    }
+
+    clearFilters(): void {
+        this.searchTerm = '';
+        this.filterStatus = '';
+        this.selectedDate = this.today();
+        this.currentPage = 1;
+        this.loadReturnList();
     }
 
     onEdit(item: ReturnMarkingListItem): void {

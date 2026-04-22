@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { OperationalOverviewService, SupervisorListItem } from '../../services/operational-overview.service';
 import { OperationalOverviewDetailComponent } from './operational-overview-detail/operational-overview-detail.component';
+import { PaginationComponent } from '@app/components/pagination/pagination.component';
 import Swal from 'sweetalert2';
 
 interface Transaction {
@@ -18,7 +19,7 @@ interface Transaction {
 
 @Component({
     selector: 'app-operational-overview',
-    imports: [CommonModule, FormsModule, OperationalOverviewDetailComponent],
+    imports: [CommonModule, FormsModule, OperationalOverviewDetailComponent, PaginationComponent],
     templateUrl: './operational-overview.component.html',
     styleUrl: './operational-overview.component.scss'
 })
@@ -30,12 +31,19 @@ export class OperationalOverviewComponent implements OnInit {
     searchTerm = '';
     selectedBranch = 'all';
     selectedStatus: 'all' | 'Pending' | 'Priority' | 'Critical' = 'all';
+    fromDate = '';
     isLoading = false;
     loadError = '';
 
     showDetail = false;
     selectedId: number | null = null;
     actionInProgressId: number | null = null;
+    bulkActionInProgress = false;
+
+    selectedIds = new Set<number>();
+
+    totalRecords = 0;
+    totalPages = 1;
 
     transactions: Transaction[] = [];
 
@@ -74,43 +82,32 @@ export class OperationalOverviewComponent implements OnInit {
         return result;
     }
 
-    get paginatedTransactions(): Transaction[] {
-        const start = (this.currentPage - 1) * this.pageSize;
-        const end = start + this.pageSize;
-        return this.filteredTransactions.slice(start, end);
-    }
-
-    get totalRecords(): number {
-        return this.filteredTransactions.length;
-    }
-
-    get totalPages(): number {
-        return Math.max(1, Math.ceil(this.totalRecords / this.pageSize));
-    }
-
-    get visiblePages(): (number | string)[] {
-        const pages: (number | string)[] = [];
-        const total = this.totalPages;
-        if (total <= 5) {
-            for (let i = 1; i <= total; i++) pages.push(i);
-        } else {
-            pages.push(1, 2, 3, '...', total);
-        }
-        return pages;
-    }
 
     ngOnInit(): void {
+        // Set current date as default for selected date filter
+        const today = new Date();
+        const formattedDate = today.toISOString().split('T')[0];
+        this.fromDate = formattedDate;
+
         this.loadSupervisorList();
     }
 
     private loadSupervisorList(): void {
         this.isLoading = true;
         this.loadError = '';
-        this.operationalOverviewService.getSupervisorList().subscribe({
+        this.selectedIds.clear();
+        this.operationalOverviewService.getSupervisorList(
+            this.currentPage,
+            this.pageSize,
+            this.fromDate,
+            this.getNextDate(this.fromDate)
+        ).subscribe({
             next: (response) => {
                 this.isLoading = false;
                 this.transactions = (response?.data?.items || []).map((item) => this.mapToTransaction(item));
-                this.currentPage = 1;
+                // Server-side pagination values
+                this.totalRecords = response?.data?.totalCount || 0;
+                this.totalPages = Math.max(1, Math.ceil(this.totalRecords / this.pageSize));
             },
             error: () => {
                 this.isLoading = false;
@@ -144,6 +141,20 @@ export class OperationalOverviewComponent implements OnInit {
         return 'Pending';
     }
 
+    private getNextDate(dateStr: string): string {
+        if (!dateStr) {
+            return '';
+        }
+
+        const date = new Date(dateStr);
+        if (Number.isNaN(date.getTime())) {
+            return '';
+        }
+
+        date.setDate(date.getDate() + 1);
+        return date.toISOString().split('T')[0];
+    }
+
    private formatTime(dateTime: string): string {
     if (!dateTime) return '—';
 
@@ -169,29 +180,99 @@ export class OperationalOverviewComponent implements OnInit {
         this.currentPage = 1;
     }
 
+    onSearch(): void {
+        this.currentPage = 1;
+        this.loadSupervisorList();
+    }
+
+    onPageChange(event: { page: number; pageSize: number }): void {
+        this.currentPage = event.page;
+        this.pageSize = event.pageSize;
+        this.loadSupervisorList();
+    }
+
     clearFilters(): void {
         this.searchTerm = '';
         this.selectedBranch = 'all';
         this.selectedStatus = 'all';
+        // Reset date to current date
+        const today = new Date();
+        const formattedDate = today.toISOString().split('T')[0];
+        this.fromDate = formattedDate;
         this.currentPage = 1;
-    }
-
-    goToPage(page: number | string): void {
-        if (typeof page === 'number') {
-            this.currentPage = page;
-        }
-    }
-
-    prevPage(): void {
-        if (this.currentPage > 1) this.currentPage--;
-    }
-
-    nextPage(): void {
-        if (this.currentPage < this.totalPages) this.currentPage++;
+        this.loadSupervisorList();
     }
 
     formatAmount(val: number): string {
         return val.toLocaleString('en-PK');
+    }
+
+    // ── Selection ──
+    toggleSelect(id: number): void {
+        if (this.selectedIds.has(id)) {
+            this.selectedIds.delete(id);
+        } else {
+            this.selectedIds.add(id);
+        }
+    }
+
+    toggleSelectAll(): void {
+        if (this.isAllSelected) {
+            this.filteredTransactions.forEach(t => this.selectedIds.delete(t.id));
+        } else {
+            this.filteredTransactions.forEach(t => this.selectedIds.add(t.id));
+        }
+    }
+
+    get isAllSelected(): boolean {
+        return this.filteredTransactions.length > 0 &&
+            this.filteredTransactions.every(t => this.selectedIds.has(t.id));
+    }
+
+    get selectedCount(): number {
+        return this.selectedIds.size;
+    }
+
+    // ── Bulk Approve ──
+    onBulkApprove(): void {
+        const ids = Array.from(this.selectedIds);
+        if (ids.length === 0) {
+            Swal.fire({ icon: 'warning', title: 'No Selection', text: 'Please select at least one cheque to approve.' });
+            return;
+        }
+
+        Swal.fire({
+            title: 'Bulk Approve',
+            text: `Are you sure you want to approve ${ids.length} cheque(s)?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Approve All',
+            confirmButtonColor: '#198754'
+        }).then((result) => {
+            if (!result.isConfirmed) return;
+
+            this.bulkActionInProgress = true;
+            this.operationalOverviewService.bulkSupervisorApprove(ids).subscribe({
+                next: (response) => {
+                    this.bulkActionInProgress = false;
+                    this.selectedIds.clear();
+                    const d = response.data;
+                    Swal.fire({
+                        icon: d.failedCount > 0 ? 'warning' : 'success',
+                        title: 'Bulk Approve Result',
+                        html: `<b>${d.successCount}</b> of <b>${d.totalRequested}</b> approved successfully.` +
+                            (d.failedCount > 0 ? `<br><b>${d.failedCount}</b> failed (IDs: ${d.failedIds.join(', ')})` : ''),
+                        timer: d.failedCount > 0 ? undefined : 2500,
+                        showConfirmButton: d.failedCount > 0
+                    });
+                    this.loadSupervisorList();
+                },
+                error: () => {
+                    this.bulkActionInProgress = false;
+                    Swal.fire({ icon: 'error', title: 'Bulk Approve Failed', text: 'Unable to perform bulk approval. Please try again.' });
+                }
+            });
+        });
     }
 
     onView(txn: Transaction): void {

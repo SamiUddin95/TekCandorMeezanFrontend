@@ -21,6 +21,7 @@ export class ChequeLodgmentScanComponent implements OnInit {
     confidenceScore = CHEQUE_LODGMENT_SCAN_DATA.confidenceScore;
     isReady = true;
     chequeInfoId = 0;
+    payingBankCode = '';
 
     constructor(
         private router: Router,
@@ -29,6 +30,7 @@ export class ChequeLodgmentScanComponent implements OnInit {
 
     ngOnInit(): void {
         this.chequeInfoId = Number(this.route.snapshot.paramMap.get('id')) || 0;
+        this.payingBankCode = this.route.snapshot.queryParamMap.get('payingBankCode') || '';
     }
 
     formatAmount(val: number): string {
@@ -36,7 +38,11 @@ export class ChequeLodgmentScanComponent implements OnInit {
     }
 
     onProceedToReview(): void {
-        this.router.navigate(['/pages/outward-clearing/cheque-lodgment/review', this.chequeInfoId]);
+        this.router.navigate(['/pages/outward-clearing/cheque-lodgment/review', this.chequeInfoId], {
+            queryParams: {
+                payingBankCode: this.payingBankCode || null
+            }
+        });
     }
 
     onDiscard(): void {

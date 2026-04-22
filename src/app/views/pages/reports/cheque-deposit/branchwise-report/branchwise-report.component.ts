@@ -19,24 +19,15 @@ import { Subscription } from 'rxjs';
   styleUrl: './branchwise-report.component.scss'
 })
 export class BranchwiseReportComponent implements OnInit, OnDestroy, AfterViewInit {
-  currentPage: number = 1;
-  pageSize: number = 10;
-  totalRecords: number = 0;
-  totalPages: number = 0;
-  isLoading: boolean = false;
-
   // Filter properties
   fromDate: string = '';
   toDate: string = '';
   selectedBranchId: string | null = null;
 
   // Data
-  reportData: BranchwiseReportItem[] = [];
   branches: FilterBranchItem[] = [];
 
-  // Dynamic columns
-  tableColumns: string[] = [];
-  columnHeaders: { [key: string]: string } = {};
+  private readonly ssrsBaseUrl = 'http://muhammad-ameen/ReportServer/Pages/ReportViewer.aspx?%2fSSRS_Reports%2fBranchWise&rs:Command=Render';
 
   private subscriptions = new Subscription();
 
@@ -48,7 +39,6 @@ export class BranchwiseReportComponent implements OnInit, OnDestroy, AfterViewIn
 
   ngOnInit() {
     this.loadBranches();
-    this.loadReport();
   }
 
   ngOnDestroy() {
@@ -79,103 +69,29 @@ export class BranchwiseReportComponent implements OnInit, OnDestroy, AfterViewIn
     this.subscriptions.add(subscription);
   }
 
-  loadReport() {
-    this.isLoading = true;
-    const subscription = this.branchwiseReportService.getBranchwiseReport(
-      this.currentPage,
-      this.pageSize,
-      this.fromDate || undefined,
-      this.toDate || undefined,
-      this.selectedBranchId || undefined
-    ).subscribe({
-      next: (response: BranchwiseReportListResponse) => {
-        if (response.status === 'success') {
-          this.reportData = response.data.items;
-          this.totalRecords = response.data.totalCount;
-          this.totalPages = response.data.totalPages;
-          
-          // Extract columns dynamically from first item
-          if (this.reportData.length > 0) {
-            this.extractColumns(this.reportData[0]);
-          }
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: response.errorMessage || 'Failed to load report'
-          });
-        }
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Error loading report:', error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Failed to load report. Please try again.'
-        });
-        this.isLoading = false;
-      }
-    });
-    this.subscriptions.add(subscription);
-  }
-
-  private extractColumns(item: any): void {
-    // Get all keys from the first item
-    this.tableColumns = Object.keys(item);
-    
-    // Generate user-friendly headers
-    this.columnHeaders = {};
-    this.tableColumns.forEach(col => {
-      this.columnHeaders[col] = this.formatColumnHeader(col);
-    });
-  }
-
-  private formatColumnHeader(columnName: string): string {
-    // Convert camelCase to Title Case with spaces
-    // e.g., "chequeNumber" -> "Cheque Number"
-    return columnName
-      .replace(/([A-Z])/g, ' $1') // Add space before capital letters
-      .replace(/^./, str => str.toUpperCase()) // Capitalize first letter
-      .trim();
-  }
-
-  getColumnValue(item: any, column: string): any {
-    const value = item[column];
-    
-    // Format amount columns with 2 decimal places
-    if (column.toLowerCase().includes('amount') && typeof value === 'number') {
-      return value.toFixed(2);
+  private buildSsrsUrl(): string {
+    let url = this.ssrsBaseUrl;
+    if (this.fromDate) {
+      url += `&FromDate=${encodeURIComponent(this.fromDate)}`;
     }
-    
-    return value || '';
-  }
-
-  isAmountColumn(column: string): boolean {
-    return column.toLowerCase().includes('amount');
-  }
-
-  onPageChange(event: { page: number; pageSize: number }) {
-    this.currentPage = event.page;
-    this.pageSize = event.pageSize;
-    this.loadReport();
+    if (this.toDate) {
+      url += `&ToDate=${encodeURIComponent(this.toDate)}`;
+    }
+    if (this.selectedBranchId && this.selectedBranchId !== 'null') {
+      url += `&BranchCode=${encodeURIComponent(this.selectedBranchId)}`;
+    }
+    return url;
   }
 
   onSearch() {
-    this.currentPage = 1;
-    this.loadReport();
+    const url = this.buildSsrsUrl();
+    window.open(url, '_blank');
   }
 
   onReset() {
     this.fromDate = '';
     this.toDate = '';
     this.selectedBranchId = null;
-    this.currentPage = 1;
-    this.loadReport();
-  }
-
-  get paginatedReportData(): BranchwiseReportItem[] {
-    return this.reportData;
   }
 
   exportReport(format: 'PDF' | 'EXCEL' | 'CSV'): void {

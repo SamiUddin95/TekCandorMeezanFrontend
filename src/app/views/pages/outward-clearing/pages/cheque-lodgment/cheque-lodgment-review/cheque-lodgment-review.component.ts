@@ -38,10 +38,11 @@ export class ChequeLodgmentReviewComponent implements OnInit {
     };
 
     selectedMode = 'Live Settlement (ICS)';
-    reviewingAs = 'Yusuf Ahmed (Officer)';
+    reviewingAs = 'Support (Administrator)';
     lastSync = 'Today, 14:22';
     isSubmitting = false;
     id = 0;
+    selectedPayingBankCode = '';
 
     constructor(
         private route: ActivatedRoute,
@@ -53,6 +54,7 @@ export class ChequeLodgmentReviewComponent implements OnInit {
     ngOnInit(): void {
         const id = Number(this.route.snapshot.paramMap.get('id')) || 0;
         this.id = id;
+        this.selectedPayingBankCode = this.route.snapshot.queryParamMap.get('payingBankCode') || '';
         if (id > 0) {
             this.loadChequeInfoById(id);
         }
@@ -108,6 +110,10 @@ export class ChequeLodgmentReviewComponent implements OnInit {
             transactionType: 'Clearing - Inward',
         };
 
+        if (!this.selectedPayingBankCode) {
+            this.selectedPayingBankCode = item.payingBankCode || '';
+        }
+
         if (item.accuracy) {
             const parsed = Number(String(item.accuracy).replace('%', ''));
             if (!Number.isNaN(parsed)) {
@@ -133,7 +139,7 @@ export class ChequeLodgmentReviewComponent implements OnInit {
             accountStatus: 'Active',
             beneficiaryBranchCode: CHEQUE_LODGMENT_SCAN_DATA.payingBranchCode,
             chequeNo: CHEQUE_LODGMENT_SCAN_DATA.chequeNumber,
-            payingBankCode: CHEQUE_LODGMENT_SCAN_DATA.payingBankCode,
+            payingBankCode: this.selectedPayingBankCode || CHEQUE_LODGMENT_SCAN_DATA.payingBankCode,
             payingBranchCode: CHEQUE_LODGMENT_SCAN_DATA.payingBranchCode,
             amount: CHEQUE_LODGMENT_SCAN_DATA.amount,
             chequeDate: CHEQUE_LODGMENT_SCAN_DATA.chequeDate,

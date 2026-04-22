@@ -214,18 +214,7 @@
               <span class="ood-detail__key">Receiver Branch</span>
               <span class="ood-detail__val ood-detail__val--mono">{{ detailItem.receiverBranchCode }}</span>
             </div>
-          </div>
-
-          <!-- Financial Settlement -->
-          <div class="ood-detail__section">
-            <p class="ood-detail__section-title">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <line x1="12" y1="1" x2="12" y2="23" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-                <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-              </svg>
-              Financial Settlement
-            </p>
-            <div class="ood-detail__row">
+             <div class="ood-detail__row">
               <span class="ood-detail__key">Total Amount</span>
               <span class="ood-detail__val ood-detail__val--amount">{{ detailItem.currency }} {{ formatAmount(detailItem.amount) }}</span>
             </div>
@@ -253,15 +242,13 @@
 
     <div class="ood-detail__decision">
       <div class="ood-detail__decision-row">
-        <button class="ood-detail__decision-btn ood-detail__decision-btn--send-back" type="button" (click)="onSendBack()">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M9 7l-5 5 5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-            <path d="M20 7v10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-            <path d="M4 12h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-          </svg>
-          Send Back
-        </button>
-
+ <button class="ood-detail__decision-btn ood-detail__decision-btn--approve" type="button" (click)="onApproveInstrument()">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2" />
+          <path d="M8.5 12.5l2.5 2.5 4.5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        Approve Instrument
+      </button>
         <button class="ood-detail__decision-btn ood-detail__decision-btn--reject" type="button" (click)="onRejectInstrument()">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2" />
@@ -271,13 +258,7 @@
         </button>
       </div>
 
-      <button class="ood-detail__decision-btn ood-detail__decision-btn--approve" type="button" (click)="onApproveInstrument()">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2" />
-          <path d="M8.5 12.5l2.5 2.5 4.5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-        Approve Instrument
-      </button>
+     
 
       <p class="ood-detail__decision-note">AUTHORIZED DECISION REQUIRED</p>
     </div>

@@ -25,7 +25,7 @@ export class GenerateClearingFileComponent implements OnInit {
     summary = {
         totalInstruments: 1234,
         totalSettledAmount: 12345678.90,
-        currency: 'USD',
+        currency: 'PKR',
         validationPassed: true
     };
 

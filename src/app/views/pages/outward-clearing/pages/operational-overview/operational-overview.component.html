@@ -1,6 +1,4 @@
 <div class="oo-page mt-2 me-2">
-
-  <!-- ═══════════════════ LIST VIEW ═══════════════════ -->
   @if (!showDetail) {
     <div class="card oo-card">
       <!-- Header -->
@@ -9,11 +7,23 @@
           <h5 class="oo-header__title">Operational Overview</h5>
           <p class="oo-header__subtitle">Review and manage pending cheque clearances for today.</p>
         </div>
+        <div class="d-flex align-items-center gap-2">
+          <button
+            class="oo-bulk-approve-btn"
+            type="button"
+            [disabled]="selectedCount === 0 || bulkActionInProgress"
+            (click)="onBulkApprove()">
+            @if (bulkActionInProgress) {
+              <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+            }
+            Bulk Approve
+          </button>
+        </div>
       </div>
 
       <div class="card-body">
         <div class="row g-2 mb-3 align-items-end">
-          <div class="col-md-4">
+          <div class="col-md-3">
             <label class="form-label mb-1">Search</label>
             <input
               type="text"
@@ -22,7 +32,7 @@
               [(ngModel)]="searchTerm"
               (ngModelChange)="onFilterChange()" />
           </div>
-          <div class="col-md-3">
+          <div class="col-md-2">
             <label class="form-label mb-1">Branch</label>
             <select
               class="form-select form-select-sm"
@@ -33,17 +43,31 @@
               }
             </select>
           </div>
-          <div class="col-md-3">
-            <label class="form-label mb-1">Status</label>
-            <select
-              class="form-select form-select-sm"
-              [(ngModel)]="selectedStatus"
-              (ngModelChange)="onFilterChange()">
-              <option value="all">All Statuses</option>
-              <option value="Pending">Pending</option>
-              <option value="Priority">Priority</option>
-              <option value="Critical">Critical</option>
-            </select>
+          <div class="col-md-2">
+            <label class="form-label mb-1">Date</label>
+            <input
+              type="date"
+              class="form-control form-control-sm"
+              [(ngModel)]="fromDate"
+              (ngModelChange)="onFilterChange()" />
+          </div>
+          <div class="col-md-1">
+            <label class="form-label mb-1">&nbsp;</label>
+            <button
+              class="btn btn-primary btn-sm w-100"
+              type="button"
+              (click)="onSearch()">
+              Search
+            </button>
+          </div>
+          <div class="col-md-1">
+            <label class="form-label mb-1">&nbsp;</label>
+            <button
+              class="btn btn-outline-secondary btn-sm w-100"
+              type="button"
+              (click)="clearFilters()">
+              Reset
+            </button>
           </div>
         </div>
 
@@ -51,6 +75,9 @@
           <table class="table table-hover table-striped table-sm">
             <thead class="bg-light">
               <tr>
+                <th style="width: 40px;">
+                  <input type="checkbox" class="form-check-input" [checked]="isAllSelected" (change)="toggleSelectAll()" />
+                </th>
                 <th>Cheque No.</th>
                 <th>Payee Name</th>
                 <th>Amount (PKR)</th>
@@ -62,13 +89,16 @@
             </thead>
             <tbody class="table-group-divider">
               @if (isLoading) {
-                <tr><td colspan="7" class="text-center text-muted py-3">Loading records...</td></tr>
+                <tr><td colspan="8" class="text-center text-muted py-3">Loading records...</td></tr>
               }
               @if (!isLoading && loadError) {
-                <tr><td colspan="7" class="text-center text-danger py-3">{{ loadError }}</td></tr>
+                <tr><td colspan="8" class="text-center text-danger py-3">{{ loadError }}</td></tr>
               }
               @for (txn of filteredTransactions; track txn.id) {
-                <tr>
+                <tr [class.table-active]="selectedIds.has(txn.id)">
+                  <td>
+                    <input type="checkbox" class="form-check-input" [checked]="selectedIds.has(txn.id)" (change)="toggleSelect(txn.id)" />
+                  </td>
                   <td><span class="oo-cheque-no">{{ txn.chequeNo }}</span></td>
                   <td>
                     <div class="oo-payee">
@@ -110,10 +140,20 @@
                 </tr>
               }
               @if (!isLoading && !loadError && filteredTransactions.length === 0) {
-                <tr><td colspan="7" class="text-center text-muted py-3">No records found</td></tr>
+                <tr><td colspan="8" class="text-center text-muted py-3">No records found</td></tr>
               }
             </tbody>
           </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="px-3 pb-3" *ngIf="!isLoading && totalRecords > 0">
+          <app-pagination
+            [currentPage]="currentPage"
+            [pageSize]="pageSize"
+            [totalRecords]="totalRecords"
+            (pageChange)="onPageChange($event)">
+          </app-pagination>
         </div>
       </div>
     </div>

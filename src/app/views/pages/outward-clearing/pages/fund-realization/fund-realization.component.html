@@ -14,7 +14,7 @@
 
     <div class="fr-summary-card">
       <p class="fr-summary-card__label">SELECTION TOTAL</p>
-      <p class="fr-summary-card__value">${{ formatAmount(selectionTotal) }}</p>
+      <p class="fr-summary-card__value">PKR:{{ formatAmount(selectionTotal) }}</p>
       <p class="fr-summary-card__sub">Across {{ selectedBranches.length }} selected branch{{ selectedBranches.length !== 1 ? 'es' : '' }}</p>
     </div>
 
@@ -45,7 +45,7 @@
           class="form-control form-control-sm fr-toolbar__search-input"
           placeholder="Search Branch Code or Name..."
           [(ngModel)]="searchTerm"
-          (ngModelChange)="onSearch()" />
+          (ngModelChange)="onFilterChange()" />
       </div>
 
       <!-- Date -->
@@ -56,8 +56,14 @@
           <line x1="8"  y1="2" x2="8"  y2="6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
           <line x1="3"  y1="10" x2="21" y2="10" stroke="currentColor" stroke-width="1.8"/>
         </svg>
-        <input type="date" class="form-control form-control-sm fr-toolbar__date-input" [(ngModel)]="selectedDate" />
+        <input
+          type="date"
+          class="form-control form-control-sm fr-toolbar__date-input"
+          [(ngModel)]="selectedDate"
+          (ngModelChange)="onFilterChange()" />
       </div>
+      <button class="btn btn-primary btn-sm" type="button" (click)="onSearch()">Search</button>
+      <button class="btn btn-outline-secondary btn-sm" type="button" (click)="clearFilters()">Reset</button>
       <div class="fr-toolbar__spacer"></div>
     </div>
 
@@ -169,14 +175,13 @@
     </div>
 
     <!-- Pagination footer -->
-    <div class="fr-table-footer">
-      <span class="text-muted fr-table-footer__info">
-        Showing {{ (currentPage - 1) * pageSize + 1 }}–{{ minVal(currentPage * pageSize, filtered.length) }} of {{ filtered.length }} branches found
-      </span>
-      <div class="fr-pagination">
-        <button class="btn btn-outline-secondary btn-sm fr-pagination__btn" type="button" [disabled]="currentPage === 1" (click)="prevPage()">Previous</button>
-        <button class="btn btn-outline-secondary btn-sm fr-pagination__btn" type="button" [disabled]="currentPage === totalPages" (click)="nextPage()">Next</button>
-      </div>
+    <div class="fr-table-footer" *ngIf="!isLoading && totalRecords > 0">
+      <app-pagination
+        [currentPage]="currentPage"
+        [pageSize]="pageSize"
+        [totalRecords]="totalRecords"
+        (pageChange)="onPageChange($event)">
+      </app-pagination>
     </div>
   </div>
 
