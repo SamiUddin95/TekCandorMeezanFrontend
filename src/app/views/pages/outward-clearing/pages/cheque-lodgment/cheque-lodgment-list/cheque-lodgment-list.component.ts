@@ -15,7 +15,7 @@ export interface ChequeLodgmentItem {
     currency: string;
     status: string;
     date: string;
-    trackingNumber: string;
+    chequeNo: string;
 }
 
 @Component({
@@ -67,11 +67,11 @@ export class ChequeLodgmentListComponent implements OnInit {
     private mapStatus(status: string): string {
         if (!status) return 'Draft';
         const normalized = status.toUpperCase();
-        if (normalized === 'P') return 'Pending Review';
+        if (normalized === 'P') return 'Pending';
         if (normalized === 'C') return 'Cleared';
-        if (normalized === 'S') return 'Scanning';
         if (normalized === 'RE') return 'Reject';
         if (normalized === 'A') return 'Approved';
+        if (normalized === 'U') return 'Un-Authorized';
 
         return status;
     }
@@ -86,7 +86,7 @@ export class ChequeLodgmentListComponent implements OnInit {
             currency: item.currency || 'PKR',
             status: this.mapStatus(item.status),
             date: item.date ? item.date.split('T')[0] : '—',
-            trackingNumber: item.referenceNo || `REF-${item.id}`
+            chequeNo: item.chequeNo
         };
     }
 
@@ -145,7 +145,7 @@ export class ChequeLodgmentListComponent implements OnInit {
             const matchSearch = !this.searchTerm ||
                 item.depositorName.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
                 item.accountNumber.includes(this.searchTerm) ||
-                item.trackingNumber.toLowerCase().includes(this.searchTerm.toLowerCase());
+                item.chequeNo.toLowerCase().includes(this.searchTerm.toLowerCase());
             const matchStatus = !this.filterStatus || item.status === this.filterStatus;
             return matchSearch && matchStatus;
         });

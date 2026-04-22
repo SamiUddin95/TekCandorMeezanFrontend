@@ -127,6 +127,16 @@
           </div>
         </div>
 
+        <div class="cln-field">
+          <label class="cln-label">Receiving Branch</label>
+          <select class="cln-input" [(ngModel)]="receiverBranchCode" [disabled]="isLoadingBranches">
+            <option value="">Select Branch</option>
+            @for (branch of branches; track branch.code) {
+              <option [value]="branch.code">{{ branch.name }}</option>
+            }
+          </select>
+        </div>
+
       </div>
 
       <div class="cln-section">
@@ -183,7 +193,7 @@
             <label class="cln-label">Instrument Amount</label>
             <div class="cln-amount-wrap">
               <span class="cln-amount-prefix">Rs.</span>
-              <input type="number" class="cln-input cln-input--amount" placeholder="0.00" [(ngModel)]="instrumentAmount" readonly/>
+              <input type="number" class="cln-input cln-input--amount" placeholder="0.00" [(ngModel)]="instrumentAmount" min="0" step="0.01"/>
             </div>
           </div>
         </div>

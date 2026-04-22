@@ -18,6 +18,45 @@ export interface BranchFilterResponse {
     errorMessage: string | null;
 }
 
+export interface HubItem {
+    name: string;
+    code: string;
+}
+
+export interface HubFilterResponse {
+    status: string;
+    data: {
+        hubs: HubItem[];
+        filterType: string;
+    };
+    statusCode: number;
+    errorMessage: string | null;
+}
+
+export interface BranchInstrumentAmountResponse {
+    status: string;
+    data: {
+        branchCode: string;
+        branchName: string;
+        totalInstrumentCount: number;
+        totalAmount: number;
+    };
+    statusCode: number;
+    errorMessage: string | null;
+}
+
+export interface HubInstrumentAmountResponse {
+    status: string;
+    data: {
+        hubCode: string;
+        hubName: string;
+        totalInstrumentCount: number;
+        totalAmount: number;
+    };
+    statusCode: number;
+    errorMessage: string | null;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -32,8 +71,24 @@ export class FilterService {
   }
 
   // Get hubs API
-  getHubs(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/Filter/hub`);
+  getHubs(): Observable<HubFilterResponse> {
+    return this.http.get<HubFilterResponse>(`${this.apiUrl}/Filter/hub`);
+  }
+
+  // Get instrument count/amount for a branch
+  getBranchInstrumentAmount(branchCode: string): Observable<BranchInstrumentAmountResponse> {
+    return this.http.get<BranchInstrumentAmountResponse>(
+      `${this.apiUrl}/Filter/branch-Instrument-Amount`,
+      { params: { branchCode } }
+    );
+  }
+
+  // Get instrument count/amount for a hub
+  getHubInstrumentAmount(hubCode: string): Observable<HubInstrumentAmountResponse> {
+    return this.http.get<HubInstrumentAmountResponse>(
+      `${this.apiUrl}/Filter/hub-Instrument-Amount`,
+      { params: { hubCode } }
+    );
   }
 
   // Get status options API

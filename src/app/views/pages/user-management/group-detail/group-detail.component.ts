@@ -39,6 +39,7 @@ export class GroupDetailComponent implements OnInit, OnDestroy {
   // Info Tab
   groupName = '';
   groupDescription = '';
+  groupUpperLimit: number | null = null;
 
   // Users Tab
   groupUsers: GroupUser[] = [];
@@ -95,6 +96,7 @@ export class GroupDetailComponent implements OnInit, OnDestroy {
             // Load Info tab data
             this.groupName = group.name || '';
             this.groupDescription = group.description || '';
+            this.groupUpperLimit = group.upperLimit ?? group.upperlimit ?? null;
             
             // Load Users tab data
             this.groupUsers = (group.users || []).map((u: any) => ({
@@ -347,7 +349,11 @@ export class GroupDetailComponent implements OnInit, OnDestroy {
     }
     this.isSaving = true;
     if (this.isNew) {
-      const req: GroupCreateRequest = { name: this.groupName, description: this.groupDescription };
+      const req: GroupCreateRequest = {
+        name: this.groupName,
+        description: this.groupDescription,
+        upperLimit: this.groupUpperLimit ?? null
+      };
       this.subscriptions.add(
         this.groupService.createGroup(req).subscribe({
           next: (response: any) => {
@@ -367,7 +373,12 @@ export class GroupDetailComponent implements OnInit, OnDestroy {
         })
       );
     } else {
-      const req: GroupUpdateRequest = { id: this.groupId, name: this.groupName, description: this.groupDescription };
+      const req: GroupUpdateRequest = {
+        id: this.groupId,
+        name: this.groupName,
+        description: this.groupDescription,
+        upperLimit: this.groupUpperLimit ?? null
+      };
       this.subscriptions.add(
         this.groupService.updateGroup(req).subscribe({
           next: (response: any) => {

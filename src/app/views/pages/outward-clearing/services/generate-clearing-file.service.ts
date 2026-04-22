@@ -16,4 +16,9 @@ export class GenerateClearingFileService {
         const url = `${this.apiUrl}/outward/ChequeInfo/generate-file?receiverBranchCode=${receiverBranchCode}&date=${date}`;
         return this.http.get(url, { responseType: 'blob' });
     }
+
+    generateClearingFileByHub(hubCode: string, date: string): Observable<Blob> {
+        const url = `${this.apiUrl}/outward/ChequeInfo/generate-file-hubwise?hubcode=${hubCode}&date=${date}`;
+        return this.http.get(url, { responseType: 'blob' });
+    }
 }

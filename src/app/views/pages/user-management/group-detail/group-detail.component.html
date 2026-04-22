@@ -40,6 +40,16 @@
                 <label class="form-label">Description <span class="text-danger">*</span></label>
                 <input type="text" class="form-control form-control-sm" placeholder="Enter description" [(ngModel)]="groupDescription" />
               </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Limit</label>
+                <input
+                  type="number"
+                  class="form-control form-control-sm"
+                  placeholder="Enter limit"
+                  [(ngModel)]="groupUpperLimit"
+                  min="0"
+                />
+              </div>
             </div>
             <div class="d-flex gap-2 mt-2">
               <button class="btn btn-primary btn-sm px-4" (click)="saveGroup()" [disabled]="isSaving">

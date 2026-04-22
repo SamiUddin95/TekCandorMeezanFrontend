@@ -29,7 +29,7 @@ export class MenuPermissionService {
         label: 'Inward Clearing',
         icon: 'tablerArrowBarToDown',
         isCollapsed: false,
-        requiredPermissions: ['system.Dashboard', 'system.LiveMonitoring', 'basicSetUp.Cycle', 'basicSetUp.Branch', 'basicSetUp.Hub', 'basicSetUp.ReturnReason', 'chequeProcess.ManualImport', 'chequeProcess.UplaodFile', 'chequeProcess.pendingCheques', 'chequeProcess.callbackcheques', 'chequeProcess.ReturnTransactions', 'Security.Users', 'Security.Groups'],
+        requiredPermissions: ['system.Dashboard', 'system.LiveMonitoring', 'chequeProcess.ManualImport', 'chequeProcess.UplaodFile', 'chequeProcess.pendingCheques', 'chequeProcess.callbackcheques', 'chequeProcess.ReturnTransactions'],
         children: [
           {
             label: 'Dashboard',
@@ -42,38 +42,6 @@ export class MenuPermissionService {
             icon: 'tablerActivity',
             url: '/pages/live-monitoring',
             requiredPermissions: ['system.LiveMonitoring']
-          },
-          {
-            label: 'Basic Setup',
-            icon: 'tablerSettings',
-            isCollapsed: true,
-            requiredPermissions: ['basicSetUp.Cycle', 'basicSetUp.Branch', 'basicSetUp.Hub', 'basicSetUp.ReturnReason'],
-            children: [
-              { 
-                label: 'Cycle', 
-                icon: 'tablerRefresh', 
-                url: '/pages/basic-set-up/cycle',
-                requiredPermissions: ['basicSetUp.Cycle']
-              },
-              { 
-                label: 'Branch', 
-                icon: 'tablerBuilding', 
-                url: '/pages/basic-set-up/branch',
-                requiredPermissions: ['basicSetUp.Branch']
-              },
-              { 
-                label: 'Hub', 
-                icon: 'tablerNetwork', 
-                url: '/pages/basic-set-up/hub',
-                requiredPermissions: ['basicSetUp.Hub']
-              },
-              { 
-                label: 'Return Reason', 
-                icon: 'tablerArrowBackUp', 
-                url: '/pages/basic-set-up/return-reason',
-                requiredPermissions: ['basicSetUp.ReturnReason']
-              },
-            ]
           },
           {
             label: 'Cheque Process',
@@ -142,27 +110,59 @@ export class MenuPermissionService {
                 requiredPermissions: ['chequeProcess.ReturnTransactions']
               },
             ]
+          }
+        ]
+      },
+      {
+        label: 'Basic Setup',
+        icon: 'tablerSettings',
+        isCollapsed: true,
+        requiredPermissions: ['basicSetUp.Cycle', 'basicSetUp.Branch', 'basicSetUp.Hub', 'basicSetUp.ReturnReason'],
+        children: [
+          {
+            label: 'Cycle',
+            icon: 'tablerRefresh',
+            url: '/pages/basic-set-up/cycle',
+            requiredPermissions: ['basicSetUp.Cycle']
           },
           {
-            label: 'Security',
-            icon: 'tablerShield',
-            isCollapsed: true,
-            requiredPermissions: ['Security.Users', 'Security.Groups'],
-            children: [
-              { 
-                label: 'Users', 
-                icon: 'tablerUsers', 
-                url: '/pages/user-management',
-                requiredPermissions: ['Security.Users']
-              },
-              { 
-                label: 'Groups', 
-                icon: 'tablerUsersGroup', 
-                url: '/pages/group',
-                requiredPermissions: ['Security.Groups']
-              },
-            ]
-          }
+            label: 'Branch',
+            icon: 'tablerBuilding',
+            url: '/pages/basic-set-up/branch',
+            requiredPermissions: ['basicSetUp.Branch']
+          },
+          {
+            label: 'Hub',
+            icon: 'tablerNetwork',
+            url: '/pages/basic-set-up/hub',
+            requiredPermissions: ['basicSetUp.Hub']
+          },
+          {
+            label: 'Return Reason',
+            icon: 'tablerArrowBackUp',
+            url: '/pages/basic-set-up/return-reason',
+            requiredPermissions: ['basicSetUp.ReturnReason']
+          },
+        ]
+      },
+      {
+        label: 'Security',
+        icon: 'tablerShield',
+        isCollapsed: true,
+        requiredPermissions: ['Security.Users', 'Security.Groups'],
+        children: [
+          {
+            label: 'Users',
+            icon: 'tablerUsers',
+            url: '/pages/user-management',
+            requiredPermissions: ['Security.Users']
+          },
+          {
+            label: 'Groups',
+            icon: 'tablerUsersGroup',
+            url: '/pages/group',
+            requiredPermissions: ['Security.Groups']
+          },
         ]
       },
       {
@@ -212,6 +212,12 @@ export class MenuPermissionService {
             icon: 'tablerArrowBackUp',
             url: '/pages/outward-clearing/return-marking-utility',
             requiredPermissions: ['outwardClearing.ReturnMarkingUtility']
+          },
+          {
+            label: 'Transaction History',
+            icon: 'tablerHistory',
+            url: '/pages/outward-clearing/transaction-history',
+            requiredPermissions: ['outwardClearing.TransactionHistory']
           },
         ]
       },

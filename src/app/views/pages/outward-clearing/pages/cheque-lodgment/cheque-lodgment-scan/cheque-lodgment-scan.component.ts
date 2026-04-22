@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CHEQUE_LODGMENT_SCAN_DATA } from '../cheque-lodgment-scan.data';
+import { amountToWords } from '../amount-in-words.util';
 
 @Component({
     selector: 'app-cheque-lodgment-scan',
@@ -14,6 +15,7 @@ export class ChequeLodgmentScanComponent implements OnInit {
     chequeNumber = CHEQUE_LODGMENT_SCAN_DATA.chequeNumber;
     micrCode = CHEQUE_LODGMENT_SCAN_DATA.micrCode;
     amount = CHEQUE_LODGMENT_SCAN_DATA.amount;
+    amountInWords = amountToWords(CHEQUE_LODGMENT_SCAN_DATA.amount);
     chequeDate = CHEQUE_LODGMENT_SCAN_DATA.chequeDate;
     beneficiary = CHEQUE_LODGMENT_SCAN_DATA.beneficiary;
     ocrEngine = CHEQUE_LODGMENT_SCAN_DATA.ocrEngine;
@@ -22,6 +24,7 @@ export class ChequeLodgmentScanComponent implements OnInit {
     isReady = true;
     chequeInfoId = 0;
     payingBankCode = '';
+    receiverBranchCode = '';
 
     constructor(
         private router: Router,
@@ -31,6 +34,13 @@ export class ChequeLodgmentScanComponent implements OnInit {
     ngOnInit(): void {
         this.chequeInfoId = Number(this.route.snapshot.paramMap.get('id')) || 0;
         this.payingBankCode = this.route.snapshot.queryParamMap.get('payingBankCode') || '';
+        this.receiverBranchCode = this.route.snapshot.queryParamMap.get('receiverBranchCode') || '';
+        const amountParam = this.route.snapshot.queryParamMap.get('amount');
+        const parsedAmount = amountParam !== null ? Number(amountParam) : NaN;
+        if (!Number.isNaN(parsedAmount) && parsedAmount > 0) {
+            this.amount = parsedAmount;
+            this.amountInWords = amountToWords(parsedAmount);
+        }
     }
 
     formatAmount(val: number): string {
@@ -40,7 +50,9 @@ export class ChequeLodgmentScanComponent implements OnInit {
     onProceedToReview(): void {
         this.router.navigate(['/pages/outward-clearing/cheque-lodgment/review', this.chequeInfoId], {
             queryParams: {
-                payingBankCode: this.payingBankCode || null
+                payingBankCode: this.payingBankCode || null,
+                amount: this.amount || null,
+                receiverBranchCode: this.receiverBranchCode || null
             }
         });
     }

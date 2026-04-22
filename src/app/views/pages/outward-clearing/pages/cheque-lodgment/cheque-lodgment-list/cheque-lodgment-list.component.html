@@ -3,7 +3,7 @@
     <div class="card">
       <div class="card-header bg-light d-flex justify-content-between align-items-center">
         <h5 class="card-title mb-0">Cheque Lodgment</h5>
-        <button class="btn btn-primary btn-sm" (click)="onAddNew()">ADD</button>
+        <button class="btn btn-primary btn-sm" (click)="onAddNew()">Add New</button>
       </div>
 
       <div class="card-body">
@@ -47,7 +47,7 @@
           <table class="table table-hover table-striped table-sm">
             <thead class="bg-light">
               <tr>
-                <th style="width: 14%;">Tracking No.</th>
+                <th style="width: 14%;">Cheque No</th>
                 <th style="width: 16%;">Depositor</th>
                 <th style="width: 14%;">Account</th>
                 <th style="width: 16%;">Beneficiary</th>
@@ -60,7 +60,7 @@
             <tbody class="table-group-divider">
               @for (item of filteredData; track item.id; let i = $index) {
                 <tr>
-                  <td class="font-monospace">{{ item.trackingNumber }}</td>
+                  <td class="font-monospace">{{ item.chequeNo }}</td>
                   <td>{{ item.depositorName }}</td>
                   <td class="font-monospace">{{ item.accountNumber }}</td>
                   <td>{{ item.beneficiaryName }}</td>

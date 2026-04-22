@@ -217,6 +217,11 @@ export const PAGES_ROUTES: Routes = [
                         loadComponent: () => import('./outward-clearing/pages/return-marking-utility/return-marking-utility.component').then(mod => mod.ReturnMarkingUtilityComponent),
                         data: { title: 'Return Marking Utility' }
                     },
+                    {
+                        path: 'transaction-history',
+                        loadComponent: () => import('./outward-clearing/pages/transaction-history/transaction-history.component').then(mod => mod.TransactionHistoryComponent),
+                        data: { title: 'Transaction History' }
+                    },
                 ]
             },
             {

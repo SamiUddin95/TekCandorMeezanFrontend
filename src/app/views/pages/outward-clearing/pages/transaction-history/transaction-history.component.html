@@ -1,0 +1,102 @@
+<div class="row mt-2">
+  <div class="col-lg-12">
+    <div class="card">
+      <div class="card-header bg-light d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">Transaction History</h5>
+      </div>
+
+      <div class="card-body">
+        <div class="row mb-3 align-items-end g-2">
+          <div class="col-md-3">
+            <label class="form-label mb-1">Search (Cheque No, Account, Ref)</label>
+            <input
+              type="text"
+              class="form-control form-control-sm"
+              placeholder="Search..."
+              [(ngModel)]="searchTerm" />
+          </div>
+          <div class="col-md-2">
+            <label class="form-label mb-1">Status</label>
+            <select class="form-select form-select-sm" [(ngModel)]="filterStatus">
+              <option value="">All Status</option>
+              <option value="Approved">Approved</option>
+              <option value="Pending Review">Pending Review</option>
+              <option value="Scanning">Scanning</option>
+              <option value="Cleared">Cleared</option>
+              <option value="Reject">Reject</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label mb-1">Date</label>
+            <input
+              type="date"
+              class="form-control form-control-sm"
+              [(ngModel)]="selectedDate" />
+          </div>
+          <div class="col-md-1">
+            <button class="btn btn-primary btn-sm w-100" type="button" (click)="onSearch()">Search</button>
+          </div>
+          <div class="col-md-1">
+            <button class="btn btn-outline-secondary btn-sm w-100" type="button" (click)="clearFilters()">Reset</button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-hover table-striped table-sm">
+            <thead class="bg-light">
+              <tr>
+                <th style="width: 9%;">Date</th>
+                <th style="width: 10%;">Cheque No</th>
+                <th style="width: 15%;">Depositor</th>
+                <th style="width: 14%;">Account No</th>
+                <th style="width: 14%;">Beneficiary</th>
+                <th style="width: 12%;">Amount</th>
+                <th style="width: 14%;">Drawer Bank</th>
+                <th style="width: 7%;">Type</th>
+                <th style="width: 8%;">Status</th>
+              </tr>
+            </thead>
+            <tbody class="table-group-divider">
+              <tr *ngIf="isLoading">
+                <td colspan="9" class="text-center text-muted py-3">
+                  <span class="spinner-border spinner-border-sm me-2"></span> Loading...
+                </td>
+              </tr>
+              @if (!isLoading) {
+                @for (item of filteredData; track item.id) {
+                  <tr>
+                    <td>{{ item.date }}</td>
+                    <td class="font-monospace">{{ item.chequeNo }}</td>
+                    <td>{{ item.depositorTitle }}</td>
+                    <td class="font-monospace">{{ item.accountNo }}</td>
+                    <td>{{ item.beneficiaryTitle }}</td>
+                    <td class="text-end fw-bold">{{ item.currency }} {{ formatAmount(item.amount) }}</td>
+                    <td>{{ item.drawerBank }}</td>
+                    <td>{{ item.instrumentType }}</td>
+                    <td>
+                      <span [ngClass]="getStatusClass(item.status)">{{ item.status }}</span>
+                    </td>
+                  </tr>
+                }
+                @if (filteredData.length === 0) {
+                  <tr>
+                    <td colspan="9" class="text-center text-muted py-3">No records found</td>
+                  </tr>
+                }
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pt-2" *ngIf="!isLoading && totalRecords > 0">
+          <app-pagination
+            [currentPage]="currentPage"
+            [pageSize]="pageSize"
+            [totalRecords]="totalRecords"
+            (pageChange)="onPageChange($event)">
+          </app-pagination>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 import { AuthService } from '@app/services/auth.service';
 import { ChequeInfoItem, ChequeInfoRequest, ChequeInfoService } from '../../../services/cheque-info.service';
 import { CHEQUE_LODGMENT_SCAN_DATA } from '../cheque-lodgment-scan.data';
+import { amountToWords } from '../amount-in-words.util';
 
 @Component({
     selector: 'app-cheque-lodgment-review',
@@ -43,6 +44,7 @@ export class ChequeLodgmentReviewComponent implements OnInit {
     isSubmitting = false;
     id = 0;
     selectedPayingBankCode = '';
+    selectedReceiverBranchCode = '';
 
     constructor(
         private route: ActivatedRoute,
@@ -55,6 +57,18 @@ export class ChequeLodgmentReviewComponent implements OnInit {
         const id = Number(this.route.snapshot.paramMap.get('id')) || 0;
         this.id = id;
         this.selectedPayingBankCode = this.route.snapshot.queryParamMap.get('payingBankCode') || '';
+        this.selectedReceiverBranchCode = this.route.snapshot.queryParamMap.get('receiverBranchCode') || '';
+
+        const amountParam = this.route.snapshot.queryParamMap.get('amount');
+        const parsedAmount = amountParam !== null ? Number(amountParam) : NaN;
+        if (!Number.isNaN(parsedAmount) && parsedAmount > 0) {
+            this.financialSettlement = {
+                ...this.financialSettlement,
+                totalAmount: parsedAmount,
+                amountInWords: amountToWords(parsedAmount)
+            };
+        }
+
         if (id > 0) {
             this.loadChequeInfoById(id);
         }
@@ -104,14 +118,19 @@ export class ChequeLodgmentReviewComponent implements OnInit {
             drawerBank: item.drawerBank || this.instrumentDetails.drawerBank,
         };
 
+        const resolvedAmount = item.amount || this.financialSettlement.totalAmount;
         this.financialSettlement = {
-            totalAmount: item.amount || this.financialSettlement.totalAmount,
-            amountInWords: item.amountInWords || this.financialSettlement.amountInWords,
+            totalAmount: resolvedAmount,
+            amountInWords: item.amountInWords || amountToWords(resolvedAmount),
             transactionType: 'Clearing - Inward',
         };
 
         if (!this.selectedPayingBankCode) {
             this.selectedPayingBankCode = item.payingBankCode || '';
+        }
+
+        if (!this.selectedReceiverBranchCode) {
+            this.selectedReceiverBranchCode = item.receiverBranchCode || '';
         }
 
         if (item.accuracy) {
@@ -141,7 +160,7 @@ export class ChequeLodgmentReviewComponent implements OnInit {
             chequeNo: CHEQUE_LODGMENT_SCAN_DATA.chequeNumber,
             payingBankCode: this.selectedPayingBankCode || CHEQUE_LODGMENT_SCAN_DATA.payingBankCode,
             payingBranchCode: CHEQUE_LODGMENT_SCAN_DATA.payingBranchCode,
-            amount: CHEQUE_LODGMENT_SCAN_DATA.amount,
+            amount: this.financialSettlement.totalAmount,
             chequeDate: CHEQUE_LODGMENT_SCAN_DATA.chequeDate,
             instrumentType: CHEQUE_LODGMENT_SCAN_DATA.instrumentType,
             micr: CHEQUE_LODGMENT_SCAN_DATA.micrCode,
@@ -153,7 +172,7 @@ export class ChequeLodgmentReviewComponent implements OnInit {
             imageU: '',
             currency: CHEQUE_LODGMENT_SCAN_DATA.currency,
             remarks: '',
-            receiverBranchCode: '0005',
+            receiverBranchCode: this.selectedReceiverBranchCode || '',
             branchName: this.depositorInfo.branchName,
             drawerBank: this.instrumentDetails.drawerBank,
             amountInWords: this.financialSettlement.amountInWords,
@@ -172,8 +191,21 @@ export class ChequeLodgmentReviewComponent implements OnInit {
 
     private handleSubmitSuccess(): void {
         this.isSubmitting = false;
-        const targetId = this.id ;
-        this.router.navigate(['/pages/outward-clearing/cheque-lodgment/deposit-slip', targetId]);
+        const targetId = this.id;
+        this.router.navigate(['/pages/outward-clearing/cheque-lodgment/deposit-slip', targetId], {
+            queryParams: {
+                amount: this.financialSettlement.totalAmount || null,
+                amountInWords: this.financialSettlement.amountInWords || null,
+                chequeNo: this.instrumentDetails.chequeNumber || null,
+                drawerBank: this.instrumentDetails.drawerBank || null,
+                chequeDate: this.instrumentDetails.instrumentDate || null,
+                depositorName: this.depositorInfo.accountName || null,
+                depositorAccount: this.depositorInfo.accountNumber || null,
+                branchName: this.depositorInfo.branchName || null,
+                refNumber: this.refNumber || null,
+                payingBankCode: this.selectedPayingBankCode || null
+            }
+        });
     }
 
     private handleSubmitError(): void {

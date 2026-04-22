@@ -155,9 +155,7 @@ export class GroupComponent implements OnInit {
     if (!this.filteredGroups || this.filteredGroups.length === 0) {
       return [];
     }
-    const startIndex = (this.currentPage - 1) * this.pageSize;
-    const endIndex = startIndex + this.pageSize;
-    return this.filteredGroups.slice(startIndex, endIndex);
+    return this.filteredGroups;
   }
 
   onPageChange(event: { page: number; pageSize: number }) {
@@ -227,7 +225,8 @@ export class GroupComponent implements OnInit {
       const updateRequest: GroupUpdateRequest = {
         id: this.selectedGroup.id,
         name: this.selectedGroup.name,
-        description: this.selectedGroup.description
+        description: this.selectedGroup.description,
+        upperLimit: this.selectedGroup.upperLimit ?? null
       };
 
       this.groupService.updateGroup(updateRequest).subscribe({
@@ -262,7 +261,8 @@ export class GroupComponent implements OnInit {
     } else {
       const createRequest: GroupCreateRequest = {
         name: this.selectedGroup.name,
-        description: this.selectedGroup.description
+        description: this.selectedGroup.description,
+        upperLimit: this.selectedGroup.upperLimit ?? null
       };
 
       this.groupService.createGroup(createRequest).subscribe({
@@ -357,6 +357,7 @@ export class GroupComponent implements OnInit {
       id: 0, 
       name: '', 
       description: '',
+      upperLimit: null,
       version: 0,
       isNew: false,
       isDeleted: false,

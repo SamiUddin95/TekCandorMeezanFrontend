@@ -8,6 +8,8 @@ export interface GroupItem {
   id: number;
   name: string | null;
   description: string | null;
+  upperLimit?: number | null;
+  upperlimit?: number | null;
   version: number;
   isNew: boolean;
   isDeleted: boolean;
@@ -20,12 +22,14 @@ export interface GroupItem {
 export interface GroupCreateRequest {
   name: string;
   description: string;
+  upperLimit: number | null;
 }
 
 export interface GroupUpdateRequest {
   id: number;
   name: string;
   description: string;
+  upperLimit: number | null;
 }
 
 export interface AddUsersRequest {

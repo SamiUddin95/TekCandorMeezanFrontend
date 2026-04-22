@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { ChequeInfoItem, ChequeInfoService } from '../../../services/cheque-info.service';
-import { BankItem, FilterService } from '../../../services/filter.service';
+import { BankItem, BranchItem, FilterService } from '../../../services/filter.service';
 
 @Component({
     selector: 'app-cheque-lodgment-new',
@@ -32,6 +32,9 @@ export class ChequeLodgmentNewComponent implements OnInit {
     chequeInfoId = 0;
     banks: BankItem[] = [];
     isLoadingBanks = false;
+    receiverBranchCode = '';
+    branches: BranchItem[] = [];
+    isLoadingBranches = false;
 
     currentStep = 1;
     isFetchingDepositor = false;
@@ -52,6 +55,7 @@ export class ChequeLodgmentNewComponent implements OnInit {
 
     ngOnInit(): void {
         this.loadBanks();
+        this.loadBranches();
         const id = Number(this.route.snapshot.queryParamMap.get('id')) || 0;
         this.chequeInfoId = id;
         if (id > 0) {
@@ -113,6 +117,30 @@ export class ChequeLodgmentNewComponent implements OnInit {
         });
     }
 
+    private loadBranches(): void {
+        this.isLoadingBranches = true;
+        this.filterService.getBranches().subscribe({
+            next: (response) => {
+                this.isLoadingBranches = false;
+                const branches = response?.data?.branches || [];
+                const uniqueByCode = new Map<string, BranchItem>();
+                branches.forEach((branch) => {
+                    const code = (branch?.code || '').trim();
+                    const name = (branch?.name || '').trim();
+                    if (!code || !name || uniqueByCode.has(code)) {
+                        return;
+                    }
+                    uniqueByCode.set(code, { code, name });
+                });
+                this.branches = Array.from(uniqueByCode.values());
+            },
+            error: () => {
+                this.isLoadingBranches = false;
+                this.branches = [];
+            }
+        });
+    }
+
     private loadChequeInfoById(id: number): void {
         this.chequeInfoService.getChequeInfoById(id).subscribe({
             next: (response) => {
@@ -155,6 +183,7 @@ export class ChequeLodgmentNewComponent implements OnInit {
         }
 
         this.remarks = item.remarks || '';
+        this.receiverBranchCode = item.receiverBranchCode || '';
     }
 
     onFetchBeneficiary(): void {
@@ -180,7 +209,9 @@ export class ChequeLodgmentNewComponent implements OnInit {
     onScanCheque(): void {
         this.router.navigate(['/pages/outward-clearing/cheque-lodgment/scan', this.chequeInfoId], {
             queryParams: {
-                payingBankCode: this.payingBankCode || null
+                payingBankCode: this.payingBankCode || null,
+                amount: this.instrumentAmount ?? null,
+                receiverBranchCode: this.receiverBranchCode || null
             }
         });
     }

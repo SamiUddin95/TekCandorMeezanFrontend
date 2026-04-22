@@ -43,9 +43,25 @@
           <div class="gcf-input-wrap">
             <i class="fas fa-building gcf-input-ico"></i>
             <select class="gcf-input gcf-input--padded gcf-input--select"
-                    [(ngModel)]="selectedBranch" (ngModelChange)="onBranchChange()">
+                    [(ngModel)]="selectedBranch" (ngModelChange)="onBranchChange()"
+                    [disabled]="isLoadingBranches || isHubSelected">
               @for (branch of branches; track branch.code) {
                 <option [value]="branch.code">{{ branch.label }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <!-- Hub -->
+        <div class="gcf-field">
+          <label class="gcf-label">Hub</label>
+          <div class="gcf-input-wrap">
+            <i class="fas fa-sitemap gcf-input-ico"></i>
+            <select class="gcf-input gcf-input--padded gcf-input--select"
+                    [(ngModel)]="selectedHub" (ngModelChange)="onHubChange()"
+                    [disabled]="isLoadingHubs || isBranchSelected">
+              @for (hub of hubs; track hub.code) {
+                <option [value]="hub.code">{{ hub.label }}</option>
               }
             </select>
           </div>
