@@ -72,6 +72,7 @@ export class TransactionHistoryComponent implements OnInit {
         if (s === 'S') return 'Scanning';
         if (s === 'RE') return 'Reject';
         if (s === 'A') return 'Approved';
+        if (s === 'U') return 'Un-Authorized';
         return status;
     }
 
