@@ -125,7 +125,33 @@ export class NiftReconciliationComponent implements OnInit {
     }
 
     onForceMatch(record: NiftApiRecord): void {
-        console.log('Force Match:', record.chequeNo);
+        this.niftService.forceMatch(record.niftStagingId, record.chequeNo).subscribe({
+            next: (res) => {
+                if (res.statusCode === 200 || res.status?.toLowerCase() === 'success') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Force Matched',
+                        text: `Cheque ${record.chequeNo} has been force matched successfully.`,
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                    this.loadReconcileList();
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Force Match Failed',
+                        text: res.errorMessage || 'Unable to force match the cheque.'
+                    });
+                }
+            },
+            error: (err) => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Force Match Failed',
+                    text: err?.error?.errorMessage || err?.message || 'Unable to force match the cheque. Please try again.'
+                });
+            }
+        });
     }
 
 

@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 
 export interface NiftApiRecord {
+    niftStagingId: number;
     chequeNo: string;
     branchName: string;
     amount: number;
@@ -55,6 +56,13 @@ export class NiftReconciliationService {
         return this.http.post<NiftUploadResponse>(
             `${this.apiUrl}/outward/ChequeInfo/upload-nift`,
             formData
+        );
+    }
+
+    forceMatch(niftStagingId: number, chequeNo: string): Observable<any> {
+        return this.http.post(
+            `${this.apiUrl}/outward/ChequeInfo/force-match`,
+            { niftStagingId, chequeNo }
         );
     }
 }
