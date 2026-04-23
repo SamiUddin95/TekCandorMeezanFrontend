@@ -76,18 +76,22 @@ export class FilterService {
   }
 
   // Get instrument count/amount for a branch
-  getBranchInstrumentAmount(branchCode: string): Observable<BranchInstrumentAmountResponse> {
+  getBranchInstrumentAmount(branchCode: string, date?: string): Observable<BranchInstrumentAmountResponse> {
+    const params: any = { branchCode };
+    if (date) params.date = date;
     return this.http.get<BranchInstrumentAmountResponse>(
       `${this.apiUrl}/Filter/branch-Instrument-Amount`,
-      { params: { branchCode } }
+      { params }
     );
   }
 
   // Get instrument count/amount for a hub
-  getHubInstrumentAmount(hubCode: string): Observable<HubInstrumentAmountResponse> {
+  getHubInstrumentAmount(hubCode: string, date?: string): Observable<HubInstrumentAmountResponse> {
+    const params: any = { hubCode };
+    if (date) params.date = date;
     return this.http.get<HubInstrumentAmountResponse>(
       `${this.apiUrl}/Filter/hub-Instrument-Amount`,
-      { params: { hubCode } }
+      { params }
     );
   }
 

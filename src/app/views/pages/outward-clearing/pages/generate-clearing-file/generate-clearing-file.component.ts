@@ -141,7 +141,7 @@ export class GenerateClearingFileComponent implements OnInit {
 
     private loadBranchSummary(branchCode: string): void {
         this.isLoadingSummary = true;
-        this.filterService.getBranchInstrumentAmount(branchCode).subscribe({
+        this.filterService.getBranchInstrumentAmount(branchCode, this.businessDate).subscribe({
             next: (response: BranchInstrumentAmountResponse) => {
                 this.isLoadingSummary = false;
                 const data = response?.data;
@@ -161,7 +161,7 @@ export class GenerateClearingFileComponent implements OnInit {
 
     private loadHubSummary(hubCode: string): void {
         this.isLoadingSummary = true;
-        this.filterService.getHubInstrumentAmount(hubCode).subscribe({
+        this.filterService.getHubInstrumentAmount(hubCode, this.businessDate).subscribe({
             next: (response: HubInstrumentAmountResponse) => {
                 this.isLoadingSummary = false;
                 const data = response?.data;
