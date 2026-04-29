@@ -41,7 +41,7 @@ export class ReturnMemoReportComponent implements OnInit, OnDestroy {
   reportUrl = '';
   isReportLoading = false;
 
-  private readonly ssrsBaseUrl = 'http://muhammad-ameen/ReportServer/Pages/ReportViewer.aspx?%2fSSRS_Reports%2fReturnMemoReport&rs:Command=Render';
+  private readonly ssrsBaseUrl = 'http://muhammad-ameen/ReportServer/Pages/ReportViewer.aspx?%2fSSRS_Reports%2fRetrunMemoReport&rs:Command=Render';
 
   private subscriptions = new Subscription();
 
