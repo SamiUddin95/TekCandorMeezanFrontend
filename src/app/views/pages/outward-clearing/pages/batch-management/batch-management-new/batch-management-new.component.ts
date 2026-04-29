@@ -1,7 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import Swal from 'sweetalert2';
+import { ChequeInfoService, ChequeInfoRequest } from '../../../services/cheque-info.service';
+import { BatchManagementService } from '../../../services/batch-management.service';
+import { FilterService, BranchItem, BankItem } from '../../../services/filter.service';
 
 export interface BatchInstrumentItem {
     sNo: number;
@@ -18,13 +22,21 @@ export interface BatchInstrumentItem {
     templateUrl: './batch-management-new.component.html',
     styleUrl: './batch-management-new.component.scss'
 })
-export class BatchManagementNewComponent {
+export class BatchManagementNewComponent implements OnInit {
 
-    batchId = 'BCH-20231024-0042';
-    totalInstruments = '12 / 50';
-    batchTotal = '$ 142,450.00';
-    lastSaved = 'Last saved 2 mins ago';
+    batchId = '';
+    maxInstruments = 50;
+    lastSaved = '';
     batchStatus = 'Draft';
+
+    get totalInstruments(): string {
+        return `${this.instruments.length} / ${this.maxInstruments || this.instruments.length}`;
+    }
+
+    get batchTotal(): string {
+        const total = this.instruments.reduce((sum, i) => sum + (Number(i.amount) || 0), 0);
+        return `PKR ${this.formatAmount(total)}`;
+    }
 
     // Instrument Details
     depositorType: 'Self' | 'MBL Account Holder' | 'Walk-in' = 'Self';
@@ -49,25 +61,66 @@ export class BatchManagementNewComponent {
 
     isFetchingDepositor = false;
     isFetchingBeneficiary = false;
+    isSaving = false;
+    isSubmittingDraft = false;
+    isAuthorizing = false;
+
+    branches: BranchItem[] = [];
+    banks: BankItem[] = [];
+
+    // Scan result / verification panel state
+    hasScanned = false;
+    scanOcrEngine = '';
+    scanProcessingTime = '';
+    scanAccuracy = '';
+    scanAmountInWords = '';
+    scanStatus: 'Ready for Review' | 'Pending' = 'Pending';
 
     chequeView: 'front' | 'back' = 'front';
 
     // Recent Instruments
-    instruments: BatchInstrumentItem[] = [
-        { sNo: 1, chequeNo: '455012', accountNo: '00628811920', draweeBank: 'J.P. Morgan', amount: 12450, status: 'Validated' },
-        { sNo: 2, chequeNo: '102938', accountNo: '99281112001', draweeBank: 'Bank of America', amount: 4500, status: 'Captured' },
-        { sNo: 3, chequeNo: '887123', accountNo: '11203344928', draweeBank: 'Wells Fargo', amount: 28000.50, status: 'Exception' },
-        { sNo: 4, chequeNo: '900211', accountNo: '44502219983', draweeBank: 'Citigroup', amount: 1200, status: 'Validated' },
-        { sNo: 5, chequeNo: '331001', accountNo: '88271100022', draweeBank: 'HSBC Bank', amount: 7500, status: 'Validated' },
-    ];
+    instruments: BatchInstrumentItem[] = [];
 
     stats = {
-        validated: 3,
-        captured: 1,
-        exceptions: 1
+        validated: 0,
+        captured: 0,
+        exceptions: 0
     };
 
-    constructor(private router: Router) {}
+    constructor(
+        private router: Router,
+        private route: ActivatedRoute,
+        private chequeInfoService: ChequeInfoService,
+        private batchManagementService: BatchManagementService,
+        private filterService: FilterService
+    ) {
+        const batchIdFromQuery = this.route.snapshot.queryParamMap.get('batchId');
+        const batchIdFromSession = sessionStorage.getItem('outward.activeBatchId');
+        this.batchId = batchIdFromQuery || batchIdFromSession || this.batchId;
+    }
+
+    ngOnInit(): void {
+        this.loadBranches();
+        this.loadBanks();
+    }
+
+    private loadBranches(): void {
+        this.filterService.getBranches().subscribe({
+            next: (res) => {
+                this.branches = res?.status === 'success' ? (res.data?.branches || []) : [];
+            },
+            error: () => { this.branches = []; }
+        });
+    }
+
+    private loadBanks(): void {
+        this.filterService.getBanks().subscribe({
+            next: (res) => {
+                this.banks = res?.status === 'success' ? (res.data?.banks || []) : [];
+            },
+            error: () => { this.banks = []; }
+        });
+    }
 
     get isWalkIn(): boolean {
         return this.depositorType === 'Walk-in';
@@ -100,21 +153,151 @@ export class BatchManagementNewComponent {
     }
 
     onScanCheque(): void {
-        console.log('Scan cheque triggered');
+        // Populate left form + right verification panel from OCR scan data
+        this.chequeNumber = '00129485';
+        this.micrCode = '043002008: 00129485: 01';
+        this.amount = 145000;
+        this.chequeDate = '2026-04-08';
+        this.beneficiaryTitle = 'AL-BARAKA TEXTILES PVT LTD';
+        this.instrumentType = 'Cheque';
+        this.currency = 'PKR - Pak Rupee';
+        this.payingBankCode = this.payingBankCode || '101';
+        this.payingBranchCode = this.payingBranchCode || '008';
+
+        this.scanOcrEngine = 'Vision-v4.0';
+        this.scanProcessingTime = '0.8s';
+        this.scanAccuracy = '98.4%';
+        this.scanAmountInWords = 'One Lakh Forty Five Thousand Rupees Only';
+        this.scanStatus = 'Ready for Review';
+        this.hasScanned = true;
     }
 
-    onAddInstrument(): void {
-        if (!this.chequeNumber || !this.amount) return;
-        this.instruments.push({
-            sNo: this.instruments.length + 1,
-            chequeNo: this.chequeNumber,
-            accountNo: this.accountNumber,
-            draweeBank: this.payingBankCode || 'N/A',
-            amount: this.amount,
-            status: 'Captured'
+    onSave(): void {
+        if (!this.chequeNumber || !this.amount) {
+            Swal.fire({ icon: 'warning', title: 'Missing data', text: 'Cheque number and amount are required.' });
+            return;
+        }
+
+        const nowIso = new Date().toISOString();
+        const payload: ChequeInfoRequest = {
+            id: 0,
+            date: nowIso,
+            depositorType: this.depositorType,
+            accountNo: this.accountNumber || '',
+            cnic: this.cnic || '',
+            depositorTitle: this.fullName || '',
+            beneficiaryAccountNumber: this.beneficiaryAccount || '',
+            beneficiaryTitle: this.beneficiaryTitle || '',
+            accountStatus: this.accountStatus || '',
+            beneficiaryBranchCode: this.beneficiaryBranchCode || '',
+            chequeNo: this.chequeNumber || '',
+            payingBankCode: this.payingBankCode || '',
+            payingBranchCode: this.payingBranchCode || '',
+            amount: Number(this.amount) || 0,
+            chequeDate: this.chequeDate || '',
+            instrumentType: this.instrumentType || '',
+            micr: this.micrCode || '',
+            ocrEngine: this.scanOcrEngine || '',
+            processingTime: this.scanProcessingTime || '',
+            accuracy: this.scanAccuracy || '',
+            imageF: '',
+            imageB: '',
+            imageU: '',
+            currency: (this.currency || '').split(' ')[0] || 'PKR',
+            remarks: this.remarks || '',
+            receiverBranchCode: this.receiverBranchCode || '',
+            branchName: '',
+            drawerBank: this.payingBankCode || '',
+            amountInWords: this.scanAmountInWords || '',
+            referenceNo: '',
+            depositSlipId: 0,
+            status: 'U',
+            isReconciled: false,
+            isReturned: false,
+            isRealized: false,
+            createdOn: nowIso,
+            createdBy: '',
+            updatedOn: nowIso,
+            updatedBy: ''
+        };
+
+        // Include batchId if backend supports it (property is optional in request shape)
+        (payload as any).hubcode = '';
+        (payload as any).batchId = this.batchId || null;
+
+        this.isSaving = true;
+        this.chequeInfoService.createChequeInfo(payload).subscribe({
+            next: (response: any) => {
+                this.isSaving = false;
+                const saved = response?.data;
+                if ((response?.status === 'success' || response?.statusCode === 201) && saved) {
+                    this.appendInstrumentFromResponse(saved);
+                    Swal.fire({ icon: 'success', title: 'Saved', text: 'Instrument saved successfully.', timer: 1500, showConfirmButton: false });
+                    this.clearForm();
+                    this.hasScanned = false;
+                } else {
+                    Swal.fire({ icon: 'error', title: 'Save failed', text: response?.errorMessage || 'Unable to save instrument.' });
+                }
+            },
+            error: (err) => {
+                this.isSaving = false;
+                Swal.fire({ icon: 'error', title: 'Save failed', text: err?.error?.errorMessage || 'Unable to save instrument.' });
+            }
         });
-        this.clearForm();
     }
+
+    private appendInstrumentFromResponse(data: any): void {
+        const item: BatchInstrumentItem = {
+            sNo: this.instruments.length + 1,
+            chequeNo: data.chequeNo || '',
+            accountNo: data.accountNo || '',
+            draweeBank: data.drawerBank || data.payingBankCode || 'N/A',
+            amount: Number(data.amount) || 0,
+            status: 'Captured'
+        };
+        this.instruments = [...this.instruments, item];
+        this.stats.captured = this.instruments.filter(i => i.status === 'Captured').length;
+        this.stats.validated = this.instruments.filter(i => i.status === 'Validated').length;
+        this.stats.exceptions = this.instruments.filter(i => i.status === 'Exception').length;
+    }
+
+    onSaveDraft(): void {
+        if (!this.batchId || this.instruments.length === 0 || this.isSubmittingDraft) {
+            return;
+        }
+        this.isSubmittingDraft = true;
+        this.batchManagementService.submitBatch(this.batchId).subscribe({
+            next: (response: any) => {
+                this.isSubmittingDraft = false;
+                if ((response?.status === 'success' || response?.statusCode === 200) && response?.data) {
+                    const d = response.data;
+                    this.batchStatus = d.status || 'Submitted';
+                    this.maxInstruments = d.maxInstruments || this.maxInstruments;
+                    this.lastSaved = 'Saved as draft';
+                    Swal.fire({ icon: 'success', title: 'Draft saved', text: `Batch ${d.batchId} submitted.`, timer: 1800, showConfirmButton: false });
+                } else {
+                    Swal.fire({ icon: 'error', title: 'Failed', text: response?.errorMessage || 'Unable to save draft.' });
+                }
+            },
+            error: (err) => {
+                this.isSubmittingDraft = false;
+                Swal.fire({ icon: 'error', title: 'Failed', text: err?.error?.errorMessage || 'Unable to save draft.' });
+            }
+        });
+    }
+
+    // onAddInstrument(): void {
+    //     if (!this.chequeNumber || !this.amount) return;
+    //     this.instruments.push({
+    //         sNo: this.instruments.length + 1,
+    //         chequeNo: this.chequeNumber,
+    //         accountNo: this.accountNumber,
+    //         draweeBank: this.payingBankCode || 'N/A',
+    //         amount: this.amount,
+    //         status: 'Captured'
+    //     });
+    //     this.clearForm();
+    // }
 
     onClearForm(): void {
         this.clearForm();
@@ -138,12 +321,35 @@ export class BatchManagementNewComponent {
         this.micrCode = '';
     }
 
-    onSaveDraft(): void {
-        console.log('Save as draft');
-    }
-
     onSubmitForAuth(): void {
-        console.log('Submit for authorization');
+        if (!this.batchId || this.instruments.length === 0 || this.isAuthorizing) {
+            return;
+        }
+        this.isAuthorizing = true;
+        this.batchManagementService.authorizeBatch(this.batchId).subscribe({
+            next: (response: any) => {
+                this.isAuthorizing = false;
+                if ((response?.status === 'success' || response?.statusCode === 200) && response?.data) {
+                    const d = response.data;
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Authorized',
+                        text: `Batch ${d.batchId} ${d.status?.toLowerCase() || 'authorized'}.`,
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(() => {
+                        sessionStorage.removeItem('outward.activeBatchId');
+                        this.router.navigate(['/pages/outward-clearing/batch-management']);
+                    });
+                } else {
+                    Swal.fire({ icon: 'error', title: 'Failed', text: response?.errorMessage || 'Unable to authorize batch.' });
+                }
+            },
+            error: (err) => {
+                this.isAuthorizing = false;
+                Swal.fire({ icon: 'error', title: 'Failed', text: err?.error?.errorMessage || 'Unable to authorize batch.' });
+            }
+        });
     }
 
     onBackToList(): void {

@@ -65,7 +65,9 @@
             <tbody class="table-group-divider">
               @if (isLoading) {
                 <tr>
-                  <td colspan="10" class="text-center text-muted py-3">Loading records...</td>
+                  <td colspan="10" class="text-center py-3">
+                    <app-spinner></app-spinner>
+                  </td>
                 </tr>
               }
               @if (!isLoading && loadError) {

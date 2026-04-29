@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { ChequeInfoItem, ChequeInfoService } from '../../../services/cheque-info.service';
 import { PaginationComponent } from '@app/components/pagination/pagination.component';
+import { SpinnerComponent } from '@app/components/spinner/spinner.component';
 
 export interface ChequeLodgmentItem {
     id: number;
@@ -20,7 +21,7 @@ export interface ChequeLodgmentItem {
 
 @Component({
     selector: 'app-cheque-lodgment-list',
-    imports: [CommonModule, FormsModule, PaginationComponent],
+    imports: [CommonModule, FormsModule, PaginationComponent, SpinnerComponent],
     templateUrl: './cheque-lodgment-list.component.html',
     styleUrl: './cheque-lodgment-list.component.scss'
 })

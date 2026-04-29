@@ -6,6 +6,7 @@
       <h5 class="bm-header__title">Outward Clearing – Batch Management</h5>
       <p class="bm-header__subtitle">Monitor and process outward cheque batches for your branch.</p>
     </div>
+
     <div class="bm-header__actions">
       <button class="bm-btn-refresh" (click)="onRefresh()">
         <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
@@ -38,7 +39,7 @@
       <div class="bm-stat-card__body">
         <p class="bm-stat-card__label">TOTAL BATCHES (TODAY)</p>
         <p class="bm-stat-card__value">{{ stats.totalBatches }}</p>
-        <p class="bm-stat-card__sub bm-stat-card__sub--green">+12% from yesterday</p>
+        <!-- <p class="bm-stat-card__sub bm-stat-card__sub--green">+12% from yesterday</p> -->
       </div>
     </div>
 
@@ -93,13 +94,12 @@
       </div>
 
       <div class="bm-filter-group bm-filter-group--date">
-        <span class="bm-filter-label">FROM:</span>
+        <span class="bm-filter-label">DATE:</span>
         <input type="date" class="form-control form-control-sm" [(ngModel)]="fromDate"/>
       </div>
 
-      <div class="bm-filter-group bm-filter-group--date">
-        <span class="bm-filter-label">TO:</span>
-        <input type="date" class="form-control form-control-sm" [(ngModel)]="toDate"/>
+      <div class="bm-filter-group">
+        <button class="bm-btn-search" (click)="onSearch()">Search</button>
       </div>
     </div>
   </div>
@@ -117,7 +117,7 @@
       <table class="table table-hover table-sm bm-table">
         <thead>
           <tr>
-            <th>Batch ID <span class="bm-sort-icon">↕</span></th>
+            <th>Batch ID </th>
             <th>Branch</th>
             <th>Created By</th>
             <th class="text-center">Instruments</th>
@@ -128,7 +128,14 @@
           </tr>
         </thead>
         <tbody>
-          @if (paginatedBatches.length === 0) {
+          @if (isLoading) {
+            <tr>
+              <td colspan="8" class="text-center py-3">
+                <app-spinner></app-spinner>
+              </td>
+            </tr>
+          }
+          @if (!isLoading && paginatedBatches.length === 0) {
             <tr>
               <td colspan="8" class="text-center py-4 text-muted">No batches found matching your criteria.</td>
             </tr>
@@ -206,5 +213,43 @@
       </div>
     </div>
   </div>
+
+  @if (isCreateBatchModalOpen) {
+    <div class="bm-modal-backdrop" (click)="onCloseCreateBatchModal()">
+      <div class="bm-modal" (click)="$event.stopPropagation()">
+        <div class="bm-modal__header">
+          <h6 class="bm-modal__title">Create New Batch</h6>
+        </div>
+
+        <div class="bm-modal__body">
+          <label class="bm-modal__label">Branch</label>
+          <select class="form-select form-select-sm" [(ngModel)]="createBatchBranch">
+            <option value="">Select Branch</option>
+            @for (branch of availableBranches; track branch.code) {
+              <option [value]="branch.code">{{ branch.name }} ({{ branch.code }})</option>
+            }
+          </select>
+
+          @if (createBatchError) {
+            <p class="bm-modal__error">{{ createBatchError }}</p>
+          }
+        </div>
+
+        <div class="bm-modal__footer">
+          <button class="bm-btn-modal bm-btn-modal--cancel" type="button" (click)="onCloseCreateBatchModal()" [disabled]="isCreatingBatch">
+            Cancel
+          </button>
+          <button class="bm-btn-modal bm-btn-modal--save" type="button" (click)="onSaveCreateBatch()" [disabled]="isCreatingBatch">
+            @if (isCreatingBatch) {
+              <span class="spinner-border spinner-border-sm me-1"></span>
+              Saving...
+            } @else {
+              Save
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 
 </div>

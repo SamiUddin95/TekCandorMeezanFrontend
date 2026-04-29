@@ -92,9 +92,13 @@
               <ng-icon name="tablerRefresh" class="me-1"></ng-icon>
               Reset filter
             </button>
-            <button class="btn btn-primary px-3 py-2" (click)="onSearch()">
-              <ng-icon name="tablerSearch" class="me-1"></ng-icon>
-              Search
+            <button class="btn btn-primary px-3 py-2" [disabled]="isReportLoading" (click)="onSearch()">
+              @if (isReportLoading) {
+                <span class="spinner-border spinner-border-sm me-1"></span> Searching...
+              } @else {
+                <ng-icon name="tablerSearch" class="me-1"></ng-icon>
+                Search
+              }
             </button>
           </div>
         </div>
@@ -125,9 +129,7 @@
           <div class="ssrs-viewer">
             @if (isReportLoading) {
               <div class="ssrs-viewer__loading">
-                <div class="spinner-border text-primary" role="status">
-                  <span class="visually-hidden">Loading...</span>
-                </div>
+                <app-spinner></app-spinner>
                 <p class="mt-2 mb-0 text-muted">Loading report, please wait…</p>
               </div>
             }

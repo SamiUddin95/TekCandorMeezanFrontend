@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FundRealizationItem, FundRealizationService } from '../../services/fund-realization.service';
 import { PaginationComponent } from '@app/components/pagination/pagination.component';
+import { SpinnerComponent } from '@app/components/spinner/spinner.component';
 
 export interface BranchRealizationItem {
     id: number;
@@ -16,7 +17,7 @@ export interface BranchRealizationItem {
 
 @Component({
     selector: 'app-fund-realization',
-    imports: [CommonModule, FormsModule, PaginationComponent],
+    imports: [CommonModule, FormsModule, PaginationComponent, SpinnerComponent],
     templateUrl: './fund-realization.component.html',
     styleUrl: './fund-realization.component.scss'
 })

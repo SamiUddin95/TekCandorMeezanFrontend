@@ -1,11 +1,12 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { SpinnerComponent } from '@app/components/spinner/spinner.component';
 import { OperationalOverviewService, ChequeDetailItem } from '../../../services/operational-overview.service';
 import Swal from 'sweetalert2';
 
 @Component({
     selector: 'app-oo-detail',
-    imports: [CommonModule],
+    imports: [CommonModule, SpinnerComponent],
     templateUrl: './operational-overview-detail.component.html',
     styleUrl: './operational-overview-detail.component.scss'
 })

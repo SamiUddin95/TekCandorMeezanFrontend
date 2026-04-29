@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { SpinnerComponent } from '@app/components/spinner/spinner.component';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReturnDetailData, ReturnMarkingUtilityService } from '../../services/return-marking-utility.service';
@@ -28,7 +29,7 @@ export interface InstrumentMetadata {
 
 @Component({
     selector: 'app-return-marking-utility',
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule, SpinnerComponent],
     templateUrl: './return-marking-utility.component.html',
     styleUrl: './return-marking-utility.component.scss'
 })

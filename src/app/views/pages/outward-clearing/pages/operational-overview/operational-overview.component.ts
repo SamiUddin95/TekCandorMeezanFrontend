@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { OperationalOverviewService, SupervisorListItem } from '../../services/operational-overview.service';
 import { OperationalOverviewDetailComponent } from './operational-overview-detail/operational-overview-detail.component';
 import { PaginationComponent } from '@app/components/pagination/pagination.component';
+import { SpinnerComponent } from '@app/components/spinner/spinner.component';
 import Swal from 'sweetalert2';
 
 interface Transaction {
@@ -19,7 +20,7 @@ interface Transaction {
 
 @Component({
     selector: 'app-operational-overview',
-    imports: [CommonModule, FormsModule, OperationalOverviewDetailComponent, PaginationComponent],
+    imports: [CommonModule, FormsModule, OperationalOverviewDetailComponent, PaginationComponent, SpinnerComponent],
     templateUrl: './operational-overview.component.html',
     styleUrl: './operational-overview.component.scss'
 })

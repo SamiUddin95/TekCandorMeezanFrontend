@@ -1,7 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { FilterService, BranchItem } from '../../../services/filter.service';
+import { BatchDetails, BatchManagementService } from '../../../services/batch-management.service';
+import { SpinnerComponent } from '@app/components/spinner/spinner.component';
 
 export interface BatchItem {
     batchId: string;
@@ -15,76 +18,48 @@ export interface BatchItem {
 
 @Component({
     selector: 'app-batch-management-list',
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule, SpinnerComponent],
     templateUrl: './batch-management-list.component.html',
     styleUrl: './batch-management-list.component.scss'
 })
-export class BatchManagementListComponent {
+export class BatchManagementListComponent implements OnInit {
 
     searchQuery = '';
-    fromDate = '2024-06-01';
-    toDate = '2024-06-20';
+    fromDate = '';
+    toDate = '';
     selectedBranch = '';
     selectedStatus = '';
     currentPage = 1;
     pageSize = 5;
+    isLoading = false;
+
+    isCreateBatchModalOpen = false;
+    isCreatingBatch = false;
+    createBatchBranch = '';
+    createBatchError = '';
+    availableBranches: BranchItem[] = [];
 
     stats = {
-        totalBatches: 24,
-        pendingAuth: 8,
-        authorizedValue: 18400000,
-        processingExceptions: 2
+        totalBatches: 0,
+        pendingAuth: 0,
+        authorizedValue: 0,
+        processingExceptions: 0
     };
 
-    batches: BatchItem[] = [
-        {
-            batchId: 'B-10293',
-            branch: 'Head Office - 001',
-            createdBy: 'John Operations',
-            instruments: 12,
-            totalAmount: 2450000,
-            status: 'Authorized',
-            createdDate: '2024-05-20 09:43'
-        },
-        {
-            batchId: 'B-10294',
-            branch: 'Main Street - 005',
-            createdBy: 'Sarah Jenkins',
-            instruments: 45,
-            totalAmount: 12100500,
-            status: 'Balanced',
-            createdDate: '2024-05-20 11:28'
-        },
-        {
-            batchId: 'B-10295',
-            branch: 'Industrial Area - 012',
-            createdBy: 'John Operations',
-            instruments: 8,
-            totalAmount: 450000,
-            status: 'Draft',
-            createdDate: '2024-05-25 14:18'
-        },
-        {
-            batchId: 'B-10296',
-            branch: 'Head Office - 001',
-            createdBy: 'Michael Chen',
-            instruments: 32,
-            totalAmount: 5670000,
-            status: 'Balanced',
-            createdDate: '2024-05-26 15:38'
-        },
-        {
-            batchId: 'B-10297',
-            branch: 'Suburban Branch - 009',
-            createdBy: 'Sarah Jenkins',
-            instruments: 19,
-            totalAmount: 1200000,
-            status: 'Rejected',
-            createdDate: '2024-05-18 16:45'
-        }
-    ];
+    batches: BatchItem[] = [];
 
-    constructor(private router: Router) {}
+    constructor(
+        private router: Router,
+        private filterService: FilterService,
+        private batchManagementService: BatchManagementService
+    ) {}
+
+    ngOnInit(): void {
+        this.setTodayDate();
+        this.loadBranches();
+        this.loadStats();
+        this.loadBatches();
+    }
 
     get filteredBatches(): BatchItem[] {
         let result = [...this.batches];
@@ -130,13 +105,172 @@ export class BatchManagementListComponent {
     }
 
     onCreateNewBatch(): void {
-        this.router.navigate(['/pages/outward-clearing/batch-management/new']);
+        this.isCreateBatchModalOpen = true;
+        this.createBatchError = '';
+    }
+
+    onCloseCreateBatchModal(): void {
+        this.isCreateBatchModalOpen = false;
+        this.createBatchBranch = '';
+        this.createBatchError = '';
+    }
+
+    onSaveCreateBatch(): void {
+        if (!this.createBatchBranch) {
+            this.createBatchError = 'Please select a branch.';
+            return;
+        }
+
+        this.isCreatingBatch = true;
+        this.createBatchError = '';
+
+        this.batchManagementService.createBatch({
+            branch: this.createBatchBranch,
+            maxInstruments: 0
+        }).subscribe({
+            next: (response) => {
+                this.isCreatingBatch = false;
+
+                if (response.status === 'success' && response.data?.batchId) {
+                    const createdBatchId = response.data.batchId;
+                    sessionStorage.setItem('outward.activeBatchId', createdBatchId);
+                    this.onCloseCreateBatchModal();
+                    this.router.navigate(['/pages/outward-clearing/batch-management/new'], {
+                        queryParams: { batchId: createdBatchId }
+                    });
+                    return;
+                }
+
+                this.createBatchError = response.errorMessage || 'Failed to create batch.';
+            },
+            error: (error) => {
+                this.isCreatingBatch = false;
+                this.createBatchError = error?.error?.errorMessage || 'Failed to create batch. Please try again.';
+            }
+        });
+    }
+
+    private loadStats(): void {
+        this.batchManagementService.getBatchStatistics().subscribe({
+            next: (response) => {
+                if (response.status === 'success' && response.data) {
+                    this.stats = {
+                        totalBatches: response.data.totalBatchesToday,
+                        pendingAuth: response.data.pendingAuthorization,
+                        authorizedValue: response.data.authorizedValue,
+                        processingExceptions: response.data.processingExceptions
+                    };
+                }
+            }
+        });
+    }
+
+    private loadBatches(): void {
+        this.isLoading = true;
+        const fromDate = this.fromDate || this.getTodayDateString();
+        const toDate = this.getNextDateString(fromDate);
+        this.toDate = toDate;
+
+        this.batchManagementService.getBatchesByDateRange(fromDate, toDate).subscribe({
+            next: (response) => {
+                this.isLoading = false;
+                if (response.status === 'success' && response.data) {
+                    this.batches = response.data.map(item => this.mapBatchItem(item));
+                } else {
+                    this.batches = [];
+                }
+            },
+            error: () => {
+                this.isLoading = false;
+                this.batches = [];
+            }
+        });
+    }
+
+    private mapBatchItem(item: BatchDetails): BatchItem {
+        return {
+            batchId: item.batchId,
+            branch: item.branch,
+            createdBy: item.createdBy,
+            instruments: item.totalInstruments,
+            totalAmount: item.totalAmount,
+            status: this.normalizeStatus(item.status),
+            createdDate: this.formatDateTime(item.createdAt)
+        };
+    }
+
+    private normalizeStatus(status: string): 'Authorized' | 'Balanced' | 'Draft' | 'Rejected' {
+        if (status === 'Authorized') return 'Authorized';
+        if (status === 'Balanced') return 'Balanced';
+        if (status === 'Rejected') return 'Rejected';
+        return 'Draft';
+    }
+
+    private setTodayDate(): void {
+        const today = this.getTodayDateString();
+        this.fromDate = today;
+        this.toDate = this.getNextDateString(today);
+    }
+
+    private getTodayDateString(): string {
+        const today = new Date();
+        return this.formatDateOnly(today);
+    }
+
+    private getNextDateString(dateString: string): string {
+        const [year, month, day] = dateString.split('-').map(Number);
+        const nextDate = new Date(year, (month || 1) - 1, day || 1);
+        nextDate.setDate(nextDate.getDate() + 1);
+        return this.formatDateOnly(nextDate);
+    }
+
+    private formatDateOnly(date: Date): string {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    private formatDateTime(dateTime: string): string {
+        if (!dateTime) return '-';
+        const date = new Date(dateTime);
+        if (Number.isNaN(date.getTime())) return dateTime;
+
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        return `${year}-${month}-${day} ${hours}:${minutes}`;
     }
 
     onRefresh(): void {
         this.searchQuery = '';
         this.selectedStatus = '';
         this.currentPage = 1;
+        this.setTodayDate();
+        this.loadStats();
+        this.loadBatches();
+    }
+
+    onSearch(): void {
+        this.currentPage = 1;
+        this.loadBatches();
+    }
+
+    private loadBranches(): void {
+        this.filterService.getBranches().subscribe({
+            next: (response) => {
+                if (response.status === 'success') {
+                    this.availableBranches = response.data.branches;
+                } else {
+                    this.availableBranches = [];
+                }
+            },
+            error: () => {
+                this.availableBranches = [];
+            }
+        });
     }
 
     formatAmount(val: number): string {

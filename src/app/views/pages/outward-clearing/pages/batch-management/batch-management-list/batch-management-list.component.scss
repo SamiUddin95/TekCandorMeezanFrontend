@@ -51,6 +51,23 @@ $accent-blue: #0ea5e9;
   &:hover { border-color: $text-secondary; }
 }
 
+.bm-btn-search {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 7px 14px;
+  border: 1px solid $text-primary;
+  border-radius: 6px;
+  background: $text-primary;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .2s;
+  &:hover { opacity: .9; }
+}
+
 .bm-btn-create {
   display: inline-flex;
   align-items: center;
@@ -454,6 +471,91 @@ $accent-blue: #0ea5e9;
     font-size: 11px;
     color: $text-secondary;
     line-height: 1.5;
+  }
+}
+
+// ── Create Batch Modal ─────────────────────────────────────────────────────
+.bm-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+  padding: 16px;
+}
+
+.bm-modal {
+  width: 100%;
+  max-width: 460px;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid $border;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.25);
+
+  &__header {
+    padding: 14px 16px;
+    border-bottom: 1px solid $border;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: $text-primary;
+  }
+
+  &__body {
+    padding: 14px 16px;
+  }
+
+  &__label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: $text-secondary;
+  }
+
+  &__error {
+    margin: 10px 0 0;
+    font-size: 12px;
+    color: #dc2626;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 12px 16px 16px;
+  }
+}
+
+.bm-btn-modal {
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  &--cancel {
+    background: #fff;
+    border-color: $border;
+    color: $text-secondary;
+  }
+
+  &--save {
+    background: $text-primary;
+    color: #fff;
   }
 }
 

@@ -58,6 +58,14 @@
               </tr>
             </thead>
             <tbody class="table-group-divider">
+              @if (isLoading) {
+                <tr>
+                  <td colspan="9" class="text-center py-3">
+                    <app-spinner></app-spinner>
+                  </td>
+                </tr>
+              }
+              @if (!isLoading) {
               @for (item of filteredData; track item.id; let i = $index) {
                 <tr>
                   <td class="font-monospace">{{ item.chequeNo }}</td>
@@ -94,6 +102,7 @@
                     No records found
                   </td>
                 </tr>
+              }
               }
             </tbody>
           </table>

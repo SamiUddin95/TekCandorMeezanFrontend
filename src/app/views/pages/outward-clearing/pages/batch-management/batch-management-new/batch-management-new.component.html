@@ -135,11 +135,9 @@
           <label class="bn-label">Drawee Bank</label>
           <select class="bn-input" [(ngModel)]="payingBankCode">
             <option value="">Select Bank</option>
-            <option value="HBL">Habib Bank Limited</option>
-            <option value="UBL">United Bank Limited</option>
-            <option value="MCB">MCB Bank Limited</option>
-            <option value="ABL">Allied Bank Limited</option>
-            <option value="BAF">Bank Alfalah</option>
+            @for (b of banks; track b.value) {
+              <option [value]="b.value">{{ b.text }}</option>
+            }
           </select>
         </div>
 
@@ -158,9 +156,9 @@
           <label class="bn-label">Receiving Branch</label>
           <select class="bn-input" [(ngModel)]="receiverBranchCode">
             <option value="">Select Branch</option>
-            <option value="001">Head Office - 001</option>
-            <option value="005">Main Street - 005</option>
-            <option value="012">Industrial Area - 012</option>
+            @for (br of branches; track br.code) {
+              <option [value]="br.code">{{ br.name }} - {{ br.code }}</option>
+            }
           </select>
         </div>
 
@@ -225,13 +223,20 @@
 
         <!-- Action Buttons -->
         <div class="bn-form-actions">
-          <button class="bn-btn-add" (click)="onAddInstrument()">
+          <!-- <button class="bn-btn-add" (click)="onAddInstrument()">
             <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
               <path d="M12 5v14m-7-7h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
             Add Instrument
-          </button>
+          </button> -->
           <button class="bn-btn-clear" (click)="onClearForm()">Clear</button>
+          <button class="bn-btn-add" [disabled]="isSaving" (click)="onSave()">
+            @if (isSaving) {
+              <span class="spinner-border spinner-border-sm me-1"></span> Saving...
+            } @else {
+              Save
+            }
+          </button>
         </div>
       </div>
     </div>
@@ -247,6 +252,61 @@
             <button class="bn-viewer-tab" [class.bn-viewer-tab--active]="chequeView === 'back'" (click)="chequeView = 'back'">Back View</button>
           </div>
         </div>
+
+        <!-- Verification Panel (after scan) -->
+        @if (hasScanned) {
+          <div class="bn-verify-panel">
+            <div class="bn-verify-panel__header">
+              <h6 class="bn-verify-panel__title">Verification Panel</h6>
+              <span class="bn-verify-panel__status">{{ scanStatus }}</span>
+            </div>
+
+            <p class="bn-verify-panel__section-title">INSTRUMENT DETAILS</p>
+            <div class="bn-verify-panel__row">
+              <span class="bn-verify-panel__label">Cheque Number</span>
+              <span class="bn-verify-panel__value">
+                <span class="bn-verify-panel__mono">{{ chequeNumber }}</span>
+                <span class="bn-badge bn-badge--verified">Verified</span>
+              </span>
+            </div>
+            <div class="bn-verify-panel__row">
+              <span class="bn-verify-panel__label">MICR Code Line</span>
+              <span class="bn-verify-panel__value">
+                <span class="bn-verify-panel__mono">{{ micrCode }}</span>
+                <span class="bn-badge bn-badge--review">Review</span>
+              </span>
+            </div>
+
+            <p class="bn-verify-panel__section-title">TRANSACTION DATA</p>
+            <div class="bn-verify-panel__cards">
+              <div class="bn-verify-panel__card">
+                <p class="bn-verify-panel__card-label">
+                  Amount (PKR) <span class="bn-badge bn-badge--verified">Verified</span>
+                </p>
+                <p class="bn-verify-panel__card-value">{{ formatAmount(amount || 0) }}</p>
+              </div>
+              <div class="bn-verify-panel__card">
+                <p class="bn-verify-panel__card-label">Cheque Date</p>
+                <p class="bn-verify-panel__card-value">{{ chequeDate }}</p>
+              </div>
+            </div>
+
+            <p class="bn-verify-panel__section-title">BENEFICIARY / PAYEE</p>
+            <p class="bn-verify-panel__beneficiary">{{ beneficiaryTitle }}</p>
+
+            <div class="bn-verify-panel__meta">
+              <div class="bn-verify-panel__meta-row">
+                <span>OCR Engine:</span><strong>{{ scanOcrEngine }}</strong>
+              </div>
+              <div class="bn-verify-panel__meta-row">
+                <span>Processing Time:</span><strong>{{ scanProcessingTime }}</strong>
+              </div>
+              <div class="bn-verify-panel__meta-row">
+                <span>Confidence Score:</span><strong class="bn-verify-panel__accuracy">{{ scanAccuracy }}</strong>
+              </div>
+            </div>
+          </div>
+        }
 
         <div class="bn-viewer__canvas">
           <!-- Placeholder cheque image -->
@@ -356,8 +416,20 @@
       <span>All captured items are validated locally</span>
     </div>
     <div class="bn-bottom-bar__right">
-      <button class="bn-btn-draft" (click)="onSaveDraft()">Save as Draft</button>
-      <button class="bn-btn-submit" (click)="onSubmitForAuth()">Submit for Authorization</button>
+      <button class="bn-btn-draft" [disabled]="instruments.length === 0 || isSubmittingDraft" (click)="onSaveDraft()">
+        @if (isSubmittingDraft) {
+          <span class="spinner-border spinner-border-sm me-1"></span> Saving...
+        } @else {
+          Save as Draft
+        }
+      </button>
+      <button class="bn-btn-submit" [disabled]="instruments.length === 0 || isAuthorizing" (click)="onSubmitForAuth()">
+        @if (isAuthorizing) {
+          <span class="spinner-border spinner-border-sm me-1"></span> Authorizing...
+        } @else {
+          Submit for Authorization
+        }
+      </button>
     </div>
   </div>
 

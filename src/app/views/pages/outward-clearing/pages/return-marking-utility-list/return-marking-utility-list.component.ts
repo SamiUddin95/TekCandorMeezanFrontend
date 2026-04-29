@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ReturnListItem, ReturnMarkingUtilityService } from '../../services/return-marking-utility.service';
 import { PaginationComponent } from '@app/components/pagination/pagination.component';
+import { SpinnerComponent } from '@app/components/spinner/spinner.component';
 
 interface ReturnMarkingListItem {
     id: number;
@@ -20,7 +21,7 @@ interface ReturnMarkingListItem {
 
 @Component({
     selector: 'app-return-marking-utility-list',
-    imports: [CommonModule, FormsModule, PaginationComponent],
+    imports: [CommonModule, FormsModule, PaginationComponent, SpinnerComponent],
     templateUrl: './return-marking-utility-list.component.html',
     styleUrl: './return-marking-utility-list.component.scss'
 })

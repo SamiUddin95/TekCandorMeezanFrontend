@@ -28,7 +28,9 @@
 
   <!-- Loading -->
   @if (isLoading) {
-    <div class="ood-detail__state">Loading transaction details...</div>
+    <div class="ood-detail__state">
+      <app-spinner></app-spinner>
+    </div>
   }
 
   <!-- Error -->

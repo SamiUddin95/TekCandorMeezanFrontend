@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { ChequeInfoItem, ChequeInfoListResponse, ChequeInfoService } from '../../services/cheque-info.service';
 import { PaginationComponent } from '@app/components/pagination/pagination.component';
+import { SpinnerComponent } from '@app/components/spinner/spinner.component';
 
 export interface TransactionHistoryItem {
     id: number;
@@ -24,7 +25,7 @@ export interface TransactionHistoryItem {
 @Component({
     selector: 'app-transaction-history',
     standalone: true,
-    imports: [CommonModule, FormsModule, PaginationComponent],
+    imports: [CommonModule, FormsModule, PaginationComponent, SpinnerComponent],
     templateUrl: './transaction-history.component.html',
     styleUrl: './transaction-history.component.scss'
 })

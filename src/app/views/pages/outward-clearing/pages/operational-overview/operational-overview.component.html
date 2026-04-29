@@ -89,7 +89,11 @@
             </thead>
             <tbody class="table-group-divider">
               @if (isLoading) {
-                <tr><td colspan="8" class="text-center text-muted py-3">Loading records...</td></tr>
+                <tr>
+                  <td colspan="8" class="text-center py-3">
+                    <app-spinner></app-spinner>
+                  </td>
+                </tr>
               }
               @if (!isLoading && loadError) {
                 <tr><td colspan="8" class="text-center text-danger py-3">{{ loadError }}</td></tr>

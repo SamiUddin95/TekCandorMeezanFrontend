@@ -119,7 +119,9 @@
         <tbody class="table-group-divider">
           @if (isLoading) {
             <tr>
-              <td colspan="8" class="text-center py-4 text-muted">Loading branches...</td>
+              <td colspan="8" class="text-center py-3">
+                <app-spinner></app-spinner>
+              </td>
             </tr>
           }
           @if (!isLoading && loadError) {
