@@ -10,11 +10,12 @@ import { CBCReportService, CBCReportItem, CBCReportListResponse, StatusOption } 
 import { BranchService, BranchItem, FilterBranchItem, FilterHubItem } from '../../../../../services/branch.service';
 import { HubService, HubItem } from '../../../../../services/hub.service';
 import { SSRSReportService } from '../../../../../services/ssrs-report.service';
+import { SafeUrlPipe } from '../../../../../pipes/safe-url.pipe';
 import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-cbc-report',
-  imports: [CommonModule, FormsModule, NgIcon, PaginationComponent, SpinnerComponent],
+  imports: [CommonModule, FormsModule, NgIcon, PaginationComponent, SpinnerComponent, SafeUrlPipe],
   providers: [provideIcons({ tablerRefresh, tablerSearch })],
   templateUrl: './cbc-report.component.html',
   styleUrls: ['./cbc-report.component.scss']
@@ -41,6 +42,12 @@ export class CBCReportComponent implements OnInit, OnDestroy {
 
   // Status options loaded from API
   statusOptions: StatusOption[] = [];
+
+  showReport = false;
+  reportUrl = '';
+  isReportLoading = false;
+
+  private readonly ssrsBaseUrl = 'http://muhammad-ameen/ReportServer/Pages/ReportViewer.aspx?%2fSSRS_Reports%2fCBCReport&rs:Command=Render';
 
   private subscriptions = new Subscription();
 
@@ -157,6 +164,22 @@ export class CBCReportComponent implements OnInit, OnDestroy {
   onSearch() {
     this.currentPage = 1;
     this.loadReport();
+    // Show inline SSRS report
+    let url = this.ssrsBaseUrl;
+    if (this.fromDate) url += `&FromDate=${encodeURIComponent(this.fromDate)}`;
+    if (this.toDate) url += `&ToDate=${encodeURIComponent(this.toDate)}`;
+    if (this.selectedBranchId && this.selectedBranchId !== 'null') url += `&BranchCode=${encodeURIComponent(this.selectedBranchId)}`;
+    if (this.selectedHubId && this.selectedHubId !== 'null') url += `&HubCode=${encodeURIComponent(this.selectedHubId)}`;
+    if (this.accountNumber) url += `&AccountNumber=${encodeURIComponent(this.accountNumber)}`;
+    if (this.status) url += `&Status=${encodeURIComponent(this.status)}`;
+    url += '&rs:Embed=true&rc:Toolbar=true&rc:Parameters=false';
+    this.isReportLoading = true;
+    this.showReport = true;
+    this.reportUrl = url;
+  }
+
+  onReportLoad(): void {
+    this.isReportLoading = false;
   }
 
   onReset() {
@@ -169,6 +192,9 @@ export class CBCReportComponent implements OnInit, OnDestroy {
     this.currentPage = 1;
     this.reportData = [];
     this.totalRecords = 0;
+    this.showReport = false;
+    this.reportUrl = '';
+    this.isReportLoading = false;
   }
 
   get paginatedReportData(): CBCReportItem[] {

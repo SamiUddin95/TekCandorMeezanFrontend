@@ -148,6 +148,35 @@
   }
 }
 
+// ── SSRS Inline Viewer ──────────────────────────────────────────────────────
+.ssrs-viewer {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 240px);
+  min-height: 500px;
+
+  &__loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    z-index: 2;
+  }
+
+  &__iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+  }
+}
+
 // Responsive design for smaller screens
 @media (max-width: 768px) {
   .export-buttons-group {

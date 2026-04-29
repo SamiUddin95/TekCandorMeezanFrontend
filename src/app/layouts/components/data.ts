@@ -161,7 +161,7 @@ export const menuItems: MenuItemType[] = [
         label: 'Outward Clearing',
         icon: 'tablerArrowBarToUp',
         isCollapsed: true,
-        requiredPermissions: ['outwardClearing.StartBusinessDay', 'outwardClearing.ChequeLodgment', 'outwardClearing.GenerateClearingFile', 'outwardClearing.OperationalOverview' , 'outwardClearing.Dashboard'],
+        requiredPermissions: ['outwardClearing.StartBusinessDay', 'outwardClearing.ChequeLodgment', 'outwardClearing.GenerateClearingFile', 'outwardClearing.OperationalOverview', 'outwardClearing.Dashboard', 'outwardClearing.BatchManagement'],
         children: [
             {
                 label: 'Dashboard',
@@ -216,6 +216,12 @@ export const menuItems: MenuItemType[] = [
                 icon: 'tablerHistory',
                 url: '/pages/outward-clearing/transaction-history',
                 requiredPermissions: ['outwardClearing.TransactionHistory']
+            },
+            {
+                label: 'Batch Management',
+                icon: 'tablerStack2',
+                url: '/pages/outward-clearing/batch-management',
+                requiredPermissions: ['outwardClearing.BatchManagement']
             },
         ]
     },

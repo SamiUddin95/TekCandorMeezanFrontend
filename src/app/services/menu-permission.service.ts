@@ -169,7 +169,7 @@ export class MenuPermissionService {
         label: 'Outward Clearing',
         icon: 'tablerArrowBarToUp',
         isCollapsed: true,
-        requiredPermissions: ['outwardClearing.Dashboard', 'outwardClearing.StartBusinessDay', 'outwardClearing.ChequeLodgment', 'outwardClearing.GenerateClearingFile', 'outwardClearing.OperationalOverview', 'outwardClearing.NiftReconciliation'],
+        requiredPermissions: ['outwardClearing.Dashboard', 'outwardClearing.StartBusinessDay', 'outwardClearing.ChequeLodgment', 'outwardClearing.GenerateClearingFile', 'outwardClearing.OperationalOverview', 'outwardClearing.NiftReconciliation', 'outwardClearing.BatchManagement'],
         children: [
           {
             label: 'Dashboard',
@@ -224,6 +224,12 @@ export class MenuPermissionService {
             icon: 'tablerHistory',
             url: '/pages/outward-clearing/transaction-history',
             requiredPermissions: ['outwardClearing.TransactionHistory']
+          },
+          {
+            label: 'Batch Management',
+            icon: 'tablerStack2',
+            url: '/pages/outward-clearing/batch-management',
+            requiredPermissions: ['outwardClearing.BatchManagement']
           },
         ]
       },

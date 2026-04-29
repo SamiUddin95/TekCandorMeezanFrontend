@@ -10,11 +10,12 @@ import { ReturnRegisterService, ReturnRegisterItem, ReturnRegisterListResponse }
 import { BranchService, BranchItem, FilterBranchItem } from '../../../../../services/branch.service';
 import { CycleService, CycleItem } from '../../../../../services/cycle.service';
 import { SSRSReportService } from '../../../../../services/ssrs-report.service';
+import { SafeUrlPipe } from '../../../../../pipes/safe-url.pipe';
 import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-return-register',
-  imports: [CommonModule, FormsModule, NgIcon, PaginationComponent, SpinnerComponent],
+  imports: [CommonModule, FormsModule, NgIcon, PaginationComponent, SpinnerComponent, SafeUrlPipe],
   providers: [provideIcons({ tablerRefresh, tablerSearch })],
   templateUrl: './return-register.component.html',
   styleUrls: ['./return-register.component.scss']
@@ -41,6 +42,12 @@ export class ReturnRegisterComponent implements OnInit, OnDestroy {
 
   // Status options (you can adjust these based on your requirements)
   statusOptions: string[] = ['Pending', 'Approved', 'Rejected', 'Processed'];
+
+  showReport = false;
+  reportUrl = '';
+  isReportLoading = false;
+
+  private readonly ssrsBaseUrl = 'http://muhammad-ameen/ReportServer/Pages/ReportViewer.aspx?%2fSSRS_Reports%2fReturnRegisterReport&rs:Command=Render';
 
   private subscriptions = new Subscription();
 
@@ -140,6 +147,21 @@ export class ReturnRegisterComponent implements OnInit, OnDestroy {
   onSearch() {
     this.currentPage = 1;
     this.loadReport();
+    let url = this.ssrsBaseUrl;
+    if (this.fromDate) url += `&FromDate=${encodeURIComponent(this.fromDate)}`;
+    if (this.toDate) url += `&ToDate=${encodeURIComponent(this.toDate)}`;
+    if (this.accountNumber) url += `&AccountNumber=${encodeURIComponent(this.accountNumber)}`;
+    if (this.selectedBranchId && this.selectedBranchId !== 'null') url += `&BranchCode=${encodeURIComponent(this.selectedBranchId)}`;
+    if (this.status) url += `&Status=${encodeURIComponent(this.status)}`;
+    if (this.selectedCycleId) url += `&CycleId=${encodeURIComponent(String(this.selectedCycleId))}`;
+    url += '&rs:Embed=true&rc:Toolbar=true&rc:Parameters=false';
+    this.isReportLoading = true;
+    this.showReport = true;
+    this.reportUrl = url;
+  }
+
+  onReportLoad(): void {
+    this.isReportLoading = false;
   }
 
   onReset() {
@@ -152,6 +174,9 @@ export class ReturnRegisterComponent implements OnInit, OnDestroy {
     this.currentPage = 1;
     this.reportData = [];
     this.totalRecords = 0;
+    this.showReport = false;
+    this.reportUrl = '';
+    this.isReportLoading = false;
   }
 
   get paginatedReportData(): ReturnRegisterItem[] {

@@ -11,11 +11,12 @@ import { HubService, HubItem } from '../../../../../services/hub.service';
 import { BranchService, FilterHubItem } from '../../../../../services/branch.service';
 import { CycleService, CycleItem } from '../../../../../services/cycle.service';
 import { SSRSReportService } from '../../../../../services/ssrs-report.service';
+import { SafeUrlPipe } from '../../../../../pipes/safe-url.pipe';
 import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-clearing-log-report',
-  imports: [CommonModule, FormsModule, NgIcon, PaginationComponent, SpinnerComponent],
+  imports: [CommonModule, FormsModule, NgIcon, PaginationComponent, SpinnerComponent, SafeUrlPipe],
   providers: [provideIcons({ tablerRefresh, tablerSearch })],
   templateUrl: './clearing-log-report.component.html',
   styleUrls: ['./clearing-log-report.component.scss']
@@ -37,6 +38,12 @@ export class ClearingLogReportComponent implements OnInit, OnDestroy {
   reportData: ClearingLogReportItem[] = [];
   hubs: FilterHubItem[] = [];
   cycles: CycleItem[] = [];
+
+  showReport = false;
+  reportUrl = '';
+  isReportLoading = false;
+
+  private readonly ssrsBaseUrl = 'http://muhammad-ameen/ReportServer/Pages/ReportViewer.aspx?%2fSSRS_Reports%2fClearingLogReport&rs:Command=Render';
 
   private subscriptions = new Subscription();
 
@@ -135,6 +142,19 @@ export class ClearingLogReportComponent implements OnInit, OnDestroy {
   onSearch() {
     this.currentPage = 1;
     this.loadReport();
+    let url = this.ssrsBaseUrl;
+    if (this.fromDate) url += `&FromDate=${encodeURIComponent(this.fromDate)}`;
+    if (this.toDate) url += `&ToDate=${encodeURIComponent(this.toDate)}`;
+    if (this.selectedHubId && this.selectedHubId !== 'null') url += `&HubCode=${encodeURIComponent(this.selectedHubId)}`;
+    if (this.selectedCycleId) url += `&CycleCode=${encodeURIComponent(String(this.selectedCycleId))}`;
+    url += '&rs:Embed=true&rc:Toolbar=true&rc:Parameters=false';
+    this.isReportLoading = true;
+    this.showReport = true;
+    this.reportUrl = url;
+  }
+
+  onReportLoad(): void {
+    this.isReportLoading = false;
   }
 
   onReset() {
@@ -145,6 +165,9 @@ export class ClearingLogReportComponent implements OnInit, OnDestroy {
     this.currentPage = 1;
     this.reportData = [];
     this.totalRecords = 0;
+    this.showReport = false;
+    this.reportUrl = '';
+    this.isReportLoading = false;
   }
 
   get paginatedReportData(): ClearingLogReportItem[] {

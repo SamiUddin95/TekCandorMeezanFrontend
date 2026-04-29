@@ -10,10 +10,11 @@ import { Observable, Subscription } from 'rxjs';
 import { InwardClearingReportService, InwardClearingReportItem, InwardClearingReportApiResponse } from '../../../../services/inward-clearing-report.service';
 import { BranchService, FilterBranchItem, FilterStatusItem, FilterHubItem } from '../../../../services/branch.service';
 import { SSRSReportService } from '../../../../services/ssrs-report.service';
+import { SafeUrlPipe } from '../../../../pipes/safe-url.pipe';
 
 @Component({
   selector: 'app-inward-clearing-report',
-  imports: [CommonModule, FormsModule, NgIcon, PaginationComponent, SpinnerComponent],
+  imports: [CommonModule, FormsModule, NgIcon, PaginationComponent, SpinnerComponent, SafeUrlPipe],
   providers: [provideIcons({ tablerRefresh, tablerSearch })],
   templateUrl: './inward-clearing-report.component.html',
   styleUrls: ['./inward-clearing-report.component.scss']
@@ -39,6 +40,12 @@ export class InwardClearingReportComponent implements OnInit, OnDestroy {
   branches: FilterBranchItem[] = [];
   statuses: FilterStatusItem[] = [];
   hubs: FilterHubItem[] = [];
+
+  showReport = false;
+  reportUrl = '';
+  isReportLoading = false;
+
+  private readonly ssrsBaseUrl = 'http://muhammad-ameen/ReportServer/Pages/ReportViewer.aspx?%2fSSRS_Reports%2fInwardClearingReport&rs:Command=Render';
 
   private subscriptions = new Subscription();
 
@@ -170,6 +177,22 @@ export class InwardClearingReportComponent implements OnInit, OnDestroy {
   onSearch(): void {
     this.currentPage = 1;
     this.loadReport();
+    let url = this.ssrsBaseUrl;
+    if (this.fromDate) url += `&FromDate=${encodeURIComponent(this.fromDate)}`;
+    if (this.toDate) url += `&ToDate=${encodeURIComponent(this.toDate)}`;
+    if (this.chequeNumber) url += `&ChequeNumber=${encodeURIComponent(this.chequeNumber)}`;
+    if (this.accountNumber) url += `&AccountNumber=${encodeURIComponent(this.accountNumber)}`;
+    if (this.selectedBranchId) url += `&BranchCode=${encodeURIComponent(this.selectedBranchId)}`;
+    if (this.selectedStatus && this.selectedStatus !== 'all') url += `&Status=${encodeURIComponent(this.selectedStatus)}`;
+    if (this.selectedHubId) url += `&HubCode=${encodeURIComponent(this.selectedHubId)}`;
+    url += '&rs:Embed=true&rc:Toolbar=true&rc:Parameters=false';
+    this.isReportLoading = true;
+    this.showReport = true;
+    this.reportUrl = url;
+  }
+
+  onReportLoad(): void {
+    this.isReportLoading = false;
   }
 
   onReset(): void {
@@ -181,6 +204,9 @@ export class InwardClearingReportComponent implements OnInit, OnDestroy {
     this.selectedStatus = 'all';
     this.selectedHubId = '';
     this.currentPage = 1;
+    this.showReport = false;
+    this.reportUrl = '';
+    this.isReportLoading = false;
     this.loadReport();
   }
 

@@ -227,6 +227,16 @@ export const PAGES_ROUTES: Routes = [
                         loadComponent: () => import('./outward-clearing/pages/transaction-history/transaction-history.component').then(mod => mod.TransactionHistoryComponent),
                         data: { title: 'Transaction History' }
                     },
+                    {
+                        path: 'batch-management',
+                        loadComponent: () => import('./outward-clearing/pages/batch-management/batch-management-list/batch-management-list.component').then(mod => mod.BatchManagementListComponent),
+                        data: { title: 'Batch Management' }
+                    },
+                    {
+                        path: 'batch-management/new',
+                        loadComponent: () => import('./outward-clearing/pages/batch-management/batch-management-new/batch-management-new.component').then(mod => mod.BatchManagementNewComponent),
+                        data: { title: 'New Batch' }
+                    },
                 ]
             },
             {

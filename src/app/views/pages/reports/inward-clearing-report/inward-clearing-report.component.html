@@ -123,64 +123,44 @@
   </div>
 </div>
 
-<!-- Table Section -->
+<!-- Report Preview Section -->
 <div class="row">
   <div class="col-lg-12">
     <div class="card">
-      <div class="card-body">
-        <div class="table-responsive">
-          <table class="table table-hover table-striped table-sm">
-            <thead class="bg-light">
-              <tr>
-                <th>CoreFTId</th>
-                <th>Account Number</th>
-                <th>Old Account</th>
-                <th>Cheque Number</th>
-                <th>Amount</th>
-                <th>Approver ID</th>
-                <th>Authorizer ID</th>
-                <th>Process Time</th>
-              </tr>
-            </thead>
-            <tbody class="table-group-divider">
-              <tr *ngFor="let item of inwardClearingRecords">
-                <td>{{ item.coreFTId }}</td>
-                <td>
-                  <span>
-                    {{ item.accountNumber }}
-                  </span>
-                </td>
-                <td>{{ item.oldAccount }}</td>
-                <td>{{ item.chequeNumber }}</td>
-                <td>{{ item.amount | number:'1.0-0' }}</td>
-                <td>{{ item.approverId }}</td>
-                <td>{{ item.authorizerId }}</td>
-                <td>{{ item.trProcORRecTime }}</td>
-              </tr>
-              <tr *ngIf="isLoading">
-                <td colspan="8">
-                  <app-spinner></app-spinner>
-                </td>
-              </tr>
-              <tr *ngIf="!isLoading && inwardClearingRecords.length === 0">
-                <td colspan="7" class="text-center text-muted py-3">
-                  Please apply filters and click Search to view data
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        
-        <!-- Pagination Component -->
-        <div class="mt-3" *ngIf="totalRecords > 0">
-          <app-pagination 
-            [currentPage]="currentPage"
-            [pageSize]="pageSize"
-            [totalRecords]="totalRecords"
-            (pageChange)="onPageChange($event)">
-          </app-pagination>
-        </div>
-        
+      <div class="card-body p-0">
+
+        @if (!showReport) {
+          <div class="text-center text-muted py-5">
+            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#dee2e6" stroke-width="1.5" class="mb-3 d-block mx-auto">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14,2 14,8 20,8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+            </svg>
+            <p class="mb-0">Apply filters and click <strong>Search</strong> to view the SSRS report</p>
+          </div>
+        }
+
+        @if (showReport) {
+          <div class="ssrs-viewer">
+            @if (isReportLoading) {
+              <div class="ssrs-viewer__loading">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2 mb-0 text-muted">Loading report, please wait…</p>
+              </div>
+            }
+            <iframe
+              class="ssrs-viewer__iframe"
+              [src]="reportUrl | safeUrl"
+              (load)="onReportLoad()"
+              frameborder="0"
+              allowfullscreen>
+            </iframe>
+          </div>
+        }
+
       </div>
     </div>
   </div>

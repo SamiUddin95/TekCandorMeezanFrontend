@@ -9,11 +9,12 @@ import Swal from 'sweetalert2';
 import { BranchwiseReportService, BranchwiseReportItem, BranchwiseReportListResponse } from '../../../../../services/branchwise-report.service';
 import { BranchService, BranchItem, FilterBranchItem } from '../../../../../services/branch.service';
 import { SSRSReportService } from '../../../../../services/ssrs-report.service';
+import { SafeUrlPipe } from '../../../../../pipes/safe-url.pipe';
 import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-branchwise-report',
-  imports: [CommonModule, FormsModule, NgIcon, PaginationComponent, SpinnerComponent],
+  imports: [CommonModule, FormsModule, NgIcon, PaginationComponent, SpinnerComponent, SafeUrlPipe],
   providers: [provideIcons({ tablerRefresh, tablerSearch })],
   templateUrl: './branchwise-report.component.html',
   styleUrl: './branchwise-report.component.scss'
@@ -26,6 +27,10 @@ export class BranchwiseReportComponent implements OnInit, OnDestroy, AfterViewIn
 
   // Data
   branches: FilterBranchItem[] = [];
+
+  showReport = false;
+  reportUrl = '';
+  isReportLoading = false;
 
   private readonly ssrsBaseUrl = 'http://muhammad-ameen/ReportServer/Pages/ReportViewer.aspx?%2fSSRS_Reports%2fBranchWise&rs:Command=Render';
 
@@ -84,14 +89,23 @@ export class BranchwiseReportComponent implements OnInit, OnDestroy, AfterViewIn
   }
 
   onSearch() {
-    const url = this.buildSsrsUrl();
-    window.open(url, '_blank');
+    const url = this.buildSsrsUrl() + '&rs:Embed=true&rc:Toolbar=true&rc:Parameters=false';
+    this.isReportLoading = true;
+    this.showReport = true;
+    this.reportUrl = url;
+  }
+
+  onReportLoad(): void {
+    this.isReportLoading = false;
   }
 
   onReset() {
     this.fromDate = '';
     this.toDate = '';
     this.selectedBranchId = null;
+    this.showReport = false;
+    this.reportUrl = '';
+    this.isReportLoading = false;
   }
 
   exportReport(format: 'PDF' | 'EXCEL' | 'CSV'): void {

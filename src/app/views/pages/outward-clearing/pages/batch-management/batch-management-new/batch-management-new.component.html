@@ -1,0 +1,364 @@
+<div class="bn-page">
+
+  <!-- Top Bar -->
+  <div class="bn-top-bar">
+    <div class="bn-top-bar__info">
+      <div class="bn-top-bar__item">
+        <span class="bn-top-bar__label">BATCH ID</span>
+        <span class="bn-top-bar__value bn-top-bar__value--mono">{{ batchId }}</span>
+      </div>
+      <div class="bn-top-bar__divider"></div>
+      <div class="bn-top-bar__item">
+        <span class="bn-top-bar__label">TOTAL INSTRUMENTS</span>
+        <span class="bn-top-bar__value">{{ totalInstruments }}</span>
+      </div>
+      <div class="bn-top-bar__divider"></div>
+      <div class="bn-top-bar__item">
+        <span class="bn-top-bar__label">BATCH TOTAL</span>
+        <span class="bn-top-bar__value bn-top-bar__value--bold">{{ batchTotal }}</span>
+      </div>
+    </div>
+    <div class="bn-top-bar__right">
+      <span class="bn-status-badge bn-status-badge--draft">
+        <svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true">
+          <circle cx="12" cy="12" r="4" fill="currentColor"/>
+        </svg>
+        {{ batchStatus }}
+      </span>
+      <span class="bn-top-bar__saved">{{ lastSaved }}</span>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <div class="bn-nav">
+    <button class="bn-btn-back" (click)="onBackToList()">
+      <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+        <path d="M19 12H5m7-7-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Back to Batch Management
+    </button>
+    <h5 class="bn-nav__title">Batch Instrument Entry</h5>
+  </div>
+
+  <!-- Main Grid: Form + Viewer -->
+  <div class="bn-grid">
+
+    <!-- LEFT: Instrument Form -->
+    <div class="bn-form-col">
+
+      <!-- Section: Instrument Details -->
+      <div class="bn-section">
+        <div class="bn-section__header">
+          <div>
+            <h6 class="bn-section__title">Instrument Details</h6>
+            <p class="bn-section__subtitle">Enter or scan cheque information</p>
+          </div>
+          <button class="bn-btn-scan" (click)="onScanCheque()">
+            <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+              <rect x="3" y="3" width="18" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+              <path d="M7 7h3m4 0h3M7 12h10M7 17h3m4 0h3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            Scan Cheque
+          </button>
+        </div>
+
+        <!-- Depositor Type -->
+        <div class="bn-field">
+          <label class="bn-label">Depositor Type</label>
+          <select class="bn-input" [(ngModel)]="depositorType" (ngModelChange)="onDepositorTypeChange()">
+            <option value="Self">Self</option>
+            <option value="MBL Account Holder">MBL Account Holder</option>
+            <option value="Walk-in">Walk-in</option>
+          </select>
+        </div>
+
+        <div class="bn-field-row">
+          @if (!isWalkIn) {
+            <div class="bn-field">
+              <label class="bn-label">Account Number</label>
+              <div class="bn-fetch-group">
+                <input type="text" class="bn-input" placeholder="0102-099283-001" [(ngModel)]="accountNumber"/>
+                <button type="button" class="bn-fetch-btn" [disabled]="!accountNumber || isFetchingDepositor" (click)="onFetchDepositor()">
+                  @if (isFetchingDepositor) {
+                    <span class="spinner-border spinner-border-sm"></span>
+                  } @else {
+                    <svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true">
+                      <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+                      <path d="m21 21-4.35-4.35" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                  }
+                </button>
+              </div>
+            </div>
+          } @else {
+            <div class="bn-field">
+              <label class="bn-label">CNIC</label>
+              <input type="text" class="bn-input" placeholder="00000-0000000-0" [(ngModel)]="cnic"/>
+            </div>
+          }
+          <div class="bn-field">
+            <label class="bn-label">Cheque Number</label>
+            <input type="text" class="bn-input" placeholder="Enter cheque number" [(ngModel)]="chequeNumber"/>
+          </div>
+        </div>
+
+        <div class="bn-field">
+          <label class="bn-label">Title</label>
+          <input type="text" class="bn-input" [placeholder]="isWalkIn ? 'Enter title manually' : 'Auto fetched'" [(ngModel)]="fullName" [readonly]="!isWalkIn"/>
+        </div>
+
+        <!-- Beneficiary -->
+        <div class="bn-field">
+          <label class="bn-label">Beneficiary Account</label>
+          <div class="bn-fetch-group">
+            <input type="text" class="bn-input" placeholder="Enter beneficiary account number" [(ngModel)]="beneficiaryAccount"/>
+            <button type="button" class="bn-fetch-btn" [disabled]="!beneficiaryAccount || isFetchingBeneficiary" (click)="onFetchBeneficiary()">
+              @if (isFetchingBeneficiary) {
+                <span class="spinner-border spinner-border-sm"></span>
+              } @else {
+                <svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true">
+                  <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+                  <path d="m21 21-4.35-4.35" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              }
+            </button>
+          </div>
+        </div>
+
+        <div class="bn-field">
+          <label class="bn-label">Beneficiary Title</label>
+          <input type="text" class="bn-input" placeholder="Auto fetched via Fetch" [(ngModel)]="beneficiaryTitle" readonly/>
+        </div>
+
+        <!-- Paying Bank -->
+        <div class="bn-field">
+          <label class="bn-label">Drawee Bank</label>
+          <select class="bn-input" [(ngModel)]="payingBankCode">
+            <option value="">Select Bank</option>
+            <option value="HBL">Habib Bank Limited</option>
+            <option value="UBL">United Bank Limited</option>
+            <option value="MCB">MCB Bank Limited</option>
+            <option value="ABL">Allied Bank Limited</option>
+            <option value="BAF">Bank Alfalah</option>
+          </select>
+        </div>
+
+        <div class="bn-field-row">
+          <div class="bn-field">
+            <label class="bn-label">Account Status</label>
+            <input type="text" class="bn-input" placeholder="Auto fetched" [(ngModel)]="accountStatus" readonly/>
+          </div>
+          <div class="bn-field">
+            <label class="bn-label">Beneficiary Branch Code</label>
+            <input type="text" class="bn-input" placeholder="Auto fetched" [(ngModel)]="beneficiaryBranchCode" readonly/>
+          </div>
+        </div>
+
+        <div class="bn-field">
+          <label class="bn-label">Receiving Branch</label>
+          <select class="bn-input" [(ngModel)]="receiverBranchCode">
+            <option value="">Select Branch</option>
+            <option value="001">Head Office - 001</option>
+            <option value="005">Main Street - 005</option>
+            <option value="012">Industrial Area - 012</option>
+          </select>
+        </div>
+
+        <!-- Instrument Section -->
+        <div class="bn-field-row">
+          <div class="bn-field">
+            <label class="bn-label">Paying Bank Code</label>
+            <input type="text" class="bn-input" placeholder="Paying Bank Code" [(ngModel)]="payingBankCode" readonly/>
+          </div>
+          <div class="bn-field">
+            <label class="bn-label">Paying Branch Code</label>
+            <input type="text" class="bn-input" placeholder="Paying Branch Code" [(ngModel)]="payingBranchCode"/>
+          </div>
+        </div>
+
+        <div class="bn-field-row">
+          <div class="bn-field">
+            <label class="bn-label">Instrument Type</label>
+            <input type="text" class="bn-input" placeholder="Instrument Type" [(ngModel)]="instrumentType"/>
+          </div>
+          <div class="bn-field">
+            <label class="bn-label">Branch Code</label>
+            <input type="text" class="bn-input" placeholder="Branch Code" [(ngModel)]="receiverBranchCode"/>
+          </div>
+        </div>
+
+        <div class="bn-field-row">
+          <div class="bn-field">
+            <label class="bn-label">Currency</label>
+            <select class="bn-input" [(ngModel)]="currency" disabled>
+              <option>PKR - Pak Rupee</option>
+              <option>USD - US Dollar</option>
+            </select>
+          </div>
+          <div class="bn-field">
+            <label class="bn-label">Amount (SRD)</label>
+            <div class="bn-amount-wrap">
+              <input type="number" class="bn-input bn-input--amount" placeholder="0.00" [(ngModel)]="amount" min="0" step="0.01"/>
+            </div>
+          </div>
+        </div>
+
+        <p class="bn-verify-note">
+          <svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/>
+            <path d="M12 8v4m0 4h.01" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Verify with Legal Amount on cheque
+        </p>
+
+        <div class="bn-field-row">
+          <div class="bn-field">
+            <label class="bn-label">Cheque Date</label>
+            <input type="date" class="bn-input" [(ngModel)]="chequeDate"/>
+          </div>
+        </div>
+
+        <div class="bn-field">
+          <label class="bn-label">Remarks</label>
+          <textarea class="bn-input bn-textarea" placeholder="Optional notes..." [(ngModel)]="remarks" rows="2"></textarea>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="bn-form-actions">
+          <button class="bn-btn-add" (click)="onAddInstrument()">
+            <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+              <path d="M12 5v14m-7-7h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Add Instrument
+          </button>
+          <button class="bn-btn-clear" (click)="onClearForm()">Clear</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Verification Viewer -->
+    <div class="bn-viewer-col">
+      <div class="bn-viewer">
+        <div class="bn-viewer__header">
+          <h6 class="bn-viewer__title">Verification Viewer</h6>
+          <p class="bn-viewer__subtitle">Verify MICR and Legal Amount visibility</p>
+          <div class="bn-viewer__tabs">
+            <button class="bn-viewer-tab" [class.bn-viewer-tab--active]="chequeView === 'front'" (click)="chequeView = 'front'">Front View</button>
+            <button class="bn-viewer-tab" [class.bn-viewer-tab--active]="chequeView === 'back'" (click)="chequeView = 'back'">Back View</button>
+          </div>
+        </div>
+
+        <div class="bn-viewer__canvas">
+          <!-- Placeholder cheque image -->
+          <div class="bn-cheque-preview">
+            <div class="bn-cheque-preview__retake">
+              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" fill="none" stroke="currentColor" stroke-width="2"/>
+                <circle cx="12" cy="13" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
+              </svg>
+              Retake Scan
+            </div>
+            <div class="bn-cheque-mock">
+              <div class="bn-cheque-mock__header">
+                <div class="bn-cheque-mock__logo">LOGO</div>
+                <div class="bn-cheque-mock__date-box">DATE</div>
+              </div>
+              <div class="bn-cheque-mock__body">
+                <p class="bn-cheque-mock__line">PAY TO THE ORDER OF</p>
+                <div class="bn-cheque-mock__amount-box">$</div>
+                <p class="bn-cheque-mock__line">NUMERICAL AMOUNT</p>
+                <p class="bn-cheque-mock__micr">⑈1055588830⑈</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Recent Instruments Table -->
+  <div class="bn-instruments card">
+    <div class="bn-instruments__header">
+      <div class="bn-instruments__header-left">
+        <h6 class="bn-instruments__title">Recent Instruments (Session History)</h6>
+      </div>
+      <div class="bn-instruments__stats">
+        <span class="bn-inst-stat bn-inst-stat--green">
+          <svg viewBox="0 0 24 24" width="10" height="10" aria-hidden="true"><circle cx="12" cy="12" r="5" fill="currentColor"/></svg>
+          Validated: {{ stats.validated }}
+        </span>
+        <span class="bn-inst-stat bn-inst-stat--blue">
+          <svg viewBox="0 0 24 24" width="10" height="10" aria-hidden="true"><circle cx="12" cy="12" r="5" fill="currentColor"/></svg>
+          Captured: {{ stats.captured }}
+        </span>
+        <span class="bn-inst-stat bn-inst-stat--red">
+          <svg viewBox="0 0 24 24" width="10" height="10" aria-hidden="true"><circle cx="12" cy="12" r="5" fill="currentColor"/></svg>
+          Exceptions: {{ stats.exceptions }}
+        </span>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-hover table-sm bn-table">
+        <thead>
+          <tr>
+            <th>S#</th>
+            <th>CHEQUE NO.</th>
+            <th>ACCOUNT NO.</th>
+            <th>DRAWEE BANK</th>
+            <th class="text-end">AMOUNT</th>
+            <th>STATUS</th>
+            <th class="text-center">ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of instruments; track item.sNo) {
+            <tr>
+              <td class="bn-sno">{{ item.sNo | number:'2.0-0' }}</td>
+              <td><span class="bn-cheque-no">{{ item.chequeNo }}</span></td>
+              <td class="bn-account">{{ item.accountNo }}</td>
+              <td>{{ item.draweeBank }}</td>
+              <td class="text-end"><strong>{{ formatAmount(item.amount) }}</strong></td>
+              <td>
+                <span class="bn-inst-status bn-inst-status--{{ item.status.toLowerCase() }}">{{ item.status }}</span>
+              </td>
+              <td class="text-center">
+                <div class="bm-row-actions">
+                  <button class="bm-row-btn" title="View">
+                    <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" fill="none" stroke="currentColor" stroke-width="2"/>
+                      <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                  </button>
+                  <button class="bm-row-btn" title="Edit">
+                    <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" fill="none" stroke="currentColor" stroke-width="2"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" fill="none" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Bottom Bar -->
+  <div class="bn-bottom-bar">
+    <div class="bn-bottom-bar__left">
+      <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+        <path d="M9 11l3 3L22 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>All captured items are validated locally</span>
+    </div>
+    <div class="bn-bottom-bar__right">
+      <button class="bn-btn-draft" (click)="onSaveDraft()">Save as Draft</button>
+      <button class="bn-btn-submit" (click)="onSubmitForAuth()">Submit for Authorization</button>
+    </div>
+  </div>
+
+</div>
