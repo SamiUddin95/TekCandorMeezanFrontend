@@ -301,9 +301,14 @@ export const menuItems: MenuItemType[] = [
                 label: 'Outward Reports',
                 icon: 'tablerArrowBarToUp',
                 isCollapsed: true,
-                requiredPermissions: [],
+                requiredPermissions: ['outwardClearing.OutwardApprovedReport'],
                 children: [
-                    // Add Outward Reports here when available
+                    { 
+                        label: 'Outward Approved Report', 
+                        icon: 'tablerFileCheck', 
+                        url: '/pages/outward-clearing/outward-approved-report',
+                        requiredPermissions: ['outwardClearing.OutwardApprovedReport']
+                    },
                 ]
             },
         ]

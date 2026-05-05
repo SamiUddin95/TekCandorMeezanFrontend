@@ -60,6 +60,70 @@ export interface BatchStatisticsResponse {
     errorMessage: string | null;
 }
 
+export interface BatchDateRangeWithStatisticsResponse {
+    status: string;
+    data: {
+        batches: BatchDetails[];
+        statistics: BatchStatistics;
+    };
+    statusCode: number;
+    errorMessage: string | null;
+}
+
+export interface InstrumentDetails {
+    id: number;
+    date: string;
+    depositorType: string;
+    accountNo: string;
+    cnic: string;
+    depositorTitle: string;
+    beneficiaryAccountNumber: string;
+    beneficiaryTitle: string;
+    accountStatus: string;
+    beneficiaryBranchCode: string;
+    chequeNo: string;
+    payingBankCode: string;
+    payingBranchCode: string;
+    amount: number;
+    chequeDate: string;
+    instrumentType: string;
+    micr: string;
+    ocrEngine: string;
+    processingTime: string;
+    accuracy: string;
+    imageF: string;
+    imageB: string;
+    imageU: string;
+    currency: string;
+    remarks: string;
+    receiverBranchCode: string;
+    branchName: string | null;
+    drawerBank: string;
+    amountInWords: string;
+    referenceNo: string;
+    depositSlipId: number;
+    status: string;
+    isReconciled: boolean;
+    isReturned: boolean;
+    isRealized: boolean;
+    createdOn: string;
+    createdBy: string;
+    updatedOn: string | null;
+    updatedBy: string | null;
+    hubcode: string;
+    batchId: string;
+}
+
+export interface BatchInstrumentsResponse {
+    status: string;
+    data: {
+        batch: BatchDetails;
+        instruments: InstrumentDetails[];
+    };
+    statusCode: number;
+    errorMessage: string | null;
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -73,12 +137,20 @@ export class BatchManagementService {
         return this.http.post<CreateBatchResponse>(`${this.apiUrl}/outward/Batch`, request);
     }
 
-    getBatchesByDateRange(fromDate: string, toDate: string): Observable<BatchDateRangeResponse> {
-        return this.http.get<BatchDateRangeResponse>(`${this.apiUrl}/outward/Batch/date-range?fromDate=${fromDate}&toDate=${toDate}`);
+    // getBatchesByDateRange(fromDate: string, toDate: string): Observable<BatchDateRangeResponse> {
+    //     return this.http.get<BatchDateRangeResponse>(`${this.apiUrl}/outward/Batch/date-range?fromDate=${fromDate}&toDate=${toDate}`);
+    // }
+
+    // getBatchStatistics(): Observable<BatchStatisticsResponse> {
+    //     return this.http.get<BatchStatisticsResponse>(`${this.apiUrl}/outward/Batch/statistics`);
+    // }
+
+    getBatchesWithStatistics(fromDate: string, toDate: string): Observable<BatchDateRangeWithStatisticsResponse> {
+        return this.http.get<BatchDateRangeWithStatisticsResponse>(`${this.apiUrl}/outward/Batch/date-range?fromDate=${fromDate}&toDate=${toDate}`);
     }
 
-    getBatchStatistics(): Observable<BatchStatisticsResponse> {
-        return this.http.get<BatchStatisticsResponse>(`${this.apiUrl}/outward/Batch/statistics`);
+    getBatchInstruments(batchId: string): Observable<BatchInstrumentsResponse> {
+        return this.http.get<BatchInstrumentsResponse>(`${this.apiUrl}/outward/Batch/${batchId}/instruments`);
     }
 
     submitBatch(batchId: string): Observable<CreateBatchResponse> {

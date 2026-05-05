@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FilterService, BranchItem } from '../../../services/filter.service';
-import { BatchDetails, BatchManagementService } from '../../../services/batch-management.service';
+import { BatchDetails, BatchManagementService, BatchDateRangeWithStatisticsResponse } from '../../../services/batch-management.service';
 import { SpinnerComponent } from '@app/components/spinner/spinner.component';
 
 export interface BatchItem {
@@ -57,8 +57,7 @@ export class BatchManagementListComponent implements OnInit {
     ngOnInit(): void {
         this.setTodayDate();
         this.loadBranches();
-        this.loadStats();
-        this.loadBatches();
+        this.loadBatchesWithStatistics();
     }
 
     get filteredBatches(): BatchItem[] {
@@ -109,6 +108,13 @@ export class BatchManagementListComponent implements OnInit {
         this.createBatchError = '';
     }
 
+    onEditBatch(batchId: string): void {
+        sessionStorage.setItem('outward.activeBatchId', batchId);
+        this.router.navigate(['/pages/outward-clearing/batch-management/new'], {
+            queryParams: { batchId: batchId, mode: 'edit' }
+        });
+    }
+
     onCloseCreateBatchModal(): void {
         this.isCreateBatchModalOpen = false;
         this.createBatchBranch = '';
@@ -150,32 +156,23 @@ export class BatchManagementListComponent implements OnInit {
         });
     }
 
-    private loadStats(): void {
-        this.batchManagementService.getBatchStatistics().subscribe({
-            next: (response) => {
-                if (response.status === 'success' && response.data) {
-                    this.stats = {
-                        totalBatches: response.data.totalBatchesToday,
-                        pendingAuth: response.data.pendingAuthorization,
-                        authorizedValue: response.data.authorizedValue,
-                        processingExceptions: response.data.processingExceptions
-                    };
-                }
-            }
-        });
-    }
-
-    private loadBatches(): void {
+    private loadBatchesWithStatistics(): void {
         this.isLoading = true;
         const fromDate = this.fromDate || this.getTodayDateString();
         const toDate = this.getNextDateString(fromDate);
         this.toDate = toDate;
 
-        this.batchManagementService.getBatchesByDateRange(fromDate, toDate).subscribe({
-            next: (response) => {
+        this.batchManagementService.getBatchesWithStatistics(fromDate, toDate).subscribe({
+            next: (response: BatchDateRangeWithStatisticsResponse) => {
                 this.isLoading = false;
                 if (response.status === 'success' && response.data) {
-                    this.batches = response.data.map(item => this.mapBatchItem(item));
+                    this.batches = response.data.batches.map(item => this.mapBatchItem(item));
+                    this.stats = {
+                        totalBatches: response.data.statistics.totalBatchesToday,
+                        pendingAuth: response.data.statistics.pendingAuthorization,
+                        authorizedValue: response.data.statistics.authorizedValue,
+                        processingExceptions: response.data.statistics.processingExceptions
+                    };
                 } else {
                     this.batches = [];
                 }
@@ -249,13 +246,12 @@ export class BatchManagementListComponent implements OnInit {
         this.selectedStatus = '';
         this.currentPage = 1;
         this.setTodayDate();
-        this.loadStats();
-        this.loadBatches();
+        this.loadBatchesWithStatistics();
     }
 
     onSearch(): void {
         this.currentPage = 1;
-        this.loadBatches();
+        this.loadBatchesWithStatistics();
     }
 
     private loadBranches(): void {

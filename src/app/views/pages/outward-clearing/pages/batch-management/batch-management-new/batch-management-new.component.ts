@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { ChequeInfoService, ChequeInfoRequest } from '../../../services/cheque-info.service';
-import { BatchManagementService } from '../../../services/batch-management.service';
+import { BatchManagementService, InstrumentDetails } from '../../../services/batch-management.service';
 import { FilterService, BranchItem, BankItem } from '../../../services/filter.service';
 
 export interface BatchInstrumentItem {
@@ -28,6 +28,7 @@ export class BatchManagementNewComponent implements OnInit {
     maxInstruments = 50;
     lastSaved = '';
     batchStatus = 'Draft';
+    editMode = false;
 
     get totalInstruments(): string {
         return `${this.instruments.length} / ${this.maxInstruments || this.instruments.length}`;
@@ -97,11 +98,15 @@ export class BatchManagementNewComponent implements OnInit {
         const batchIdFromQuery = this.route.snapshot.queryParamMap.get('batchId');
         const batchIdFromSession = sessionStorage.getItem('outward.activeBatchId');
         this.batchId = batchIdFromQuery || batchIdFromSession || this.batchId;
+        this.editMode = this.route.snapshot.queryParamMap.get('mode') === 'edit';
     }
 
     ngOnInit(): void {
         this.loadBranches();
         this.loadBanks();
+        if (this.editMode && this.batchId) {
+            this.loadBatchInstruments();
+        }
     }
 
     private loadBranches(): void {
@@ -119,6 +124,42 @@ export class BatchManagementNewComponent implements OnInit {
                 this.banks = res?.status === 'success' ? (res.data?.banks || []) : [];
             },
             error: () => { this.banks = []; }
+        });
+    }
+
+    private loadBatchInstruments(): void {
+        if (!this.batchId) return;
+        this.batchManagementService.getBatchInstruments(this.batchId).subscribe({
+            next: (response) => {
+                if (response.status === 'success' && response.data) {
+                    const batchData = response.data.batch;
+                    const instrumentData = response.data.instruments;
+                    
+                    this.batchStatus = batchData.status || 'Draft';
+                    this.maxInstruments = batchData.maxInstruments || 50;
+                    
+                    this.instruments = instrumentData.map((inst: InstrumentDetails, index: number) => ({
+                        sNo: index + 1,
+                        chequeNo: inst.chequeNo || '',
+                        accountNo: inst.accountNo || '',
+                        draweeBank: inst.drawerBank || inst.payingBankCode || 'N/A',
+                        amount: inst.amount || 0,
+                        status: 'Captured'
+                    }));
+                    
+                    this.stats.captured = this.instruments.filter(i => i.status === 'Captured').length;
+                    this.stats.validated = this.instruments.filter(i => i.status === 'Validated').length;
+                    this.stats.exceptions = this.instruments.filter(i => i.status === 'Exception').length;
+                }
+            },
+            error: (err) => {
+                console.error('Error loading batch instruments:', err);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Load Failed',
+                    text: 'Unable to load batch instruments. Please try again.'
+                });
+            }
         });
     }
 

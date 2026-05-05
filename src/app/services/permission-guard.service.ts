@@ -80,7 +80,8 @@ export class PermissionGuardService {
       'chequeprocess.uploadfile': 'Upload File',
       'chequeprocess.pendingcheques': 'Pending Cheques',
       'chequeprocess.callbackcheques': 'Callback Cheques',
-      'chequeprocess.returntransactions': 'Return Transactions'
+      'chequeprocess.returntransactions': 'Return Transactions',
+      'outwardClearing.OutwardApprovedReport': 'Outward Approved Report'
     };
 
     return permissionNames[permission] || permission;

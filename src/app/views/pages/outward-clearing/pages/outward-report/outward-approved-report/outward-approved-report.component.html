@@ -1,0 +1,83 @@
+<!-- Filters Section -->
+<div class="row mt-1">
+  <div class="col-lg-12">
+    <div class="card">
+      <div class="card-header bg-light d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">Outward Approved Report Filters</h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-4">
+            <label class="form-label mb-1">Date From</label>
+            <input
+              type="date"
+              class="form-control form-control-sm"
+              [(ngModel)]="fromDate" />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label mb-1">Date To</label>
+            <input
+              type="date"
+              class="form-control form-control-sm"
+              [(ngModel)]="toDate" />
+          </div>
+          <div class="col-md-4 d-flex align-items-end gap-2">
+            <button class="btn btn-outline-secondary px-3 py-2" (click)="onReset()">
+              <ng-icon name="tablerRefresh" class="me-1"></ng-icon>
+              Reset filter
+            </button>
+            <button class="btn btn-primary px-3 py-2" [disabled]="isReportLoading" (click)="onSearch()">
+              @if (isReportLoading) {
+                <span class="spinner-border spinner-border-sm me-1"></span> Searching...
+              } @else {
+                <ng-icon name="tablerSearch" class="me-1"></ng-icon>
+                Search
+              }
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Report Preview Section -->
+<div class="row">
+  <div class="col-lg-12">
+    <div class="card">
+      <div class="card-body p-0">
+
+        @if (!showReport) {
+          <div class="text-center text-muted py-5">
+            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#dee2e6" stroke-width="1.5" class="mb-3 d-block mx-auto">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14,2 14,8 20,8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+            </svg>
+            <p class="mb-0">Apply filters and click <strong>Search</strong> to view the SSRS report</p>
+          </div>
+        }
+
+        @if (showReport) {
+          <div class="ssrs-viewer">
+            @if (isReportLoading) {
+              <div class="ssrs-viewer__loading">
+                <app-spinner></app-spinner>
+                <p class="mt-2 mb-0 text-muted">Loading report, please wait…</p>
+              </div>
+            }
+            <iframe
+              class="ssrs-viewer__iframe"
+              [src]="reportUrl | safeUrl"
+              (load)="onReportLoad()"
+              frameborder="0"
+              allowfullscreen>
+            </iframe>
+          </div>
+        }
+
+      </div>
+    </div>
+  </div>
+</div>
