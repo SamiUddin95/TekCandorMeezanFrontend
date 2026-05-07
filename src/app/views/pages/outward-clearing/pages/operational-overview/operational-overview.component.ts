@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { OperationalOverviewService, SupervisorListItem } from '../../services/operational-overview.service';
+import { OperationalOverviewService, SupervisorListItem, BatchGroup } from '../../services/operational-overview.service';
 import { OperationalOverviewDetailComponent } from './operational-overview-detail/operational-overview-detail.component';
 import { PaginationComponent } from '@app/components/pagination/pagination.component';
 import { SpinnerComponent } from '@app/components/spinner/spinner.component';
@@ -16,6 +16,8 @@ interface Transaction {
     branchName: string;
     timeReceived: string;
     status: 'Pending' | 'Priority' | 'Critical';
+    batchId: string;
+    batchName: string;
 }
 
 @Component({
@@ -46,7 +48,9 @@ export class OperationalOverviewComponent implements OnInit {
     totalRecords = 0;
     totalPages = 1;
 
+    batches: BatchGroup[] = [];
     transactions: Transaction[] = [];
+    expandedBatches = new Set<string>();
 
     constructor(private operationalOverviewService: OperationalOverviewService) { }
 
@@ -105,20 +109,29 @@ export class OperationalOverviewComponent implements OnInit {
         ).subscribe({
             next: (response) => {
                 this.isLoading = false;
-                this.transactions = (response?.data?.items || []).map((item) => this.mapToTransaction(item));
+                this.batches = response?.data?.batches || [];
+                const allItems: SupervisorListItem[] = [];
+                this.batches.forEach((batch: BatchGroup) => {
+                    batch.items.forEach((item: SupervisorListItem) => {
+                        allItems.push(item);
+                    });
+                });
+                this.transactions = allItems.map((item) => this.mapToTransaction(item));
                 // Server-side pagination values
                 this.totalRecords = response?.data?.totalCount || 0;
-                this.totalPages = Math.max(1, Math.ceil(this.totalRecords / this.pageSize));
+                this.totalPages = response?.data?.totalPages || 1;
             },
             error: () => {
                 this.isLoading = false;
+                this.batches = [];
                 this.transactions = [];
                 this.loadError = 'Unable to load operational overview records.';
             }
         });
     }
 
-    private mapToTransaction(item: SupervisorListItem): Transaction {
+    mapToTransaction(item: SupervisorListItem): Transaction {
+        const batch = this.batches.find(b => b.items.some(i => i.id === item.id));
         return {
             id: item.id,
             chequeNo: item.chequeNo || '—',
@@ -127,7 +140,9 @@ export class OperationalOverviewComponent implements OnInit {
             amount: item.amount || 0,
             branchName: item.branchName || `Branch ${item.receiverBranchCode || '—'}`,
             timeReceived: this.formatTime(item.date || item.createdOn),
-            status: this.mapStatus(item.status)
+            status: this.mapStatus(item.status),
+            batchId: batch?.batchId || '',
+            batchName: batch?.branchName || 'Unassigned'
         };
     }
 
@@ -232,6 +247,18 @@ export class OperationalOverviewComponent implements OnInit {
 
     get selectedCount(): number {
         return this.selectedIds.size;
+    }
+
+    toggleBatch(batchId: string): void {
+        if (this.expandedBatches.has(batchId)) {
+            this.expandedBatches.delete(batchId);
+        } else {
+            this.expandedBatches.add(batchId);
+        }
+    }
+
+    isBatchExpanded(batchId: string): boolean {
+        return this.expandedBatches.has(batchId);
     }
 
     // ── Bulk Approve ──

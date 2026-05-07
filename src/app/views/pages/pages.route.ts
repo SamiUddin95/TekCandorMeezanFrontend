@@ -238,6 +238,11 @@ export const PAGES_ROUTES: Routes = [
                         data: { title: 'New Batch' }
                     },
                     {
+                        path: 'batch-file-upload',
+                        loadComponent: () => import('./outward-clearing/pages/batch-file-upload/batch-file-upload.component').then(mod => mod.BatchFileUploadComponent),
+                        data: { title: 'Batch File Upload' }
+                    },
+                    {
                         path: 'outward-approved-report',
                         loadComponent: () => import('./outward-clearing/pages/outward-report/outward-approved-report/outward-approved-report.component').then(mod => mod.OutwardApprovedReportComponent),
                         data: { title: 'Outward Approved Report' }

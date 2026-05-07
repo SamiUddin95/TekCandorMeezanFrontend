@@ -72,82 +72,113 @@
         </div>
 
         <div class="table-responsive">
-          <table class="table table-hover table-striped table-sm">
-            <thead class="bg-light">
-              <tr>
-                <th style="width: 40px;">
-                  <input type="checkbox" class="form-check-input" [checked]="isAllSelected" (change)="toggleSelectAll()" />
-                </th>
-                <th>Cheque No.</th>
-                <th>Payee Name</th>
-                <th>Amount (PKR)</th>
-                <th>Branch Name</th>
-                <th>Date Received</th>
-                <th>Status</th>
-                <th class="oo-table__th-actions">Actions</th>
-              </tr>
-            </thead>
-            <tbody class="table-group-divider">
-              @if (isLoading) {
+          @if (isLoading) {
+            <div class="text-center py-3">
+              <app-spinner></app-spinner>
+            </div>
+          }
+          @if (!isLoading && loadError) {
+            <div class="text-center text-danger py-3">{{ loadError }}</div>
+          }
+          @if (!isLoading && !loadError && batches.length === 0) {
+            <div class="text-center text-muted py-4">No transactions found.</div>
+          }
+          @if (!isLoading && !loadError && batches.length > 0) {
+            <table class="table table-hover table-striped table-sm oo-main-table">
+              <thead class="bg-light">
                 <tr>
-                  <td colspan="8" class="text-center py-3">
-                    <app-spinner></app-spinner>
-                  </td>
+                  <th style="width: 40px;">
+                    <input type="checkbox" class="form-check-input" [checked]="isAllSelected" (change)="toggleSelectAll()" />
+                  </th>
+                  <th>Cheque No.</th>
+                  <th>Payee Name</th>
+                  <th>Amount (PKR)</th>
+                  <th>Branch Name</th>
+                  <th>Date Received</th>
+                  <th>Status</th>
+                  <th class="oo-table__th-actions">Actions</th>
                 </tr>
-              }
-              @if (!isLoading && loadError) {
-                <tr><td colspan="8" class="text-center text-danger py-3">{{ loadError }}</td></tr>
-              }
-              @for (txn of filteredTransactions; track txn.id) {
-                <tr [class.table-active]="selectedIds.has(txn.id)">
-                  <td>
-                    <input type="checkbox" class="form-check-input" [checked]="selectedIds.has(txn.id)" (change)="toggleSelect(txn.id)" />
-                  </td>
-                  <td><span class="oo-cheque-no">{{ txn.chequeNo }}</span></td>
-                  <td>
-                    <div class="oo-payee">
-                      <span class="oo-payee__name">{{ txn.payeeName }}</span>
-                      <span class="oo-payee__txn">{{ txn.txnId }}</span>
-                    </div>
-                  </td>
-                  <td><strong>{{ formatAmount(txn.amount) }}</strong></td>
-                  <td>{{ txn.branchName }}</td>
-                  <td>{{ txn.timeReceived }}</td>
-                  <td>
-                    <span class="oo-status"
-                      [class.oo-status--pending]="txn.status === 'Pending'"
-                      [class.oo-status--priority]="txn.status === 'Priority'"
-                      [class.oo-status--critical]="txn.status === 'Critical'">
-                      {{ txn.status }}
-                    </span>
-                  </td>
-                  <td>
-                    <div class="oo-actions">
-                      <button class="oo-action-btn oo-action-btn--icon oo-action-btn--view" type="button" title="View" aria-label="View" (click)="onView(txn)">
-                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                          <path d="M1.5 12s3.8-6.5 10.5-6.5S22.5 12 22.5 12s-3.8 6.5-10.5 6.5S1.5 12 1.5 12z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
-                          <circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="1.8"></circle>
-                        </svg>
-                      </button>
-                      <button class="oo-action-btn oo-action-btn--icon oo-action-btn--approve" type="button" title="Approve" aria-label="Approve" (click)="onApprove(txn)">
-                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                          <path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                        </svg>
-                      </button>
-                      <button class="oo-action-btn oo-action-btn--icon oo-action-btn--reject" type="button" title="Reject" aria-label="Reject" (click)="onReject(txn)">
-                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                          <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                        </svg>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              }
-              @if (!isLoading && !loadError && filteredTransactions.length === 0) {
-                <tr><td colspan="8" class="text-center text-muted py-3">No records found</td></tr>
-              }
-            </tbody>
-          </table>
+              </thead>
+              <tbody class="table-group-divider">
+                @for (batch of batches; track batch.batchId) {
+                  <!-- Batch Header Row -->
+                  <tr class="oo-batch-row" (click)="toggleBatch(batch.batchId)" style="cursor: pointer;">
+                    <td colspan="8" class="oo-batch-header-cell">
+                      <div class="oo-batch-header-content">
+                        <button
+                          class="oo-expand-btn"
+                          type="button"
+                          (click)="toggleBatch(batch.batchId); $event.stopPropagation()"
+                          [attr.aria-expanded]="isBatchExpanded(batch.batchId)">
+                          @if (isBatchExpanded(batch.batchId)) {
+                            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+                              <path d="M18 15l-6-6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                          } @else {
+                            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+                              <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                          }
+                        </button>
+                        <span class="oo-batch-id">{{ batch.batchId || 'Unassigned' }}</span>
+                        <span class="oo-batch-branch">{{ batch.branchName || 'No Branch' }}</span>
+                        <span class="oo-batch-count">({{ batch.items.length }} items)</span>
+                      </div>
+                    </td>
+                  </tr>
+                  <!-- Child Rows - Batch Items -->
+                  @if (isBatchExpanded(batch.batchId)) {
+                    @for (item of batch.items; track item.id) {
+                      @let txn = mapToTransaction(item);
+                      <tr [class.table-active]="selectedIds.has(txn.id)">
+                        <td>
+                          <input type="checkbox" class="form-check-input" [checked]="selectedIds.has(txn.id)" (change)="toggleSelect(txn.id)" />
+                        </td>
+                        <td><span class="oo-cheque-no">{{ txn.chequeNo }}</span></td>
+                        <td>
+                          <div class="oo-payee">
+                            <span class="oo-payee__name">{{ txn.payeeName }}</span>
+                            <span class="oo-payee__txn">{{ txn.txnId }}</span>
+                          </div>
+                        </td>
+                        <td><strong>{{ formatAmount(txn.amount) }}</strong></td>
+                        <td>{{ txn.branchName }}</td>
+                        <td>{{ txn.timeReceived }}</td>
+                        <td>
+                          <span class="oo-status"
+                            [class.oo-status--pending]="txn.status === 'Pending'"
+                            [class.oo-status--priority]="txn.status === 'Priority'"
+                            [class.oo-status--critical]="txn.status === 'Critical'">
+                            {{ txn.status }}
+                          </span>
+                        </td>
+                        <td>
+                          <div class="oo-actions">
+                            <button class="oo-action-btn oo-action-btn--icon oo-action-btn--view" type="button" title="View" aria-label="View" (click)="onView(txn)">
+                              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                <path d="M1.5 12s3.8-6.5 10.5-6.5S22.5 12 22.5 12s-3.8 6.5-10.5 6.5S1.5 12 1.5 12z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+                                <circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="1.8"></circle>
+                              </svg>
+                            </button>
+                            <button class="oo-action-btn oo-action-btn--icon oo-action-btn--approve" type="button" title="Approve" aria-label="Approve" (click)="onApprove(txn)">
+                              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                <path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                              </svg>
+                            </button>
+                            <button class="oo-action-btn oo-action-btn--icon oo-action-btn--reject" type="button" title="Reject" aria-label="Reject" (click)="onReject(txn)">
+                              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                              </svg>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    }
+                  }
+                }
+              </tbody>
+            </table>
+          }
         </div>
 
         <!-- Pagination -->

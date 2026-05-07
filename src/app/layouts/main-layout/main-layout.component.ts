@@ -1,7 +1,8 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {RouterOutlet} from '@angular/router';
 import {LayoutStoreService} from '@core/services/layout-store.service';
 import {VerticalLayoutComponent} from '../vertical-layout/vertical-layout.component';
+import {LicenseService} from '@app/services/license.service';
 
 @Component({
     selector: 'app-main-layout',
@@ -11,7 +12,14 @@ import {VerticalLayoutComponent} from '../vertical-layout/vertical-layout.compon
     ],
     templateUrl: './main-layout.component.html',
 })
-export class MainLayoutComponent {
-    constructor(public layout: LayoutStoreService) {
+export class MainLayoutComponent implements OnInit {
+    constructor(public layout: LayoutStoreService, private licenseService: LicenseService) {
+    }
+
+    ngOnInit(): void {
+        // Refresh license status when entering authenticated area (covers page reloads)
+        if (!this.licenseService.getCurrentStatus()) {
+            this.licenseService.getLicenseStatus().subscribe({ error: () => {} });
+        }
     }
 }

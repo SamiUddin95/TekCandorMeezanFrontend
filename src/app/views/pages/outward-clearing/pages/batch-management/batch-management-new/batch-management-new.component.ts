@@ -6,19 +6,22 @@ import Swal from 'sweetalert2';
 import { ChequeInfoService, ChequeInfoRequest } from '../../../services/cheque-info.service';
 import { BatchManagementService, InstrumentDetails } from '../../../services/batch-management.service';
 import { FilterService, BranchItem, BankItem } from '../../../services/filter.service';
+import { SpinnerComponent } from '@app/components/spinner/spinner.component';
 
 export interface BatchInstrumentItem {
+    id: number;
     sNo: number;
     chequeNo: string;
     accountNo: string;
     draweeBank: string;
+    drawerBankName : string;
     amount: number;
     status: 'Validated' | 'Captured' | 'Exception';
 }
 
 @Component({
     selector: 'app-batch-management-new',
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule, SpinnerComponent],
     templateUrl: './batch-management-new.component.html',
     styleUrl: './batch-management-new.component.scss'
 })
@@ -29,6 +32,9 @@ export class BatchManagementNewComponent implements OnInit {
     lastSaved = '';
     batchStatus = 'Draft';
     editMode = false;
+    isLoadingInstruments = false;
+    editingInstrumentId: number | null = null;
+    isLoadingInstrument = false;
 
     get totalInstruments(): string {
         return `${this.instruments.length} / ${this.maxInstruments || this.instruments.length}`;
@@ -129,8 +135,10 @@ export class BatchManagementNewComponent implements OnInit {
 
     private loadBatchInstruments(): void {
         if (!this.batchId) return;
+        this.isLoadingInstruments = true;
         this.batchManagementService.getBatchInstruments(this.batchId).subscribe({
             next: (response) => {
+                this.isLoadingInstruments = false;
                 if (response.status === 'success' && response.data) {
                     const batchData = response.data.batch;
                     const instrumentData = response.data.instruments;
@@ -139,10 +147,12 @@ export class BatchManagementNewComponent implements OnInit {
                     this.maxInstruments = batchData.maxInstruments || 50;
                     
                     this.instruments = instrumentData.map((inst: InstrumentDetails, index: number) => ({
+                        id: inst.id,
                         sNo: index + 1,
                         chequeNo: inst.chequeNo || '',
                         accountNo: inst.accountNo || '',
                         draweeBank: inst.drawerBank || inst.payingBankCode || 'N/A',
+                        drawerBankName: inst.drawerBankName || 'N/A',
                         amount: inst.amount || 0,
                         status: 'Captured'
                     }));
@@ -153,11 +163,92 @@ export class BatchManagementNewComponent implements OnInit {
                 }
             },
             error: (err) => {
+                this.isLoadingInstruments = false;
                 console.error('Error loading batch instruments:', err);
                 Swal.fire({
                     icon: 'error',
                     title: 'Load Failed',
                     text: 'Unable to load batch instruments. Please try again.'
+                });
+            }
+        });
+    }
+
+    onEditInstrument(instrumentId: number): void {
+        if (!instrumentId || this.isLoadingInstrument) return;
+        this.isLoadingInstrument = true;
+        this.chequeInfoService.getChequeInfoById(instrumentId).subscribe({
+            next: (response) => {
+                this.isLoadingInstrument = false;
+                if (response.status === 'success' && response.data) {
+                    const d = response.data;
+                    this.editingInstrumentId = d.id;
+                    this.depositorType = (d.depositorType as any) || 'Self';
+                    this.accountNumber = d.accountNo || '';
+                    this.cnic = d.cnic || '';
+                    this.fullName = d.depositorTitle || '';
+                    this.beneficiaryAccount = d.beneficiaryAccountNumber || '';
+                    this.beneficiaryTitle = d.beneficiaryTitle || '';
+                    this.accountStatus = d.accountStatus || '';
+                    this.beneficiaryBranchCode = d.beneficiaryBranchCode || '';
+                    this.chequeNumber = d.chequeNo || '';
+                    this.payingBankCode = d.payingBankCode || '';
+                    this.payingBranchCode = d.payingBranchCode || '';
+                    this.amount = d.amount || null;
+                    this.chequeDate = d.chequeDate || '';
+                    this.instrumentType = d.instrumentType || '';
+                    this.micrCode = d.micr || '';
+                    this.currency = d.currency ? `${d.currency} - Pak Rupee` : 'PKR - Pak Rupee';
+                    this.remarks = d.remarks || '';
+                    this.receiverBranchCode = d.receiverBranchCode || '';
+                    this.scanOcrEngine = d.ocrEngine || '';
+                    this.scanProcessingTime = d.processingTime || '';
+                    this.scanAccuracy = d.accuracy || '';
+                    this.scanAmountInWords = d.amountInWords || '';
+                    this.scanStatus = 'Ready for Review';
+                    this.hasScanned = true;
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    Swal.fire({ icon: 'error', title: 'Load Failed', text: response?.errorMessage || 'Unable to load instrument.' });
+                }
+            },
+            error: (err) => {
+                this.isLoadingInstrument = false;
+                Swal.fire({ icon: 'error', title: 'Load Failed', text: err?.error?.errorMessage || 'Unable to load instrument.' });
+            }
+        });
+    }
+
+    onDeleteInstrument(instrumentId: number): void {
+        if (!instrumentId || this.isLoadingInstrument) return;
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This instrument will be deleted permanently.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                this.isLoadingInstrument = true;
+                this.chequeInfoService.deleteChequeInfo(instrumentId).subscribe({
+                    next: (response) => {
+                        this.isLoadingInstrument = false;
+                        if (response.status === 'success' || response.statusCode === 200) {
+                            this.instruments = this.instruments.filter(inst => inst.id !== instrumentId);
+                            this.stats.captured = this.instruments.filter(i => i.status === 'Captured').length;
+                            this.stats.validated = this.instruments.filter(i => i.status === 'Validated').length;
+                            this.stats.exceptions = this.instruments.filter(i => i.status === 'Exception').length;
+                            Swal.fire({ icon: 'success', title: 'Deleted', text: 'Instrument deleted successfully.', timer: 1500, showConfirmButton: false });
+                        } else {
+                            Swal.fire({ icon: 'error', title: 'Delete Failed', text: response?.errorMessage || 'Unable to delete instrument.' });
+                        }
+                    },
+                    error: (err) => {
+                        this.isLoadingInstrument = false;
+                        Swal.fire({ icon: 'error', title: 'Delete Failed', text: err?.error?.errorMessage || 'Unable to delete instrument.' });
+                    }
                 });
             }
         });
@@ -267,6 +358,30 @@ export class BatchManagementNewComponent implements OnInit {
         (payload as any).batchId = this.batchId || null;
 
         this.isSaving = true;
+
+        if (this.editingInstrumentId) {
+            payload.id = this.editingInstrumentId;
+            this.chequeInfoService.updateChequeInfo(this.editingInstrumentId, payload).subscribe({
+                next: (response: any) => {
+                    this.isSaving = false;
+                    if (response?.status === 'success' || response?.statusCode === 200) {
+                        const updatedId = this.editingInstrumentId!;
+                        this.updateInstrumentInList(updatedId, payload);
+                        Swal.fire({ icon: 'success', title: 'Updated', text: 'Instrument updated successfully.', timer: 1500, showConfirmButton: false });
+                        this.clearForm();
+                        this.hasScanned = false;
+                    } else {
+                        Swal.fire({ icon: 'error', title: 'Update failed', text: response?.errorMessage || 'Unable to update instrument.' });
+                    }
+                },
+                error: (err) => {
+                    this.isSaving = false;
+                    Swal.fire({ icon: 'error', title: 'Update failed', text: err?.error?.errorMessage || 'Unable to update instrument.' });
+                }
+            });
+            return;
+        }
+
         this.chequeInfoService.createChequeInfo(payload).subscribe({
             next: (response: any) => {
                 this.isSaving = false;
@@ -287,11 +402,28 @@ export class BatchManagementNewComponent implements OnInit {
         });
     }
 
+    private updateInstrumentInList(id: number, data: any): void {
+        this.instruments = this.instruments.map(inst => {
+            if (inst.id === id) {
+                return {
+                    ...inst,
+                    chequeNo: data.chequeNo || '',
+                    accountNo: data.accountNo || '',
+                    draweeBank: data.drawerBank || data.payingBankCode || 'N/A',
+                    amount: Number(data.amount) || 0
+                };
+            }
+            return inst;
+        });
+    }
+
     private appendInstrumentFromResponse(data: any): void {
         const item: BatchInstrumentItem = {
+            id: data.id || 0,
             sNo: this.instruments.length + 1,
             chequeNo: data.chequeNo || '',
             accountNo: data.accountNo || '',
+            drawerBankName: data.drawerBankName || 'N/A',
             draweeBank: data.drawerBank || data.payingBankCode || 'N/A',
             amount: Number(data.amount) || 0,
             status: 'Captured'
@@ -348,6 +480,7 @@ export class BatchManagementNewComponent implements OnInit {
         this.accountNumber = '';
         this.chequeNumber = '';
         this.fullName = '';
+        this.cnic = '';
         this.beneficiaryAccount = '';
         this.beneficiaryTitle = '';
         this.payingBankCode = '';
@@ -360,6 +493,7 @@ export class BatchManagementNewComponent implements OnInit {
         this.chequeDate = '';
         this.remarks = '';
         this.micrCode = '';
+        this.editingInstrumentId = null;
     }
 
     onSubmitForAuth(): void {
