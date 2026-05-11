@@ -75,25 +75,11 @@ export class SignInComponent implements OnInit {
                             this.licenseMessage = this.licenseService.buildWarningMessage(status);
                         }
 
-                        // AuthService automatically handles session storage
-
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Successfully logged in',
-                            text: `Welcome, ${response.data.name}!`,
-                            showConfirmButton: false,
-                            timer: 1400
-                        }).then(() => this.router.navigate(['/dashboard']));
+                        this.handlePostLoginNavigation(response.data.name);
                     },
                     error: () => {
                         // If license check fails, still proceed to login
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Successfully logged in',
-                            text: `Welcome, ${response.data.name}!`,
-                            showConfirmButton: false,
-                            timer: 1400
-                        }).then(() => this.router.navigate(['/dashboard']));
+                        this.handlePostLoginNavigation(response.data.name);
                     }
                 });
             },
@@ -113,5 +99,34 @@ export class SignInComponent implements OnInit {
 
     openUpdateLicense(): void {
         this.router.navigate(['/update-license']);
+    }
+
+    private handlePostLoginNavigation(userName: string): void {
+        const hasInwardDashboard = this.authService.hasPermission('system.Dashboard');
+        const hasOutwardDashboard = this.authService.hasPermission('outwardClearing.Dashboard');
+
+        // Case 1: User has no dashboard permission at all
+        if (!hasInwardDashboard && !hasOutwardDashboard) {
+            // Logout the user since they have no dashboard access
+            this.authService.logout();
+            Swal.fire({
+                icon: 'warning',
+                title: 'Access Denied',
+                html: `Welcome <b>${userName}</b>,<br/>You do not have access to any dashboard.<br/>Please contact your administrator to grant the required permissions.`,
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+
+        // Determine landing page: Inward dashboard takes priority if user has both
+        const landingPage = hasInwardDashboard ? '/dashboard' : '/pages/outward-clearing/dashboard';
+
+        Swal.fire({
+            icon: 'success',
+            title: 'Successfully logged in',
+            text: `Welcome, ${userName}!`,
+            showConfirmButton: false,
+            timer: 1400
+        }).then(() => this.router.navigate([landingPage]));
     }
 }

@@ -1,515 +1,237 @@
-// ─── Outward Dashboard – Meezan Bank Theme ────────────────────────────
+// ─── Outward Dashboard – Meezan Bank Theme ────────────────────────────────
 $meezan-deep:    #5a2181;
 $meezan-mid:     #9c59c3;
 $meezan-light:   #ede9fe;
-$meezan-soft:    #faf8fd;
 $success-green:  #16a34a;
-$danger-red:     #dc2626;
-$amber:          #f59e0b;
-$info-blue:      #2563eb;
-$teal:           #0891b2;
+$info-cyan:      #0891b2;
+$pending-amber:  #f59e0b;
 $border:         #e5e7eb;
 $text-primary:   #1f2937;
 $text-secondary: #6b7280;
 $text-muted:     #9ca3af;
 
-.od-page {
+// ── KPI CARDS ─────────────────────────────────────────────────────────────
+.kpi-card {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding: 4px 0 24px;
-}
-
-// ── Hero ──────────────────────────────────────────────────────────────
-.od-hero {
-  position: relative;
-  border-radius: 18px;
-  overflow: hidden;
-  color: #fff;
-  box-shadow: 0 18px 40px -24px rgba(90, 33, 129, 0.45);
-  isolation: isolate;
-
-  &__bg {
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(circle at 85% 20%, rgba(255, 255, 255, 0.18) 0%, transparent 45%),
-      radial-gradient(circle at 10% 110%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-      linear-gradient(135deg, #3d1457 0%, #5a2181 45%, #7b3ea8 100%);
-    z-index: -1;
-  }
-
-  &__body {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 26px 30px;
-    gap: 24px;
-    flex-wrap: wrap;
-  }
-
-  &__eyebrow {
-    display: inline-flex;
-    align-items: center;
-    padding: 4px 12px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.18);
-    backdrop-filter: blur(6px);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.4px;
-    text-transform: uppercase;
-  }
-
-  &__title {
-    margin: 10px 0 4px;
-    font-size: 24px;
-    font-weight: 700;
-    letter-spacing: 0.2px;
-  }
-
-  &__subtitle {
-    margin: 0;
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.82);
-  }
-
-  &__right {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-
-  &__meta {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 10px 18px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-  }
-
-  &__meta-item {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  &__meta-label {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: rgba(255, 255, 255, 0.7);
-  }
-
-  &__meta-value {
-    font-size: 15px;
-    font-weight: 700;
-  }
-
-  &__meta-divider {
-    width: 1px;
-    height: 28px;
-    background: rgba(255, 255, 255, 0.2);
-  }
-
-  &__refresh {
-    display: inline-flex;
-    align-items: center;
-    padding: 10px 18px;
-    border-radius: 10px;
-    background: #fff;
-    color: $meezan-deep;
-    font-weight: 600;
-    font-size: 13px;
-    border: 0;
-    cursor: pointer;
-    transition: transform 0.18s ease, box-shadow 0.18s ease;
-
-    &:hover:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow: 0 10px 22px -14px rgba(0, 0, 0, 0.35);
-    }
-
-    &:disabled { opacity: 0.7; cursor: progress; }
-  }
-}
-
-// ── KPI grid ──────────────────────────────────────────────────────────
-.od-kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  align-items: center;
   gap: 14px;
-}
-
-.od-kpi {
-  display: flex;
-  gap: 14px;
-  padding: 18px;
-  background: #fff;
+  padding: 14px 16px;
+  background: #ffffff;
   border: 1px solid $border;
-  border-radius: 14px;
-  box-shadow: 0 2px 8px -4px rgba(31, 41, 55, 0.08);
-  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  border-radius: 12px;
+  position: relative;
+  box-shadow: 0 1px 4px rgba(0,0,0,.06);
+  height: 100%;
+  transition: transform .2s ease, box-shadow .2s ease;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+    border-radius: 12px 0 0 12px;
+  }
 
   &:hover {
     transform: translateY(-2px);
-    border-color: $meezan-mid;
-    box-shadow: 0 18px 32px -20px rgba(90, 33, 129, 0.35);
+    box-shadow: 0 5px 16px rgba(90,33,129,.12);
   }
 
   &__icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    font-size: 20px;
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
     flex-shrink: 0;
-    box-shadow: 0 8px 18px -10px rgba(0, 0, 0, 0.35);
   }
 
-  &__body {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    min-width: 0;
-  }
+  &__body { flex: 1; min-width: 0; }
 
   &__label {
-    font-size: 11px;
-    font-weight: 600;
+    margin: 0;
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .4px;
     color: $text-secondary;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
   }
 
   &__value {
-    font-size: 20px;
-    font-weight: 700;
-    color: $text-primary;
-    word-break: break-word;
+    margin: 3px 0 2px;
+    font-size: 24px; font-weight: 800; line-height: 1;
   }
 
-  &__trend {
-    display: inline-flex;
+  &__sub {
+    margin: 0;
+    font-size: 10px;
+    color: $text-muted;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  // ── colour variants ──
+  &--total {
+    &::before         { background: $meezan-deep; }
+    .kpi-card__icon   { background: $meezan-light; color: $meezan-deep; }
+    .kpi-card__value  { color: $meezan-deep; }
+  }
+
+  &--amount {
+    &::before         { background: $success-green; }
+    .kpi-card__icon   { background: #dcfce7; color: $success-green; }
+    .kpi-card__value  { color: $success-green; font-size: 20px; }
+  }
+
+  &--normal {
+    &::before         { background: $info-cyan; }
+    .kpi-card__icon   { background: #cffafe; color: $info-cyan; }
+    .kpi-card__value  { color: $info-cyan; }
+  }
+
+  &--sameday {
+    &::before         { background: $pending-amber; }
+    .kpi-card__icon   { background: #fef3c7; color: $pending-amber; }
+    .kpi-card__value  { color: $pending-amber; }
+  }
+}
+
+// ── STATUS DETAIL CARDS ───────────────────────────────────────────────────
+.detail-card {
+  background: #ffffff;
+  border: 1px solid $border;
+  border-radius: 12px;
+  padding: 10px 14px 8px;
+  height: 100%;
+
+  &__header {
+    display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 11px;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: $text-primary;
+    i { opacity: .6; }
+  }
+
+  &__badge {
+    font-size: 10px;
     font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 12px;
 
-    &--up { color: $success-green; }
-    &--down { color: $danger-red; }
-    &--flat { color: $text-muted; }
+    &--cyan  { background: #cffafe; color: #155e75; }
+    &--amber { background: #fef3c7; color: #92400e; }
+  }
+}
 
-    &-period {
-      color: $text-muted;
-      font-weight: 500;
+.status-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 20px;
+}
+
+.status-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+  border-bottom: 1px solid #f9fafb;
+
+  &:last-child { border-bottom: none; }
+
+  &--clickable {
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color .15s ease;
+
+    &:hover {
+      background: #f8fafc;
+    }
+
+    &:focus {
+      outline: 2px solid rgba(90, 33, 129, .25);
+      outline-offset: 1px;
+      background: #f8fafc;
     }
   }
 }
 
-// ── Grid helpers ──────────────────────────────────────────────────────
-.od-grid {
-  display: grid;
-  gap: 18px;
-
-  &--2 { grid-template-columns: 1.25fr 1fr; }
-  &--3-2 { grid-template-columns: 1.6fr 1fr; }
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 
-@media (max-width: 1100px) {
-  .od-grid--2,
-  .od-grid--3-2 { grid-template-columns: 1fr; }
+.status-name {
+  flex: 1;
+  font-size: 11px;
+  font-weight: 500;
+  color: $text-secondary;
+  white-space: nowrap;
 }
 
-// ── Card ──────────────────────────────────────────────────────────────
-.od-card {
-  background: #fff;
+.status-cheques {
+  font-size: 13px;
+  font-weight: 700;
+  color: $meezan-deep;
+  min-width: 22px;
+  text-align: right;
+}
+
+.status-amount {
+  font-size: 10px;
+  font-weight: 500;
+  color: $text-muted;
+  min-width: 60px;
+  text-align: right;
+}
+
+// ── CHART CARDS ───────────────────────────────────────────────────────────
+.chart-card {
+  background: #ffffff;
   border: 1px solid $border;
-  border-radius: 14px;
-  box-shadow: 0 2px 8px -4px rgba(31, 41, 55, 0.06);
+  border-radius: 12px;
+  padding: 12px 14px 8px;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
 
   &__header {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    padding: 16px 20px;
-    border-bottom: 1px solid $border;
-    gap: 12px;
+    margin-bottom: 6px;
+    gap: 8px;
   }
 
   &__title {
     margin: 0;
-    font-size: 14px;
-    font-weight: 700;
+    font-size: 14px; font-weight: 700;
     color: $text-primary;
   }
 
   &__subtitle {
     margin: 3px 0 0;
-    font-size: 12px;
-    color: $text-secondary;
+    font-size: 11px;
+    color: $text-muted;
   }
 
-  &__body {
-    padding: 14px 18px 18px;
-
-    &--flush {
-      padding: 0;
-    }
+  &__total {
+    font-size: 22px; font-weight: 700;
+    color: $meezan-deep;
+    line-height: 1; flex-shrink: 0;
   }
 }
 
-.od-chip {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 600;
+.total-pill {
+  display: inline-block;
+  font-size: 11px; font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 20px;
 
   &--purple { background: $meezan-light; color: $meezan-deep; }
-  &--green { background: #f0fdf4; color: $success-green; }
-  &--amber { background: #fffbeb; color: $amber; }
-  &--blue { background: #eff6ff; color: $info-blue; }
-}
-
-.od-link {
-  color: $meezan-deep;
-  font-size: 12px;
-  font-weight: 600;
-  text-decoration: none;
-
-  &:hover { text-decoration: underline; }
-}
-
-// ── Status chips under donut ──────────────────────────────────────────
-.od-status-chip-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  padding: 0 18px 18px;
-}
-
-.od-status-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 10px;
-  border-radius: 999px;
-  background: #f9fafb;
-  border: 1px solid $border;
-  font-size: 11px;
-  color: $text-primary;
-
-  &__dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 999px;
-  }
-
-  &__label { font-weight: 600; }
-
-  &__count {
-    padding: 2px 6px;
-    border-radius: 6px;
-    background: #fff;
-    border: 1px solid $border;
-    font-weight: 700;
-    color: $meezan-deep;
-  }
-}
-
-// ── Status badges (activity) ──────────────────────────────────────────
-.od-status {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 999px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-
-  &--purple { background: #f5efff; color: $meezan-deep; }
-  &--green { background: #f0fdf4; color: $success-green; }
-  &--blue { background: #eff6ff; color: $info-blue; }
-  &--red { background: #fef2f2; color: $danger-red; }
-  &--amber { background: #fffbeb; color: $amber; }
-  &--gray { background: #f3f4f6; color: $text-secondary; }
-}
-
-// ── Activity list ─────────────────────────────────────────────────────
-.od-activity {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-
-  &__item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 20px;
-    border-bottom: 1px solid #f3f4f6;
-    transition: background 0.15s ease;
-
-    &:hover { background: $meezan-soft; }
-    &:last-child { border-bottom: none; }
-  }
-
-  &__icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: $meezan-light;
-    color: $meezan-deep;
-    font-size: 14px;
-    flex-shrink: 0;
-  }
-
-  &__body {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    flex: 1;
-  }
-
-  &__title {
-    font-size: 13px;
-    font-weight: 600;
-    color: $text-primary;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  &__sub {
-    font-size: 11px;
-    color: $text-muted;
-  }
-
-  &__right {
-    text-align: right;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 3px;
-    flex-shrink: 0;
-  }
-
-  &__amount {
-    font-size: 13px;
-    font-weight: 700;
-    color: $meezan-deep;
-  }
-
-  &__meta {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  &__time {
-    font-size: 10px;
-    color: $text-muted;
-  }
-}
-
-.od-empty {
-  padding: 40px 20px;
-  text-align: center;
-  color: $text-muted;
-
-  i {
-    font-size: 28px;
-    margin-bottom: 8px;
-    display: block;
-    color: $meezan-mid;
-  }
-
-  p { margin: 0; font-size: 12px; }
-}
-
-// ── Quick actions ─────────────────────────────────────────────────────
-.od-actions {
-  display: grid;
-  gap: 10px;
-}
-
-.od-action {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
-  background: #fff;
-  border: 1px solid $border;
-  border-radius: 12px;
-  cursor: pointer;
-  text-align: left;
-  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
-
-  &:hover {
-    transform: translateX(3px);
-    border-color: $meezan-mid;
-    box-shadow: 0 8px 18px -12px rgba(90, 33, 129, 0.35);
-  }
-
-  &__icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    flex-shrink: 0;
-  }
-
-  &__body {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    flex: 1;
-    min-width: 0;
-  }
-
-  &__label {
-    font-size: 13px;
-    font-weight: 700;
-    color: $text-primary;
-  }
-
-  &__desc {
-    font-size: 11px;
-    color: $text-secondary;
-  }
-
-  &__chevron {
-    font-size: 11px;
-    color: $text-muted;
-  }
-
-  &--purple .od-action__icon { background: $meezan-light; color: $meezan-deep; }
-  &--amber .od-action__icon { background: #fffbeb; color: $amber; }
-  &--green .od-action__icon { background: #f0fdf4; color: $success-green; }
-  &--blue .od-action__icon { background: #eff6ff; color: $info-blue; }
-  &--teal .od-action__icon { background: #ecfeff; color: $teal; }
-  &--red .od-action__icon { background: #fef2f2; color: $danger-red; }
-}
-
-// ── Responsive ────────────────────────────────────────────────────────
-@media (max-width: 768px) {
-  .od-hero__body { padding: 22px; }
-  .od-hero__right { width: 100%; justify-content: space-between; }
-  .od-hero__meta { flex: 1; justify-content: space-between; }
+  &--violet { background: #f3e8ff;       color: $meezan-mid;  }
 }

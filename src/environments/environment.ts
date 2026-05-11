@@ -3,7 +3,8 @@ export const environment = {
   // apiUrl: 'http://13.58.156.144/api/'
   // apiUrl: 'https://localhost:7208/api'
   apiUrl: 'https://localhost:44367/api',
-  //apiUrl: 'http://192.168.18.83:5223/api',
+  //apiUrl: '/api',
+  //apiUrl: ' https://tek.teknoloje.com/api',
 
   // Auto logout inactivity timeout (milliseconds)
   inactivityTimeout: 5 * 60 * 1000,      // 5 minutes
