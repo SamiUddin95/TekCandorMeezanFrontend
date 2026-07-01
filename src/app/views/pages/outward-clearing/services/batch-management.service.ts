@@ -153,11 +153,17 @@ export class BatchManagementService {
         return this.http.get<BatchInstrumentsResponse>(`${this.apiUrl}/outward/Batch/${batchId}/instruments`);
     }
 
-    submitBatch(batchId: string): Observable<CreateBatchResponse> {
-        return this.http.post<CreateBatchResponse>(`${this.apiUrl}/outward/Batch/submit/${batchId}`, {});
+    // submitBatch(batchId: string): Observable<CreateBatchResponse> {
+    //     return this.http.post<CreateBatchResponse>(`${this.apiUrl}/outward/Batch/submit/${batchId}`, {});
+    // }
+      submitBatch(batchId: string): Observable<CreateBatchResponse> {
+        return this.http.post<CreateBatchResponse>(`${this.apiUrl}/outward/batch/save-draft/${batchId}`, {});
     }
 
-    authorizeBatch(batchId: string): Observable<CreateBatchResponse> {
-        return this.http.post<CreateBatchResponse>(`${this.apiUrl}/outward/Batch/authorize/${batchId}`, {});
+    // authorizeBatch(batchId: string): Observable<CreateBatchResponse> {
+    //     return this.http.post<CreateBatchResponse>(`${this.apiUrl}/outward/Batch/authorize/${batchId}`, {});
+    // }
+     authorizeBatch(batchId: string): Observable<CreateBatchResponse> {
+        return this.http.post<CreateBatchResponse>(`${this.apiUrl}/outward/batch/submit/${batchId}`, {});
     }
 }

@@ -84,7 +84,8 @@ export class UploadFileComponent implements OnInit {
     sftpImageUpload: false
   };
 
-  filterDate: string = '';
+  // filterDate: string = '';
+  filterDate: string = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
   importHistory: ImportRecord[] = [];
   filteredImports: ImportRecord[] = [];
   selectedImport: ImportRecord | null = null;
@@ -100,6 +101,7 @@ export class UploadFileComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadImportHistory();
+    this.filterImports();
   }
 
   // Image upload methods
