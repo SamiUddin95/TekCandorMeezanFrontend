@@ -25,15 +25,15 @@ export class PendingChequeService {
   getPendingCheques(filters: any): Observable<any> {
     const queryParams = new URLSearchParams();
     
-    if (filters.branchCode) queryParams.append('branchCode', filters.branchCode);
-    if (filters.accountNumber) queryParams.append('accountNumber', filters.accountNumber);
+    if (filters.branchCode) queryParams.append('Branch', filters.branchCode);
+    if (filters.accountNumber) queryParams.append('AccountNumber', filters.accountNumber);
     if (filters.amount) queryParams.append('amount', filters.amount);
-    if (filters.chequeNumber) queryParams.append('chequeNumber', filters.chequeNumber);
-    if (filters.hub) queryParams.append('hub', filters.hub);
-    if (filters.resCore) queryParams.append('resCore', filters.resCore);
+    if (filters.chequeNumber) queryParams.append('ChequeNumber', filters.chequeNumber);
+    if (filters.hub) queryParams.append('HubCode', filters.hub);
+    if (filters.resCore) queryParams.append('ServiceRun', filters.resCore);
     if (filters.status) queryParams.append('status', filters.status);
-    if (filters.instrument) queryParams.append('instrument', filters.instrument);
-    if (filters.cycle) queryParams.append('cycle', filters.cycle);
+    if (filters.instrument) queryParams.append('InstrumentNo', filters.instrument);
+    if (filters.cycle) queryParams.append('CycleCode', filters.cycle);
     queryParams.append('pageNumber', filters.pageNumber.toString());
     queryParams.append('pageSize', filters.pageSize.toString());
 

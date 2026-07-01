@@ -129,8 +129,12 @@ uploadFile(file: File): Observable<any> {
   }
 
   // Get manual import history API (for manual-import component)
-  getManualImportHistory(pageNumber: number = 1, pageSize: number = 10): Observable<any> {
-    return this.http.get(`${this.apiUrl}/ChequeDeposit/manual-import-history?pageNumber=${pageNumber}&pageSize=${pageSize}`, { 
+  getManualImportHistory(pageNumber: number = 1, pageSize: number = 10,date?: string): Observable<any> {
+    let url = `${this.apiUrl}/ChequeDeposit/manual-import-history?pageNumber=${pageNumber}&pageSize=${pageSize}`;
+    if (date) {
+      url += `&date=${date}`;
+    }
+    return this.http.get(url, { 
       headers: this.getAuthHeaders() 
     });
   }

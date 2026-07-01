@@ -24,7 +24,8 @@ export class ManualImportComponent implements OnInit {
   selectedFile: File | null = null;
   isImporting = false;
   isLoading = false;
-  filterDate: string = '';
+  // filterDate: string = '';
+    filterDate: string = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
   importHistory: ImportRecord[] = [];
   filteredImports: ImportRecord[] = [];
   selectedImport: ImportRecord | null = null;
@@ -52,7 +53,7 @@ export class ManualImportComponent implements OnInit {
   loadImportHistory() {
     this.isLoading = true;
     
-    this.chequeDepositService.getManualImportHistory(this.currentPage, this.pageSize).subscribe({
+    this.chequeDepositService.getManualImportHistory(this.currentPage, this.pageSize,this.filterDate).subscribe({
       next: (response) => {
         if (response.status === 'success' && response.data) {
           this.importHistory = response.data.items;
@@ -82,6 +83,12 @@ export class ManualImportComponent implements OnInit {
       }
     });
   }
+
+
+onDateFilterChange() {
+  this.currentPage = 1;
+  this.loadImportHistory();
+}
 
    uploadFile() {
     if (!this.selectedFile) {

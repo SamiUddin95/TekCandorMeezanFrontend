@@ -46,19 +46,21 @@ export class ApprovedTransactionsService {
   constructor(private http: HttpClient) { }
 
   // Get approved transactions list
-  getApprovedTransactions(filters: any): Observable<ApprovedTransactionResponse> {
-    let params = new HttpParams();
-    
-    if (filters.branch) params = params.set('branch', filters.branch);
-    if (filters.accountNumber) params = params.set('accountNumber', filters.accountNumber);
-    if (filters.chequeNumber) params = params.set('chequeNumber', filters.chequeNumber);
-    if (filters.hub) params = params.set('hub', filters.hub);
-    if (filters.resCore) params = params.set('resCore', filters.resCore);
-    if (filters.status) params = params.set('status', filters.status);
-    if (filters.instrument) params = params.set('instrument', filters.instrument);
-    if (filters.cycle) params = params.set('cycle', filters.cycle);
-    if (filters.page) params = params.set('page', filters.page);
-    if (filters.pageSize) params = params.set('pageSize', filters.pageSize);
+ getApprovedTransactions(filters: any): Observable<ApprovedTransactionResponse> {
+  let params = new HttpParams();
+
+  if (filters.branch) params = params.set('Branch', filters.branch);
+  if (filters.accountNumber) params = params.set('AccountNumber', filters.accountNumber);
+  if (filters.chequeNumber) params = params.set('ChequeNumber', filters.chequeNumber);
+  if (filters.hub) params = params.set('HubCode', filters.hub);
+  if (filters.resCore) params = params.set('ServiceRun', filters.resCore);
+  if (filters.status) params = params.set('Status', filters.status);
+  if (filters.instrument) params = params.set('InstrumentNo', filters.instrument);
+  if (filters.cycle) params = params.set('CycleCode', filters.cycle);
+  if (filters.page) params = params.set('Page', filters.page);
+  if (filters.pageSize) params = params.set('PageSize', filters.pageSize);
+
+  
 
     return this.http.get<ApprovedTransactionResponse>(`${this.apiUrl}/ChequeDeposit/ApprovedList`, { params });
   }
