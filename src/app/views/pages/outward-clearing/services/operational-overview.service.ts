@@ -6,22 +6,61 @@ import { environment } from '../../../../../environments/environment';
 export interface SupervisorListItem {
     id: number;
     date: string;
+    depositorType: string;
+    accountNo: string;
+    cnic: string;
     depositorTitle: string;
+    beneficiaryAccountNumber: string;
     beneficiaryTitle: string;
+    accountStatus: string;
+    beneficiaryBranchCode: string;
+    chequeNo: string;
+    payingBankCode: string;
+    payingBranchCode: string;
+    amount: number;
+    chequeDate: string;
+    instrumentType: string;
+    micr: string;
+    ocrEngine: string;
+    processingTime: string;
+    accuracy: string;
+    imageF: string;
+    imageB: string;
+    imageU: string;
+    currency: string;
+    remarks: string;
     receiverBranchCode: string;
     branchName: string | null;
-    chequeNo: string;
-    amount: number;
+    drawerBank: string;
+    drawerBankName: string;
+    amountInWords: string;
     referenceNo: string;
+    depositSlipId: number;
     status: string;
+    isReconciled: boolean;
+    isReturned: boolean;
+    isRealized: boolean;
     createdOn: string;
+    createdBy: string;
+    updatedOn: string | null;
+    updatedBy: string | null;
+    hubcode: string | null;
+}
+
+export interface BatchGroup {
+    batchId: string;
+    branchName: string | null;
+    items: SupervisorListItem[];
 }
 
 export interface SupervisorListResponse {
     status: string;
     data: {
-        items: SupervisorListItem[];
+        batches: BatchGroup[];
         totalCount: number;
+        pageNumber: number;
+        pageSize: number;
+        totalPages: number;
     };
     statusCode: number;
     errorMessage: string | null;

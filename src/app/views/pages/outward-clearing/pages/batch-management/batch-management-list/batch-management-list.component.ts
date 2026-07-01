@@ -9,6 +9,7 @@ import { SpinnerComponent } from '@app/components/spinner/spinner.component';
 export interface BatchItem {
     batchId: string;
     branch: string;
+    branchname: string;
     createdBy: string;
     instruments: number;
     totalAmount: number;
@@ -187,6 +188,7 @@ export class BatchManagementListComponent implements OnInit {
     private mapBatchItem(item: BatchDetails): BatchItem {
         return {
             batchId: item.batchId,
+            branchname: item.branchName,
             branch: item.branch,
             createdBy: item.createdBy,
             instruments: item.totalInstruments,

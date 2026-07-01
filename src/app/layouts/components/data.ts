@@ -223,6 +223,12 @@ export const menuItems: MenuItemType[] = [
                 url: '/pages/outward-clearing/batch-management',
                 requiredPermissions: ['outwardClearing.BatchManagement']
             },
+            {
+                label: 'Batch File Upload',
+                icon: 'tablerUpload',
+                url: '/pages/outward-clearing/batch-file-upload',
+                requiredPermissions: ['outwardClearing.BatchFileUpload']
+            },
         ]
     },
     {

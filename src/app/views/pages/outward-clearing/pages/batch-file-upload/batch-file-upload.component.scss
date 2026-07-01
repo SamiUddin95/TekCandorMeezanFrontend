@@ -1,0 +1,31 @@
+.upload-area {
+  border: 2px dashed #dee2e6;
+  border-radius: 8px;
+  padding: 30px 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #f8f9fa;
+
+  &:hover {
+    border-color: #6a1b9a;
+    background: #f0ebff;
+  }
+
+  .upload-content {
+    .upload-icon {
+      font-size: 2.5rem;
+      color: #6a1b9a;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-weight: 500;
+      color: #495057;
+      margin-bottom: 5px;
+    }
+
+    small {
+      font-size: 0.8rem;
+    }
+  }
+}

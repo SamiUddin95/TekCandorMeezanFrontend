@@ -145,7 +145,7 @@
           @for (batch of paginatedBatches; track batch.batchId) {
             <tr>
               <td><span class="bm-batch-id">{{ batch.batchId }}</span></td>
-              <td class="bm-branch-cell">{{ batch.branch }}</td>
+              <td class="bm-branch-cell">{{ batch.branchname }}</td>
               <td>{{ batch.createdBy }}</td>
               <td class="text-center">{{ batch.instruments }}</td>
               <td class="text-end"><strong>{{ formatTableAmount(batch.totalAmount) }}</strong></td>

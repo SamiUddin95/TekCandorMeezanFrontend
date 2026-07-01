@@ -11,6 +11,7 @@ export interface CreateBatchRequest {
 export interface BatchDetails {
     id: number;
     batchId: string;
+    branchName : string;
     branch: string;
     totalInstruments: number;
     totalAmount: number;
@@ -112,6 +113,7 @@ export interface InstrumentDetails {
     updatedBy: string | null;
     hubcode: string;
     batchId: string;
+    drawerBankName: string;
 }
 
 export interface BatchInstrumentsResponse {
@@ -153,17 +155,19 @@ export class BatchManagementService {
         return this.http.get<BatchInstrumentsResponse>(`${this.apiUrl}/outward/Batch/${batchId}/instruments`);
     }
 
+    submitBatch(batchId: string): Observable<CreateBatchResponse> {
+        return this.http.post<CreateBatchResponse>(`${this.apiUrl}/outward/batch/save-draft/${batchId}`, {});
+    }
+
+    authorizeBatch(batchId: string): Observable<CreateBatchResponse> {
+        return this.http.post<CreateBatchResponse>(`${this.apiUrl}/outward/batch/submit/${batchId}`, {});
+    }
+
     // submitBatch(batchId: string): Observable<CreateBatchResponse> {
     //     return this.http.post<CreateBatchResponse>(`${this.apiUrl}/outward/Batch/submit/${batchId}`, {});
     // }
-      submitBatch(batchId: string): Observable<CreateBatchResponse> {
-        return this.http.post<CreateBatchResponse>(`${this.apiUrl}/outward/batch/save-draft/${batchId}`, {});
-    }
 
     // authorizeBatch(batchId: string): Observable<CreateBatchResponse> {
     //     return this.http.post<CreateBatchResponse>(`${this.apiUrl}/outward/Batch/authorize/${batchId}`, {});
     // }
-     authorizeBatch(batchId: string): Observable<CreateBatchResponse> {
-        return this.http.post<CreateBatchResponse>(`${this.apiUrl}/outward/batch/submit/${batchId}`, {});
-    }
 }

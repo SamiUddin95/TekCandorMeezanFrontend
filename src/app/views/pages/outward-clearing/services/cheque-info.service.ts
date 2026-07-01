@@ -171,4 +171,8 @@ export class ChequeInfoService {
     updateChequeInfo(id: number, payload: ChequeInfoRequest): Observable<ChequeInfoResponse> {
         return this.http.put<ChequeInfoResponse>(`${this.apiUrl}/outward/ChequeInfo/${id}`, payload);
     }
+
+    deleteChequeInfo(id: number): Observable<ChequeInfoResponse> {
+        return this.http.delete<ChequeInfoResponse>(`${this.apiUrl}/outward/ChequeInfo/${id}`);
+    }
 }
