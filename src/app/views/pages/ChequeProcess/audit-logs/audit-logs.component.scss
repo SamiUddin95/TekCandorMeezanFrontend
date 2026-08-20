@@ -1,0 +1,130 @@
+.audit-logs-container {
+  padding: 1rem;
+
+  .card {
+    border-radius: 12px;
+    border: 1px solid #dee2e6;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+    .card-header {
+      border-bottom: 1px solid #e9ecef;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+  }
+
+  .filters-section {
+    background: #fff;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+    .form-label {
+      font-weight: 500;
+      color: #495057;
+    }
+
+    .input-group-text {
+      background: #f8f9fa;
+      border-color: #dee2e6;
+    }
+
+    .form-control,
+    .form-select {
+      border-color: #dee2e6;
+      transition: all 0.2s ease;
+
+      &:focus {
+        border-color: #600e6d;
+        box-shadow: 0 0 0 0.2rem rgba(96, 14, 109, 0.15);
+      }
+    }
+  }
+
+  .table-responsive {
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #e9ecef;
+
+    .table {
+      margin-bottom: 0;
+
+      thead {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-bottom: 2px solid #dee2e6;
+
+        th {
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          border-bottom: none;
+        }
+      }
+
+      tbody {
+        tr {
+          transition: all 0.2s ease;
+
+          &:hover {
+            background-color: rgba(96, 14, 109, 0.05);
+          }
+
+          td {
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: middle;
+          }
+        }
+      }
+    }
+  }
+
+  .badge {
+    font-weight: 500;
+    padding: 0.35em 0.65em;
+    font-size: 0.75rem;
+
+    &.badge-success {
+      background-color: #198754;
+      color: #fff;
+    }
+
+    &.badge-primary {
+      background-color: #600e6d;
+      color: #fff;
+    }
+
+    &.badge-info {
+      background-color: #0dcaf0;
+      color: #fff;
+    }
+
+    &.badge-warning {
+      background-color: #ffc107;
+      color: #000;
+    }
+
+    &.badge-danger {
+      background-color: #dc3545;
+      color: #fff;
+    }
+
+    &.badge-secondary {
+      background-color: #6c757d;
+      color: #fff;
+    }
+  }
+
+  .audit-info {
+    border-left: 4px solid #600e6d;
+    background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+
+    h6 {
+      color: #600e6d;
+    }
+  }
+
+  code {
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+  }
+}

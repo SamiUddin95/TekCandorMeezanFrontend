@@ -39,7 +39,7 @@ export const menuItems: MenuItemType[] = [
                 label: 'Cheque Process',
                 icon: 'tablerFileDescription',
                 isCollapsed: true,
-                requiredPermissions: ['chequeProcess.ManualImport', 'chequeProcess.UplaodFile', 'chequeProcess.pendingCheques', 'chequeProcess.callbackcheques', 'chequeProcess.ReturnTransactions'],
+                requiredPermissions: ['chequeProcess.ManualImport', 'chequeProcess.UplaodFile', 'chequeProcess.pendingCheques', 'chequeProcess.callbackcheques', 'chequeProcess.ReturnTransactions', 'chequeProcess.AuditLogs'],
                 children: [
                     { 
                         label: 'Manual Import', 
@@ -100,6 +100,12 @@ export const menuItems: MenuItemType[] = [
                         icon: 'tablerLoader', 
                         url: '/pages/ChequeProcess/manual-import',
                         requiredPermissions: ['chequeProcess.ReturnTransactions']
+                    },
+                    {
+                        label: 'Audit Logs',
+                        icon: 'tablerFileClock',
+                        url: '/pages/ChequeProcess/audit-logs',
+                        requiredPermissions: ['chequeProcess.AuditLogs']
                     },
                 ]
             }

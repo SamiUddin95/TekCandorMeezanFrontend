@@ -151,6 +151,11 @@ export const PAGES_ROUTES: Routes = [
                         path: 'in-process-cheques-details/:id',
                         loadComponent: () => import('./ChequeProcess/in-process-cheques-details/in-process-cheques-details.component').then(mod => mod.InProcessChequesDetailsComponent),
                         data: {title: 'In Process Cheques Details'}
+                    },
+                    {
+                        path: 'audit-logs',
+                        loadComponent: () => import('./ChequeProcess/audit-logs/audit-logs.component').then(mod => mod.AuditLogsComponent),
+                        data: {title: 'Audit Logs'}
                     }
                 ]
             },

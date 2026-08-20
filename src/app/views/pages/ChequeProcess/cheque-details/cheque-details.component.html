@@ -93,36 +93,113 @@
           </div>
           <div class="card-body p-1">
 
-            <div id="chequeCarousel" class="carousel slide" data-bs-ride="carousel">
-              <div class="carousel-inner bg-light">
-
-                <div class="carousel-item active">
-                  <img [src]="'https://localhost:44367/api/ChequeDeposit/image/' + (chequeDetails.imgF || '')"
-                       class="w-100"
-                       alt=""
-                       (error)="onImageError($event)">
-                </div>
-
-                <div class="carousel-item">
-                  <img [src]="'https://localhost:44367/api/ChequeDeposit/image/' + (chequeDetails.imgR || '')"
-                       class="w-100"
-                       alt=""
-                       (error)="onImageError($event)">
-                </div>
-
+            <!-- Image Controls Toolbar -->
+            <div class="image-controls-toolbar">
+              <div class="control-group">
+                <span class="control-label">Zoom: {{ (chequeZoom * 100).toFixed(0) }}%</span>
+                <button class="control-btn" (click)="zoomChequeOut()" title="Zoom Out">
+                  <ng-icon name="tablerZoomOut"></ng-icon>
+                </button>
+                <button class="control-btn" (click)="resetChequeZoom()" title="Reset Zoom">
+                  <ng-icon name="tablerZoomReset"></ng-icon>
+                </button>
+                <button class="control-btn" (click)="zoomChequeIn()" title="Zoom In">
+                  <ng-icon name="tablerZoomIn"></ng-icon>
+                </button>
               </div>
+              <div class="control-group">
+                <span class="control-label">Rotate: {{ chequeRotation }}°</span>
+                <button class="control-btn" (click)="rotateChequeLeft()" title="Rotate Left">
+                  <ng-icon name="tablerRotate"></ng-icon>
+                </button>
+                <button class="control-btn" (click)="resetChequeRotation()" title="Reset Rotation">
+                  <ng-icon name="tablerRefresh"></ng-icon>
+                </button>
+                <button class="control-btn" (click)="rotateChequeRight()" title="Rotate Right">
+                  <ng-icon name="tablerRotateClockwise"></ng-icon>
+                </button>
+              </div>
+              <div class="control-group">
+                <span class="control-label">Brightness: {{ chequeBrightness }}%</span>
+                <button class="control-btn" (click)="decreaseChequeBrightness()" title="Decrease Brightness">
+                  <ng-icon name="tablerBrightnessDown"></ng-icon>
+                </button>
+                <button class="control-btn" (click)="resetChequeBrightness()" title="Reset Brightness">
+                  <ng-icon name="tablerBrightness"></ng-icon>
+                </button>
+                <button class="control-btn" (click)="increaseChequeBrightness()" title="Increase Brightness">
+                  <ng-icon name="tablerBrightnessUp"></ng-icon>
+                </button>
+              </div>
+              <div class="control-group">
+                <span class="control-label">Contrast: {{ chequeContrast }}%</span>
+                <button class="control-btn" (click)="decreaseChequeContrast()" title="Decrease Contrast">
+                  <ng-icon name="tablerContrast"></ng-icon>
+                </button>
+                <button class="control-btn" (click)="resetChequeContrast()" title="Reset Contrast">
+                  <ng-icon name="tablerContrast"></ng-icon>
+                </button>
+                <button class="control-btn" (click)="increaseChequeContrast()" title="Increase Contrast">
+                  <ng-icon name="tablerContrast"></ng-icon>
+                </button>
+              </div>
+              <div class="control-group">
+                <button class="control-btn btn-reset-all" (click)="resetAllChequeSettings()" title="Reset All">
+                  <ng-icon name="tablerRefresh"></ng-icon>
+                  <span>Reset All</span>
+                </button>
+              </div>
+            </div>
 
-              <button class="carousel-control-prev" type="button"
-                      data-bs-target="#chequeCarousel"
-                      data-bs-slide="prev">
-                <span class="carousel-control-prev-icon"></span>
-              </button>
+            <!-- Main Image Display with Magnifier -->
+            <div class="cheque-image-container">
+              <div class="main-image-wrapper"
+                   (mousedown)="onChequeMouseDown($event)"
+                   (mousemove)="onChequeMouseMove($event)"
+                   (mouseup)="onChequeMouseUp()"
+                   (mouseleave)="onChequeMouseLeave()">
+                <img [src]="currentChequeImage"
+                     class="main-cheque-image"
+                     [ngStyle]="getChequeImageStyle()"
+                     [style.cursor]="chequeZoom > 1 ? (isChequeDragging ? 'grabbing' : 'grab') : 'zoom-in'"
+                     alt="Cheque Image"
+                     (error)="onImageError($event)">
+                <div class="magnifier-lens"
+                     *ngIf="showMagnifier"
+                     [style.background-image]="'url(' + currentChequeImage + ')'"
+                     [style.background-position]="magnifierBgPosition"
+                     [style.left]="magnifierX + 'px'"
+                     [style.top]="magnifierY + 'px'">
+                </div>
+              </div>
+            </div>
 
-              <button class="carousel-control-next" type="button"
-                      data-bs-target="#chequeCarousel"
-                      data-bs-slide="next">
-                <span class="carousel-control-next-icon"></span>
-              </button>
+            <!-- Thumbnail Images -->
+            <div class="thumbnail-container mt-2">
+              <div class="thumbnail-item"
+                   [class.active]="currentImageType === 'front'"
+                   (click)="selectImage('front')">
+                <img [src]="frontImageUrl"
+                     alt="Front"
+                     (error)="onThumbnailError($event)">
+                <span class="thumbnail-label">Front</span>
+              </div>
+              <div class="thumbnail-item"
+                   [class.active]="currentImageType === 'back'"
+                   (click)="selectImage('back')">
+                <img [src]="backImageUrl"
+                     alt="Back"
+                     (error)="onThumbnailError($event)">
+                <span class="thumbnail-label">Back</span>
+              </div>
+              <div class="thumbnail-item"
+                   [class.active]="currentImageType === 'ultra'"
+                   (click)="selectImage('ultra')">
+                <img [src]="ultraImageUrl"
+                     alt="Ultra Violet"
+                     (error)="onThumbnailError($event)">
+                <span class="thumbnail-label">Ultra Violet</span>
+              </div>
             </div>
 
           </div>
@@ -131,67 +208,151 @@
 
       <!-- Signature Images -->
       <div class="col-md-6">
-        <div class="card shadow-sm h-100  ">
-          <div class="card-header py-1 bg-light">
+        <div class="card shadow-sm h-100">
+          <div class="card-header py-1 bg-light d-flex align-items-center justify-content-between">
             <h6 class="mb-0 fw-semibold text-black">Signature Images</h6>
+            <span class="badge bg-primary rounded-pill" *ngIf="signatureImages.length > 0">
+              {{ currentSignatureIndex + 1 }} / {{ signatureImages.length }}
+            </span>
           </div>
           <div class="card-body p-1">
 
-            <div id="signatureCarousel" class="carousel slide" data-bs-ride="carousel">
-              <div class="carousel-inner bg-light">
-                <!-- Loading state -->
-                <div class="carousel-item active" *ngIf="isLoadingSignatureImages">
-                  <div class="d-flex align-items-center justify-content-center" style="height: 180px;">
-                    <app-spinner></app-spinner>
-                  </div>
+            <div class="signature-image-container">
+              <!-- Loading state -->
+              <div *ngIf="isLoadingSignatureImages" class="signature-placeholder">
+                <div class="d-flex align-items-center justify-content-center" style="height: 350px;">
+                  <app-spinner></app-spinner>
                 </div>
-
-                <!-- Error state -->
-                <div class="carousel-item active" *ngIf="signatureImageError && !isLoadingSignatureImages && signatureImages.length === 0">
-                  <div class="d-flex align-items-center justify-content-center" style="height: 180px;">
-                    <div class="text-center text-muted">
-                      <ng-icon name="tablerAlertTriangle" size="48" class="mb-2 text-danger"></ng-icon>
-                      <p class="text-danger">{{ signatureImageError }}</p>
-                      <small class="text-muted">Click the photo icon to try again</small>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Empty state (no error, no loading, no images) -->
-                <div class="carousel-item active" *ngIf="!isLoadingSignatureImages && !signatureImageError && signatureImages.length === 0">
-                  <div class="d-flex align-items-center justify-content-center" style="height: 180px;">
-                    <div class="text-center text-muted">
-                      <ng-icon name="tablerPhotoOff" size="48" class="mb-2"></ng-icon>
-                      <p>No signature images available</p>
-                      <small>Click the photo icon to load signature images</small>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Dynamic signature images -->
-                <div class="carousel-item" 
-                     *ngFor="let image of signatureImages; let i = index"
-                     [class.active]="i === 0">
-                  <img [src]="image.url" 
-                       class="d-block w-100" 
-                       style="height: 180px; object-fit: contain; background: #f8f9fa;"
-                       [alt]="image.title"
-                       onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2Y4ZjlmYSIvPjx0ZXh0IHg9IjUwIiB5PSI1MCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSIjNmM3NTdkIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+Tm8gSW1hZ2U8L3RleHQ+PC9zdmc+'">
-                </div>
-
               </div>
 
-              <button class="carousel-control-prev" type="button"
-                      data-bs-target="#signatureCarousel"
-                      data-bs-slide="prev">
-                <span class="carousel-control-prev-icon"></span>
-              </button>
+              <!-- Error state -->
+              <div *ngIf="signatureImageError && !isLoadingSignatureImages && signatureImages.length === 0" class="signature-placeholder">
+                <div class="d-flex align-items-center justify-content-center" style="height: 350px;">
+                  <div class="text-center text-muted">
+                    <ng-icon name="tablerAlertTriangle" size="48" class="mb-2 text-danger"></ng-icon>
+                    <p class="text-danger">{{ signatureImageError }}</p>
+                    <small class="text-muted">Click the photo icon to try again</small>
+                  </div>
+                </div>
+              </div>
 
-              <button class="carousel-control-next" type="button"
-                      data-bs-target="#signatureCarousel"
-                      data-bs-slide="next">
-                <span class="carousel-control-next-icon"></span>
-              </button>
+              <!-- Empty state -->
+              <div *ngIf="!isLoadingSignatureImages && !signatureImageError && signatureImages.length === 0" class="signature-placeholder">
+                <div class="d-flex align-items-center justify-content-center" style="height: 350px;">
+                  <div class="text-center text-muted">
+                    <ng-icon name="tablerPhotoOff" size="48" class="mb-2"></ng-icon>
+                    <p>No signature images available</p>
+                    <small>Click the photo icon to load signature images</small>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Signature images display -->
+              <div *ngIf="!isLoadingSignatureImages && signatureImages.length > 0" class="signature-display">
+                <!-- Signature Image Controls Toolbar -->
+                <div class="image-controls-toolbar">
+                  <div class="control-group">
+                    <span class="control-label">Zoom: {{ (signatureZoom * 100).toFixed(0) }}%</span>
+                    <button class="control-btn" (click)="zoomSignatureOut()" title="Zoom Out">
+                      <ng-icon name="tablerZoomOut"></ng-icon>
+                    </button>
+                    <button class="control-btn" (click)="resetSignatureZoom()" title="Reset Zoom">
+                      <ng-icon name="tablerZoomReset"></ng-icon>
+                    </button>
+                    <button class="control-btn" (click)="zoomSignatureIn()" title="Zoom In">
+                      <ng-icon name="tablerZoomIn"></ng-icon>
+                    </button>
+                  </div>
+                  <div class="control-group">
+                    <span class="control-label">Rotate: {{ signatureRotation }}°</span>
+                    <button class="control-btn" (click)="rotateSignatureLeft()" title="Rotate Left">
+                      <ng-icon name="tablerRotate"></ng-icon>
+                    </button>
+                    <button class="control-btn" (click)="resetSignatureRotation()" title="Reset Rotation">
+                      <ng-icon name="tablerRefresh"></ng-icon>
+                    </button>
+                    <button class="control-btn" (click)="rotateSignatureRight()" title="Rotate Right">
+                      <ng-icon name="tablerRotateClockwise"></ng-icon>
+                    </button>
+                  </div>
+                  <div class="control-group">
+                    <span class="control-label">Brightness: {{ signatureBrightness }}%</span>
+                    <button class="control-btn" (click)="decreaseSignatureBrightness()" title="Decrease Brightness">
+                      <ng-icon name="tablerBrightnessDown"></ng-icon>
+                    </button>
+                    <button class="control-btn" (click)="resetSignatureBrightness()" title="Reset Brightness">
+                      <ng-icon name="tablerBrightness"></ng-icon>
+                    </button>
+                    <button class="control-btn" (click)="increaseSignatureBrightness()" title="Increase Brightness">
+                      <ng-icon name="tablerBrightnessUp"></ng-icon>
+                    </button>
+                  </div>
+                  <div class="control-group">
+                    <span class="control-label">Contrast: {{ signatureContrast }}%</span>
+                    <button class="control-btn" (click)="decreaseSignatureContrast()" title="Decrease Contrast">
+                      <ng-icon name="tablerContrast"></ng-icon>
+                    </button>
+                    <button class="control-btn" (click)="resetSignatureContrast()" title="Reset Contrast">
+                      <ng-icon name="tablerContrast"></ng-icon>
+                    </button>
+                    <button class="control-btn" (click)="increaseSignatureContrast()" title="Increase Contrast">
+                      <ng-icon name="tablerContrast"></ng-icon>
+                    </button>
+                  </div>
+                  <div class="control-group">
+                    <button class="control-btn btn-reset-all" (click)="resetAllSignatureSettings()" title="Reset All">
+                      <ng-icon name="tablerRefresh"></ng-icon>
+                      <span>Reset All</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="main-signature-wrapper"
+                     (mousedown)="onSignatureMouseDown($event)"
+                     (mousemove)="onSignatureDragMove($event)"
+                     (mouseup)="onSignatureDragEnd()"
+                     (mouseleave)="onSignatureDragLeave()">
+                  <img [src]="signatureImages[currentSignatureIndex]?.url"
+                       class="main-signature-image"
+                       [ngStyle]="getSignatureImageStyle()"
+                       [style.cursor]="signatureZoom > 1 ? (isSignatureDragging ? 'grabbing' : 'grab') : 'zoom-in'"
+                       alt="Signature Image"
+                       (error)="onSignatureImageError($event)">
+                  <div class="signature-magnifier-lens"
+                       *ngIf="showSignatureMagnifier"
+                       [style.background-image]="'url(' + signatureImages[currentSignatureIndex]?.url + ')'"
+                       [style.background-position]="signatureMagnifierBgPosition"
+                       [style.left]="signatureMagnifierX + 'px'"
+                       [style.top]="signatureMagnifierY + 'px'">
+                  </div>
+                </div>
+
+                <!-- Navigation buttons -->
+                <div class="signature-nav-buttons" *ngIf="signatureImages.length > 1">
+                  <button class="btn btn-outline-primary btn-sm signature-nav-btn"
+                          (click)="previousSignatureImage()"
+                          [disabled]="currentSignatureIndex === 0">
+                    <ng-icon name="tablerChevronLeft"></ng-icon>
+                  </button>
+                  <button class="btn btn-outline-primary btn-sm signature-nav-btn"
+                          (click)="nextSignatureImage()"
+                          [disabled]="currentSignatureIndex === signatureImages.length - 1">
+                    <ng-icon name="tablerChevronRight"></ng-icon>
+                  </button>
+                </div>
+
+                <!-- Thumbnail indicators -->
+                <div class="signature-thumbnails" *ngIf="signatureImages.length > 1">
+                  <div class="signature-thumbnail-item"
+                       *ngFor="let image of signatureImages; let i = index"
+                       [class.active]="i === currentSignatureIndex"
+                       (click)="selectSignatureImage(i)">
+                    <img [src]="image.url"
+                         alt="Signature {{ i + 1 }}"
+                         (error)="onSignatureThumbnailError($event)">
+                  </div>
+                </div>
+              </div>
             </div>
 
           </div>

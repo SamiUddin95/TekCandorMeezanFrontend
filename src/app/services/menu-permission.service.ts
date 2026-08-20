@@ -47,7 +47,7 @@ export class MenuPermissionService {
             label: 'Cheque Process',
             icon: 'tablerFileDescription',
             isCollapsed: true,
-            requiredPermissions: ['chequeProcess.ManualImport', 'chequeProcess.UplaodFile', 'chequeProcess.pendingCheques', 'chequeProcess.callbackcheques', 'chequeProcess.ReturnTransactions'],
+            requiredPermissions: ['chequeProcess.ManualImport', 'chequeProcess.UplaodFile', 'chequeProcess.pendingCheques', 'chequeProcess.callbackcheques', 'chequeProcess.ReturnTransactions', 'chequeProcess.AuditLogs'],
             children: [
               { 
                 label: 'Manual Import', 
@@ -103,11 +103,17 @@ export class MenuPermissionService {
                 url: '/pages/ChequeProcess/system-rejected-cheques',
                 requiredPermissions: ['chequeProcess.ReturnTransactions']
               },
-              { 
-                label: 'In Process Cheques ', 
-                icon: 'tablerLoader', 
+              {
+                label: 'In Process Cheques ',
+                icon: 'tablerLoader',
                 url: '/pages/ChequeProcess/in-process-cheques',
                 requiredPermissions: ['chequeProcess.ReturnTransactions']
+              },
+              {
+                label: 'Audit Logs',
+                icon: 'tablerFileClock',
+                url: '/pages/ChequeProcess/audit-logs',
+                requiredPermissions: ['chequeProcess.AuditLogs']
               },
             ]
           }

@@ -9,6 +9,7 @@ import { ManualImportComponent } from './manual-import/manual-import.component';
 import { UploadFileComponent } from './upload-file/upload-file.component';
 import { PendingChequeComponent } from './pending-cheque/pending-cheque.component';
 import { ChequeDetailsComponent } from './cheque-details/cheque-details.component';
+// Audit Logs is standalone and loaded via lazy loading
 // Callback components are standalone
 
 // Icons
@@ -30,7 +31,9 @@ import {
   tablerPencil,
   tablerUpload,
   tablerFileUpload,
-  tablerPhoneCall
+  tablerPhoneCall,
+  tablerInfoCircle,
+  tablerFileX
 } from '@ng-icons/tabler-icons';
 
 // Shared Components will be handled dynamically
@@ -67,7 +70,9 @@ import {
       tablerPencil,
       tablerUpload,
       tablerFileUpload,
-      tablerPhoneCall
+      tablerPhoneCall,
+      tablerInfoCircle,
+      tablerFileX
     })
   ],
   exports: [

@@ -4,6 +4,7 @@ import { ManualImportComponent } from './manual-import/manual-import.component';
 import { UploadFileComponent } from './upload-file/upload-file.component';
 import { PendingChequeComponent } from './pending-cheque/pending-cheque.component';
 import { ChequeDetailsComponent } from './cheque-details/cheque-details.component';
+import { AuditLogsComponent } from './audit-logs/audit-logs.component';
 
 const routes: Routes = [
   {
@@ -24,6 +25,11 @@ const routes: Routes = [
   {
     path: 'cheque-details/:id',
     component: ChequeDetailsComponent
+  },
+  {
+    path: 'audit-logs',
+    component: AuditLogsComponent,
+    title: 'Audit Logs'
   },
     {
     path: '',
