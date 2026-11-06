@@ -211,9 +211,21 @@
         <div class="card shadow-sm h-100">
           <div class="card-header py-1 bg-light d-flex align-items-center justify-content-between">
             <h6 class="mb-0 fw-semibold text-black">Signature Images</h6>
-            <span class="badge bg-primary rounded-pill" *ngIf="signatureImages.length > 0">
-              {{ currentSignatureIndex + 1 }} / {{ signatureImages.length }}
-            </span>
+            <div class="d-flex align-items-center gap-2">
+              <span class="badge bg-primary rounded-pill" *ngIf="signatureImages.length > 0">
+                {{ currentSignatureIndex + 1 }} / {{ signatureImages.length }}
+              </span>
+              <span *ngIf="signatureVerificationStatus === 'verified'" class="badge bg-success">
+                Verified{{ signatureMatchScore != null ? ' · ' + signatureMatchScore.toFixed(1) + '%' : '' }}
+              </span>
+              <span *ngIf="signatureVerificationStatus === 'rejected'" class="badge bg-danger">
+                Rejected{{ signatureMatchScore != null ? ' · ' + signatureMatchScore.toFixed(1) + '%' : '' }}
+              </span>
+              <button class="btn btn-sm btn-outline-primary" (click)="onVerifySignature()"
+                      [disabled]="signatureImages.length === 0 || isVerifyingSignature" title="Verify signature against cheque">
+                <ng-icon name="tablerShieldCheck" size="14"></ng-icon> Verify
+              </button>
+            </div>
           </div>
           <div class="card-body p-1">
 

@@ -13,7 +13,7 @@ export interface BatchItem {
     createdBy: string;
     instruments: number;
     totalAmount: number;
-    status: 'Authorized' | 'Balanced' | 'Draft' | 'Rejected';
+    status: 'Authorized' | 'Pending' | 'Balanced' | 'Draft' | 'Rejected';
     createdDate: string;
 }
 
@@ -198,8 +198,9 @@ export class BatchManagementListComponent implements OnInit {
         };
     }
 
-    private normalizeStatus(status: string): 'Authorized' | 'Balanced' | 'Draft' | 'Rejected' {
+    private normalizeStatus(status: string): 'Authorized' | 'Pending' | 'Balanced' | 'Draft' | 'Rejected' {
         if (status === 'Authorized') return 'Authorized';
+        if (status === 'Pending') return 'Pending';
         if (status === 'Balanced') return 'Balanced';
         if (status === 'Rejected') return 'Rejected';
         return 'Draft';

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
 import { environment } from '../../../../../environments/environment';
 
 export interface ChequeInfoRequest {
@@ -158,6 +159,24 @@ export class ChequeInfoService {
         }
 
         return this.http.get<ChequeInfoListResponse>(`${this.apiUrl}/outward/ChequeInfo/transaction-history`, { params });
+    }
+
+    /**
+     * Saved cheque images are stored by file name (the backend writes the scanned base64
+     * to disk). Resolves a stored name to a data URI usable in <img [src]>; data URIs pass through.
+     */
+    getChequeImageDataUri(value: string): Observable<string> {
+        if (!value) return of('');
+        if (value.startsWith('data:')) return of(value);
+        return this.http.get(`${this.apiUrl}/ChequeDeposit/image/${encodeURIComponent(value)}`, { responseType: 'blob' }).pipe(
+            switchMap(blob => new Observable<string>(subscriber => {
+                const reader = new FileReader();
+                reader.onload = () => { subscriber.next(reader.result as string); subscriber.complete(); };
+                reader.onerror = () => { subscriber.next(''); subscriber.complete(); };
+                reader.readAsDataURL(blob);
+            })),
+            catchError(() => of(''))
+        );
     }
 
     getChequeInfoById(id: number): Observable<ChequeInfoByIdResponse> {

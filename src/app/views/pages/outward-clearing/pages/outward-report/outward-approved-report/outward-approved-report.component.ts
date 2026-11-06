@@ -25,8 +25,8 @@ export class OutwardApprovedReportComponent implements OnInit {
   reportUrl = '';
   isReportLoading = false;
 
-  // private readonly ssrsBaseUrl = 'http://muhammad-ameen/ReportServer/Pages/ReportViewer.aspx?%2fSSRS_Reports%2fOutwardApproved&rs:Command=Render';
-   private readonly ssrsBaseUrl = 'http://localhost/Reports/report/SSRS_Reports/OutwardApproved';
+  private readonly ssrsBaseUrl = 'http://sami-uddin/ReportServer/Pages/ReportViewer.aspx?%2fSSRS_Reports%2fOutwardApproved&rs:Command=Render';
+   //private readonly ssrsBaseUrl = 'http://localhost/Reports/report/SSRS_Reports/OutwardApproved';
 
   constructor() {}
 

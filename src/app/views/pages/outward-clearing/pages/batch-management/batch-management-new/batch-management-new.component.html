@@ -46,189 +46,189 @@
     <!-- LEFT: Instrument Form -->
     <div class="bn-form-col">
 
-      <!-- Section: Instrument Details -->
+      <!-- Card 1: Instrument Details -->
       <div class="bn-section">
         <div class="bn-section__header">
           <div>
             <h6 class="bn-section__title">Instrument Details</h6>
             <p class="bn-section__subtitle">Enter or scan cheque information</p>
           </div>
-          <button class="bn-btn-scan" (click)="onScanCheque()">
-            <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
-              <rect x="3" y="3" width="18" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
-              <path d="M7 7h3m4 0h3M7 12h10M7 17h3m4 0h3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-            Scan Cheque
+          <button class="bn-btn-scan" [disabled]="isScanning" (click)="onScanCheque()">
+            @if (isScanning) {
+              <span class="spinner-border spinner-border-sm me-1"></span>
+              Scanning...
+            } @else {
+              <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+                <rect x="3" y="3" width="18" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+                <path d="M7 7h3m4 0h3M7 12h10M7 17h3m4 0h3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+              Scan Cheque
+            }
           </button>
         </div>
 
-        <!-- Depositor Type -->
-        <div class="bn-field">
-          <label class="bn-label">Depositor Type</label>
-          <select class="bn-input" [(ngModel)]="depositorType" (ngModelChange)="onDepositorTypeChange()">
-            <option value="Self">Self</option>
-            <option value="MBL Account Holder">MBL Account Holder</option>
-            <option value="Walk-in">Walk-in</option>
-          </select>
-        </div>
-
-        <div class="bn-field-row">
-          @if (!isWalkIn) {
-            <div class="bn-field">
-              <label class="bn-label">Account Number</label>
-              <div class="bn-fetch-group">
-                <input type="text" class="bn-input" placeholder="0102-099283-001" [(ngModel)]="accountNumber"/>
-                <button type="button" class="bn-fetch-btn" [disabled]="!accountNumber || isFetchingDepositor" (click)="onFetchDepositor()">
-                  @if (isFetchingDepositor) {
-                    <span class="spinner-border spinner-border-sm"></span>
-                  } @else {
-                    <svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true">
-                      <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
-                      <path d="m21 21-4.35-4.35" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
-                  }
-                </button>
-              </div>
-            </div>
-          } @else {
-            <div class="bn-field">
-              <label class="bn-label">CNIC</label>
-              <input type="text" class="bn-input" placeholder="00000-0000000-0" [(ngModel)]="cnic"/>
-            </div>
-          }
+        <div class="bn-form-grid">
           <div class="bn-field">
-            <label class="bn-label">Cheque Number</label>
-            <input type="text" class="bn-input" placeholder="Enter cheque number" [(ngModel)]="chequeNumber"/>
-          </div>
-        </div>
-
-        <div class="bn-field">
-          <label class="bn-label">Title</label>
-          <input type="text" class="bn-input" [placeholder]="isWalkIn ? 'Enter title manually' : 'Auto fetched'" [(ngModel)]="fullName" [readonly]="!isWalkIn"/>
-        </div>
-
-        <!-- Beneficiary -->
-        <div class="bn-field">
-          <label class="bn-label">Beneficiary Account</label>
-          <div class="bn-fetch-group">
-            <input type="text" class="bn-input" placeholder="Enter beneficiary account number" [(ngModel)]="beneficiaryAccount"/>
-            <button type="button" class="bn-fetch-btn" [disabled]="!beneficiaryAccount || isFetchingBeneficiary" (click)="onFetchBeneficiary()">
-              @if (isFetchingBeneficiary) {
-                <span class="spinner-border spinner-border-sm"></span>
-              } @else {
-                <svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true">
-                  <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
-                  <path d="m21 21-4.35-4.35" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-              }
-            </button>
-          </div>
-        </div>
-
-        <div class="bn-field">
-          <label class="bn-label">Beneficiary Title</label>
-          <input type="text" class="bn-input" placeholder="Auto fetched via Fetch" [(ngModel)]="beneficiaryTitle" readonly/>
-        </div>
-
-        <!-- Paying Bank -->
-        <div class="bn-field">
-          <label class="bn-label">Drawee Bank</label>
-          <select class="bn-input" [(ngModel)]="payingBankCode">
-            <option value="">Select Bank</option>
-            @for (b of banks; track b.value) {
-              <option [value]="b.value">{{ b.text }}</option>
-            }
-          </select>
-        </div>
-
-        <div class="bn-field-row">
-          <div class="bn-field">
-            <label class="bn-label">Account Status</label>
-            <input type="text" class="bn-input" placeholder="Auto fetched" [(ngModel)]="accountStatus" readonly/>
-          </div>
-          <div class="bn-field">
-            <label class="bn-label">Beneficiary Branch Code</label>
-            <input type="text" class="bn-input" placeholder="Auto fetched" [(ngModel)]="beneficiaryBranchCode" readonly/>
-          </div>
-        </div>
-
-        <div class="bn-field">
-          <label class="bn-label">Receiving Branch</label>
-          <select class="bn-input" [(ngModel)]="receiverBranchCode">
-            <option value="">Select Branch</option>
-            @for (br of branches; track br.code) {
-              <option [value]="br.code">{{ br.name }} - {{ br.code }}</option>
-            }
-          </select>
-        </div>
-
-        <!-- Instrument Section -->
-        <div class="bn-field-row">
-          <div class="bn-field">
-            <label class="bn-label">Paying Bank Code</label>
-            <input type="text" class="bn-input" placeholder="Paying Bank Code" [(ngModel)]="payingBankCode" readonly/>
-          </div>
-          <div class="bn-field">
-            <label class="bn-label">Paying Branch Code</label>
-            <input type="text" class="bn-input" placeholder="Paying Branch Code" [(ngModel)]="payingBranchCode"/>
-          </div>
-        </div>
-
-        <div class="bn-field-row">
-          <div class="bn-field">
-            <label class="bn-label">Instrument Type</label>
-            <input type="text" class="bn-input" placeholder="Instrument Type" [(ngModel)]="instrumentType"/>
-          </div>
-          <div class="bn-field">
-            <label class="bn-label">Branch Code</label>
-            <input type="text" class="bn-input" placeholder="Branch Code" [(ngModel)]="receiverBranchCode"/>
-          </div>
-        </div>
-
-        <div class="bn-field-row">
-          <div class="bn-field">
-            <label class="bn-label">Currency</label>
-            <select class="bn-input" [(ngModel)]="currency" disabled>
-              <option>PKR - Pak Rupee</option>
-              <option>USD - US Dollar</option>
+            <label class="bn-label">Depositor Type</label>
+            <select class="bn-input" [(ngModel)]="depositorType" (ngModelChange)="onDepositorTypeChange()">
+              <option value="Self">Self</option>
+              <option value="MBL Account Holder">MBL Account Holder</option>
+              <option value="Walk-in">Walk-in</option>
             </select>
           </div>
-          <div class="bn-field">
-            <label class="bn-label">Amount (SRD)</label>
-            <div class="bn-amount-wrap">
-              <input type="number" class="bn-input bn-input--amount" placeholder="0.00" [(ngModel)]="amount" min="0" step="0.01"/>
-            </div>
-          </div>
-        </div>
-
-        <p class="bn-verify-note">
-          <svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true">
-            <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/>
-            <path d="M12 8v4m0 4h.01" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-          Verify with Legal Amount on cheque
-        </p>
-
-        <div class="bn-field-row">
           <div class="bn-field">
             <label class="bn-label">Cheque Date</label>
             <input type="date" class="bn-input" [(ngModel)]="chequeDate"/>
           </div>
+
+          <div class="bn-field">
+            <label class="bn-label">Beneficiary Account No</label>
+            <div class="bn-fetch-group">
+              <input type="text" class="bn-input" placeholder="Enter account number" [(ngModel)]="beneficiaryAccount" maxlength="50"/>
+              <button type="button" class="bn-fetch-btn" title="Fetch account" [disabled]="!beneficiaryAccount || isFetchingBeneficiary" (click)="onFetchBeneficiary()">
+                @if (isFetchingBeneficiary) {
+                  <span class="spinner-border spinner-border-sm"></span>
+                } @else {
+                  <svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true">
+                    <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+                    <path d="m21 21-4.35-4.35" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                }
+              </button>
+            </div>
+          </div>
+          <div class="bn-field">
+            <label class="bn-label">Account Title</label>
+            <input type="text" class="bn-input" placeholder="Auto fetched" [(ngModel)]="beneficiaryTitle" readonly/>
+          </div>
+
+          <div class="bn-field">
+            <label class="bn-label">CNIC</label>
+            <input type="text" class="bn-input" placeholder="00000-0000000-0" [(ngModel)]="cnic" maxlength="20"/>
+          </div>
+          <div class="bn-field">
+            <label class="bn-label">Deposit Slip ID</label>
+            <input type="text" class="bn-input" placeholder="Enter deposit slip ID" [(ngModel)]="depositSlipId" inputmode="numeric" maxlength="18"/>
+          </div>
+
+          <div class="bn-field">
+            <label class="bn-label">Drawer Bank</label>
+            <select class="bn-input" [(ngModel)]="payingBankCode">
+              <option value="">Select Bank</option>
+              @if (payingBankCode && !hasBank(payingBankCode)) {
+                <option [value]="payingBankCode">{{ payingBankCode }}</option>
+              }
+              @for (b of banks; track b.value) {
+                <option [value]="b.value">{{ b.value }} - {{ b.text }}</option>
+              }
+            </select>
+          </div>
+          <div class="bn-field">
+            <label class="bn-label">Drawer Branch</label>
+            <select class="bn-input" [(ngModel)]="payingBranchCode">
+              <option value="">Select Branch</option>
+              @if (payingBranchCode && !hasBranch(payingBranchCode)) {
+                <option [value]="payingBranchCode">{{ payingBranchCode }}</option>
+              }
+              @for (br of branches; track br.code) {
+                <option [value]="br.code">{{ br.code }} - {{ br.name }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="bn-field">
+            <label class="bn-label">Instrument Type</label>
+            <input type="text" class="bn-input" placeholder="Instrument Type" [(ngModel)]="instrumentType" maxlength="10"/>
+          </div>
+          <div class="bn-field">
+            <label class="bn-label">Account Status</label>
+            <input type="text" class="bn-input" placeholder="Auto fetched" [(ngModel)]="accountStatus" readonly/>
+          </div>
+
+          <div class="bn-field">
+            <label class="bn-label">Cycle</label>
+            <input type="text" class="bn-input" placeholder="Enter cycle" [(ngModel)]="cycle"/>
+          </div>
+          <div class="bn-field">
+            <label class="bn-label">City</label>
+            <input type="text" class="bn-input" placeholder="Enter city" [(ngModel)]="city"/>
+          </div>
+
+          <div class="bn-field bn-form-grid__full">
+            <label class="bn-label">Remarks</label>
+            <textarea class="bn-input bn-textarea" placeholder="Optional notes..." [(ngModel)]="remarks" rows="2" maxlength="100"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: MICR / OCR Verification -->
+      <div class="bn-section bn-micr-card">
+        <div class="bn-section__header">
+          <div>
+            <h6 class="bn-section__title">MICR Verification</h6>
+            <p class="bn-section__subtitle">Compare MICR and OCR values with user input</p>
+          </div>
         </div>
 
-        <div class="bn-field">
-          <label class="bn-label">Remarks</label>
-          <textarea class="bn-input bn-textarea" placeholder="Optional notes..." [(ngModel)]="remarks" rows="2"></textarea>
+        <div class="table-responsive">
+          <table class="bn-micr-table">
+            <thead>
+              <tr>
+                <th>Particulars</th>
+                <th class="text-center">MICR</th>
+                <th class="text-center">OCR</th>
+                <th class="text-center">User Input</th>
+                <th class="text-center">Matched</th>
+                <th class="text-center">Not Matched</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of micrRows; track row.key) {
+                @let status = getMicrRowStatus(row.key);
+                <tr>
+                  <td class="bn-micr-table__label">{{ row.label }}</td>
+                  <td>
+                    <div class="bn-micr-value">{{ getMicrValue(row.key) || '—' }}</div>
+                  </td>
+                  <td>
+                    <div class="bn-micr-value" [class.bn-micr-value--words]="row.key === 'amount' && getOcrValue(row.key)">
+                      {{ getOcrValue(row.key) || '—' }}
+                    </div>
+                  </td>
+                  <td>
+                    <div class="bn-micr-input"
+                         [class.bn-micr-input--matched]="status === 'matched'"
+                         [class.bn-micr-input--not-matched]="status === 'notMatched'">
+                      <input [type]="row.key === 'amount' ? 'number' : 'text'"
+                             class="bn-input"
+                             [placeholder]="row.key === 'amount' ? '0.00' : 'Enter ' + row.label.toLowerCase()"
+                             [ngModel]="getUserInput(row.key)"
+                             (ngModelChange)="setUserInput(row.key, $event)"/>
+                      @if (status === 'matched') {
+                        <ng-icon name="tablerCheck" class="bn-micr-input__icon"></ng-icon>
+                      } @else if (status === 'notMatched') {
+                        <ng-icon name="tablerX" class="bn-micr-input__icon"></ng-icon>
+                      }
+                    </div>
+                  </td>
+                  <td class="text-center">
+                    <input type="checkbox" class="bn-micr-check bn-micr-check--matched"
+                           [checked]="status === 'matched'"
+                           (change)="setMicrRowStatus(row.key, 'matched', $any($event.target).checked)"/>
+                  </td>
+                  <td class="text-center">
+                    <input type="checkbox" class="bn-micr-check bn-micr-check--not-matched"
+                           [checked]="status === 'notMatched'"
+                           (change)="setMicrRowStatus(row.key, 'notMatched', $any($event.target).checked)"/>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
         </div>
 
         <!-- Action Buttons -->
         <div class="bn-form-actions">
-          <!-- <button class="bn-btn-add" (click)="onAddInstrument()">
-            <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
-              <path d="M12 5v14m-7-7h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-            Add Instrument
-          </button> -->
           <button class="bn-btn-clear" (click)="onClearForm()">Clear</button>
           <button class="bn-btn-add" [disabled]="isSaving" (click)="onSave()">
             @if (isSaving) {
@@ -246,10 +246,168 @@
       <div class="bn-viewer">
         <div class="bn-viewer__header">
           <h6 class="bn-viewer__title">Verification Viewer</h6>
-          <p class="bn-viewer__subtitle">Verify MICR and Legal Amount visibility</p>
-          <div class="bn-viewer__tabs">
-            <button class="bn-viewer-tab" [class.bn-viewer-tab--active]="chequeView === 'front'" (click)="chequeView = 'front'">Front View</button>
-            <button class="bn-viewer-tab" [class.bn-viewer-tab--active]="chequeView === 'back'" (click)="chequeView = 'back'">Back View</button>
+          <p class="bn-viewer__subtitle">
+            Verify MICR and Legal Amount visibility
+          </p>
+        </div>
+
+        <!-- Scanned cheques queue (multi-cheque feed) -->
+        @if (scannedCheques.length > 1) {
+          <div class="bn-scan-queue">
+            <span class="bn-scan-queue__label">Scanned:</span>
+            @for (c of scannedCheques; track c.sequenceNumber; let i = $index) {
+              <button type="button" class="bn-scan-chip"
+                      [class.bn-scan-chip--active]="activeScanIndex === i"
+                      [class.bn-scan-chip--fraud]="c.micrMatch === false"
+                      (click)="selectScannedCheque(i)">
+                #{{ c.sequenceNumber }}
+              </button>
+            }
+          </div>
+        }
+
+        <div class="bn-viewer__canvas">
+          <div class="bn-cheque-preview">
+            @if (hasScanned) {
+
+              <!-- Image Controls Toolbar -->
+              <div class="image-controls-toolbar">
+                <div class="control-group">
+                  <span class="control-label">Zoom: {{ (scanZoom * 100).toFixed(0) }}%</span>
+                  <button class="control-btn" (click)="zoomScanOut()" title="Zoom Out">
+                    <ng-icon name="tablerZoomOut"></ng-icon>
+                  </button>
+                  <button class="control-btn" (click)="resetScanZoom()" title="Reset Zoom">
+                    <ng-icon name="tablerZoomReset"></ng-icon>
+                  </button>
+                  <button class="control-btn" (click)="zoomScanIn()" title="Zoom In">
+                    <ng-icon name="tablerZoomIn"></ng-icon>
+                  </button>
+                </div>
+                <div class="control-group">
+                  <span class="control-label">Rotate: {{ scanRotation }}°</span>
+                  <button class="control-btn" (click)="rotateScanLeft()" title="Rotate Left">
+                    <ng-icon name="tablerRotate"></ng-icon>
+                  </button>
+                  <button class="control-btn" (click)="resetScanRotation()" title="Reset Rotation">
+                    <ng-icon name="tablerRefresh"></ng-icon>
+                  </button>
+                  <button class="control-btn" (click)="rotateScanRight()" title="Rotate Right">
+                    <ng-icon name="tablerRotateClockwise"></ng-icon>
+                  </button>
+                </div>
+                <div class="control-group">
+                  <span class="control-label">Brightness: {{ scanBrightness }}%</span>
+                  <button class="control-btn" (click)="decreaseScanBrightness()" title="Decrease Brightness">
+                    <ng-icon name="tablerBrightnessDown"></ng-icon>
+                  </button>
+                  <button class="control-btn" (click)="resetScanBrightness()" title="Reset Brightness">
+                    <ng-icon name="tablerBrightness"></ng-icon>
+                  </button>
+                  <button class="control-btn" (click)="increaseScanBrightness()" title="Increase Brightness">
+                    <ng-icon name="tablerBrightnessUp"></ng-icon>
+                  </button>
+                </div>
+                <div class="control-group">
+                  <span class="control-label">Contrast: {{ scanContrast }}%</span>
+                  <button class="control-btn" (click)="decreaseScanContrast()" title="Decrease Contrast">
+                    <ng-icon name="tablerContrast"></ng-icon>
+                  </button>
+                  <button class="control-btn" (click)="resetScanContrast()" title="Reset Contrast">
+                    <ng-icon name="tablerContrast"></ng-icon>
+                  </button>
+                  <button class="control-btn" (click)="increaseScanContrast()" title="Increase Contrast">
+                    <ng-icon name="tablerContrast"></ng-icon>
+                  </button>
+                </div>
+                <div class="control-group">
+                  <button class="control-btn btn-reset-all" (click)="resetAllScanSettings()" title="Reset All">
+                    <ng-icon name="tablerRefresh"></ng-icon>
+                    <span>Reset All</span>
+                  </button>
+                </div>
+                <div class="control-group">
+                  <button class="control-btn btn-reset-all" (click)="onScanCheque()" [disabled]="isScanning" title="Retake Scan">
+                    <ng-icon name="tablerCamera"></ng-icon>
+                    <span>Retake</span>
+                  </button>
+                  <button class="control-btn btn-reset-all" (click)="onVisualChecks()" title="Visual Checks">
+                    <ng-icon name="tablerClipboardCheck"></ng-icon>
+                    <span>Visual Checks</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Main Image Display with Magnifier -->
+              <div class="cheque-image-container">
+                <div class="main-image-wrapper"
+                     (mousedown)="onScanMouseDown($event)"
+                     (mousemove)="onScanMouseMove($event)"
+                     (mouseup)="onScanMouseUp()"
+                     (mouseleave)="onScanMouseLeave()">
+                  @if (activeScanImage) {
+                    <img [src]="activeScanImage"
+                         class="main-cheque-image"
+                         [ngStyle]="getScanImageStyle()"
+                         [style.cursor]="scanZoom > 1 ? (isScanDragging ? 'grabbing' : 'grab') : 'zoom-in'"
+                         [alt]="'Cheque ' + chequeView + ' image'"/>
+                    @if (showScanMagnifier) {
+                      <div class="magnifier-lens"
+                           [style.background-image]="'url(' + activeScanImage + ')'"
+                           [style.background-position]="scanMagnifierBgPosition"
+                           [style.left]="scanMagnifierX + 'px'"
+                           [style.top]="scanMagnifierY + 'px'">
+                      </div>
+                    }
+                  } @else {
+                    <div class="bn-scan-empty">
+                      <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
+                        <rect x="3" y="3" width="18" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+                        <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/>
+                        <path d="m21 15-5-5L5 21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                      <p>No {{ chequeView === 'Ultra' ? 'Ultra Violet' : chequeView }} image captured for this cheque.</p>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <!-- Thumbnail Images -->
+              <div class="thumbnail-container mt-2">
+                <div class="thumbnail-item"
+                     [class.active]="chequeView === 'front'"
+                     (click)="selectScanView('front')">
+                  <img [src]="scanFrontImage" alt="Front"/>
+                  <span class="thumbnail-label">Front</span>
+                </div>
+                <div class="thumbnail-item"
+                     [class.active]="chequeView === 'back'"
+                     (click)="selectScanView('back')">
+                  <img [src]="scanBackImage" alt="Back"/>
+                  <span class="thumbnail-label">Back</span>
+                </div>
+                <div class="thumbnail-item"
+                     [class.active]="chequeView === 'Ultra'"
+                     (click)="selectScanView('Ultra')">
+                  <img [src]="scanUvImage" alt="Ultra Violet"/>
+                  <span class="thumbnail-label">Ultra Violet</span>
+                </div>
+              </div>
+
+            } @else {
+            <div class="bn-cheque-mock">
+              <div class="bn-cheque-mock__header">
+                <div class="bn-cheque-mock__logo">LOGO</div>
+                <div class="bn-cheque-mock__date-box">DATE</div>
+              </div>
+              <div class="bn-cheque-mock__body">
+                <p class="bn-cheque-mock__line">PAY TO THE ORDER OF</p>
+                <div class="bn-cheque-mock__amount-box">PKR</div>
+                <p class="bn-cheque-mock__line">NUMERICAL AMOUNT</p>
+                <p class="bn-cheque-mock__micr">⑈1055588830⑈</p>
+              </div>
+            </div>
+            }
           </div>
         </div>
 
@@ -273,21 +431,74 @@
               <span class="bn-verify-panel__label">MICR Code Line</span>
               <span class="bn-verify-panel__value">
                 <span class="bn-verify-panel__mono">{{ micrCode }}</span>
-                <span class="bn-badge bn-badge--review">Review</span>
+                <span class="bn-badge"
+                      [class.bn-badge--verified]="micrMatch === true"
+                      [class.bn-badge--fraud]="micrMatch === false"
+                      [class.bn-badge--review]="micrMatch === null">
+                  {{ micrMatch === true ? 'Verified' : micrMatch === false ? 'Fraud' : 'Review' }}
+                </span>
+              </span>
+            </div>
+            <div class="bn-verify-panel__row">
+              <span class="bn-verify-panel__label">MICR OCR Line</span>
+              <span class="bn-verify-panel__value">
+                <span class="bn-verify-panel__mono">{{ scanMicrOcr || '—' }}</span>
+                @if (micrMatch === true) {
+                  <span class="bn-badge bn-badge--verified">Matched</span>
+                }
+                @if (micrMatch === false) {
+                  <span class="bn-badge bn-badge--fraud">Fraud Detected</span>
+                }
               </span>
             </div>
 
-            <p class="bn-verify-panel__section-title">TRANSACTION DATA</p>
-            <div class="bn-verify-panel__cards">
-              <div class="bn-verify-panel__card">
-                <p class="bn-verify-panel__card-label">
-                  Amount (PKR) <span class="bn-badge bn-badge--verified">Verified</span>
-                </p>
-                <p class="bn-verify-panel__card-value">{{ formatAmount(amount || 0) }}</p>
+            <p class="bn-verify-panel__section-title">CHEQUE ANALYTICS</p>
+            <div class="bn-analytics">
+              <div class="bn-analytics__tabs">
+                @for (tab of analyticsTabs; track tab.key) {
+                  <button type="button" class="bn-analytics-tab"
+                          [class.bn-analytics-tab--active]="activeAnalyticsTab === tab.key"
+                          (click)="activeAnalyticsTab = tab.key">
+                    <span class="bn-analytics-tab__title">
+                      {{ tab.title }} <strong>{{ tab.done }}/{{ tab.total }}</strong>
+                    </span>
+                    <span class="bn-analytics-tab__sub" [class.bn-analytics-tab__sub--alert]="tab.alert">{{ tab.note }}</span>
+                  </button>
+                }
               </div>
-              <div class="bn-verify-panel__card">
-                <p class="bn-verify-panel__card-label">Cheque Date</p>
-                <p class="bn-verify-panel__card-value">{{ chequeDate }}</p>
+
+              <div class="bn-analytics__body">
+                @if (activeAnalyticsTab === 'risk') {
+                  <div class="bn-analytics-grid">
+                    @for (item of riskParameters; track item.label) {
+                      <div class="bn-analytics-item">
+                        <ng-icon [name]="item.icon" class="bn-analytics-item__icon bn-analytics-item__icon--{{ item.tone }}"></ng-icon>
+                        <span class="bn-analytics-item__label">{{ item.label }}</span>
+                        <span class="bn-analytics-item__value">{{ item.value }}</span>
+                      </div>
+                    }
+                  </div>
+                } @else if (activeAnalyticsTab === 'validation') {
+                  <div class="bn-analytics-grid">
+                    @for (item of validationChecks; track item.label) {
+                      <div class="bn-analytics-item">
+                        <ng-icon [name]="item.icon" class="bn-analytics-item__icon bn-analytics-item__icon--{{ item.tone }}"></ng-icon>
+                        <span class="bn-analytics-item__label">{{ item.label }}</span>
+                        <span class="bn-analytics-item__value">{{ item.value }}</span>
+                      </div>
+                    }
+                  </div>
+                } @else {
+                  <div class="bn-analytics-grid">
+                    @for (item of imageQualityChecks; track item.label) {
+                      <div class="bn-analytics-item">
+                        <ng-icon [name]="item.icon" class="bn-analytics-item__icon bn-analytics-item__icon--{{ item.tone }}"></ng-icon>
+                        <span class="bn-analytics-item__label">{{ item.label }}</span>
+                        <span class="bn-analytics-item__value">{{ item.value }}</span>
+                      </div>
+                    }
+                  </div>
+                }
               </div>
             </div>
 
@@ -307,31 +518,6 @@
             </div>
           </div>
         }
-
-        <div class="bn-viewer__canvas">
-          <!-- Placeholder cheque image -->
-          <div class="bn-cheque-preview">
-            <div class="bn-cheque-preview__retake">
-              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
-                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" fill="none" stroke="currentColor" stroke-width="2"/>
-                <circle cx="12" cy="13" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
-              </svg>
-              Retake Scan
-            </div>
-            <div class="bn-cheque-mock">
-              <div class="bn-cheque-mock__header">
-                <div class="bn-cheque-mock__logo">LOGO</div>
-                <div class="bn-cheque-mock__date-box">DATE</div>
-              </div>
-              <div class="bn-cheque-mock__body">
-                <p class="bn-cheque-mock__line">PAY TO THE ORDER OF</p>
-                <div class="bn-cheque-mock__amount-box">PKR</div>
-                <p class="bn-cheque-mock__line">NUMERICAL AMOUNT</p>
-                <p class="bn-cheque-mock__micr">⑈1055588830⑈</p>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -367,6 +553,9 @@
             <th>CHEQUE NO.</th>
             <th>ACCOUNT NO.</th>
             <th>DRAWEE BANK</th>
+            <th>CITY</th>
+            <th>DEPOSIT SLIP ID</th>
+            <th>CYCLE</th>
             <th class="text-end">AMOUNT</th>
             <th>STATUS</th>
             <th class="text-center">ACTIONS</th>
@@ -375,14 +564,14 @@
         <tbody>
           @if (isLoadingInstruments) {
             <tr>
-              <td colspan="7" class="text-center py-3">
+              <td colspan="10" class="text-center py-3">
                 <app-spinner></app-spinner>
               </td>
             </tr>
           }
           @if (!isLoadingInstruments && instruments.length === 0) {
             <tr>
-              <td colspan="7" class="text-center py-4 text-muted">No instruments found.</td>
+              <td colspan="10" class="text-center py-4 text-muted">No instruments found.</td>
             </tr>
           }
           @for (item of instruments; track item.id) {
@@ -391,6 +580,9 @@
               <td><span class="bn-cheque-no">{{ item.chequeNo }}</span></td>
               <td class="bn-account">{{ item.accountNo }}</td>
               <td>{{ item.drawerBankName }}</td>
+              <td>{{ item.city || '—' }}</td>
+              <td>{{ item.depositSlipId || '—' }}</td>
+              <td>{{ item.cycle || '—' }}</td>
               <td class="text-end"><strong>{{ formatAmount(item.amount) }}</strong></td>
               <td>
                 <span class="bn-inst-status bn-inst-status--{{ item.status.toLowerCase() }}">{{ item.status }}</span>

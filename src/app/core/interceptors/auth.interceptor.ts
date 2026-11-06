@@ -2,6 +2,12 @@ import { HttpInterceptorFn, HttpRequest, HttpHandlerFn, HttpEvent } from '@angul
 import { Observable } from 'rxjs';
 
 export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
+  // The local Bancor scanner service doesn't allow the Authorization header in
+  // its CORS preflight — device calls must go out without auth headers.
+  if (req.url.includes('localhost:6077') || req.url.startsWith('/scanner-api')) {
+    return next(req);
+  }
+
   const token = sessionStorage.getItem('access_token');
    
   const isFormData = req.body instanceof FormData;

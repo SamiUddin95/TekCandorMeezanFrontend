@@ -43,7 +43,7 @@ export class ClearingLogReportComponent implements OnInit, OnDestroy {
   reportUrl = '';
   isReportLoading = false;
 
-  private readonly ssrsBaseUrl = 'http://muhammad-ameen/ReportServer/Pages/ReportViewer.aspx?%2fSSRS_Reports%2fClearingLogReport&rs:Command=Render';
+  private readonly ssrsBaseUrl = 'http://sami-uddin/ReportServer/Pages/ReportViewer.aspx?%2fSSRS_Reports%2fClearingLogReport&rs:Command=Render';
 
   private subscriptions = new Subscription();
 

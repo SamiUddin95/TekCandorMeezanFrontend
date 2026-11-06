@@ -32,7 +32,7 @@ export class BranchwiseReportComponent implements OnInit, OnDestroy, AfterViewIn
   reportUrl = '';
   isReportLoading = false;
 
-  private readonly ssrsBaseUrl = 'http://muhammad-ameen/ReportServer/Pages/ReportViewer.aspx?%2fSSRS_Reports%2fBranchWise&rs:Command=Render';
+  private readonly ssrsBaseUrl = 'http://sami-uddin/ReportServer/Pages/ReportViewer.aspx?%2fSSRS_Reports%2fBranchWise&rs:Command=Render';
 
   private subscriptions = new Subscription();
 

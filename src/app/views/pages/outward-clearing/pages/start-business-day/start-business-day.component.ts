@@ -83,7 +83,7 @@ export class StartBusinessDayComponent implements OnInit {
 
                 const payload: BusinessDateRequest = {
                     id: this.businessDateId,
-                    businessDate: this.businessDate ? this.businessDate.toISOString() : new Date().toISOString(),
+                    businessDate: this.toLocalDateString(this.businessDate || new Date()),
                     isActive: true,
                     startedBy,
                     startedAt: new Date().toISOString()
@@ -101,7 +101,7 @@ export class StartBusinessDayComponent implements OnInit {
 
                         this.startBusinessDayService.setBusinessDayState(
                             true,
-                            this.businessDate ? this.businessDate.toISOString() : null
+                            this.businessDate ? this.toLocalDateString(this.businessDate) : null
                         );
 
                         Swal.fire({
@@ -125,5 +125,11 @@ export class StartBusinessDayComponent implements OnInit {
                 });
             }
         });
+    }
+
+    /** yyyy-MM-dd in local time — avoids toISOString() shifting the date to the previous UTC day. */
+    private toLocalDateString(d: Date): string {
+        const pad = (n: number) => String(n).padStart(2, '0');
+        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
     }
 }

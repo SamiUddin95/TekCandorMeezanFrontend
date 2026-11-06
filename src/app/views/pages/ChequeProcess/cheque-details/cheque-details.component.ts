@@ -40,6 +40,9 @@ export class ChequeDetailsComponent implements OnInit {
   currentImageType: string = 'front';
   currentChequeImage: string = '';
   signatureImages: any[] = [];
+  signatureVerificationStatus: 'verified' | 'rejected' | null = null;
+  signatureMatchScore: number | null = null;
+  isVerifyingSignature = false;
   isLoadingSignatureImages: boolean = false;
   signatureImageError: string = '';
   currentSignatureIndex: number = 0;
@@ -433,6 +436,84 @@ export class ChequeDetailsComponent implements OnInit {
   }
 
   // Fetch signature images
+  /**
+   * Auto signature verification: compares the signature on file with the signature
+   * on the cheque image and returns a match accuracy.
+   * TODO: replace the simulated score with the AI verification service response.
+   */
+  onVerifySignature(): void {
+    if (this.signatureImages.length === 0) {
+      Swal.fire({ icon: 'info', title: 'No Signatures', text: 'Load signature images first.' });
+      return;
+    }
+
+    this.isVerifyingSignature = true;
+    Swal.fire({
+      title: 'Verifying Signature',
+      html: 'Comparing signature on file with the cheque signature…',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
+    });
+
+    this.runSignatureMatch()
+      .then(score => {
+        this.isVerifyingSignature = false;
+        this.signatureMatchScore = score;
+        this.signatureVerificationStatus = score >= 70 ? 'verified' : 'rejected';
+        this.showSignatureResult(score);
+      })
+      .catch(() => {
+        this.isVerifyingSignature = false;
+        Swal.fire({ icon: 'error', title: 'Verification Failed', text: 'Unable to verify the signature.' });
+      });
+  }
+
+  /** Simulated match score — swap for the AI verification API call when available. */
+  private runSignatureMatch(): Promise<number> {
+    return new Promise(resolve => setTimeout(() => resolve(5), 1500));
+  }
+
+  private showSignatureResult(score: number): void {
+    const sigList = this.signatureImages.map((img: any, i: number) =>
+      `<img src="${img.url}" style="max-width:100%;max-height:200px;object-fit:contain;border:1px solid #e5e7eb;border-radius:8px;background:#fff;" alt="Signature ${i + 1}"/>`
+    ).join('');
+    const chequeImg = this.frontImageUrl
+      ? `<img src="${this.frontImageUrl}" style="max-width:100%;max-height:260px;object-fit:contain;border:1px solid #e5e7eb;border-radius:8px;background:#fff;" alt="Cheque Front"/>`
+      : `<div style="display:flex;align-items:center;justify-content:center;height:180px;background:#f8fafc;border-radius:8px;color:#9ca3af;font-size:12px;">Cheque image not loaded</div>`;
+    const verified = this.signatureVerificationStatus === 'verified';
+    const color = verified ? '#198754' : '#dc2626';
+
+    Swal.fire({
+      title: 'Signature Verification Result',
+      width: 820,
+      html: `
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;text-align:left;">
+          <div>
+            <h6 style="font-size:12px;font-weight:700;color:#6b7280;text-transform:uppercase;margin:0 0 8px;letter-spacing:.5px;">Signature on File</h6>
+            <div style="display:flex;flex-direction:column;gap:8px;">${sigList}</div>
+          </div>
+          <div>
+            <h6 style="font-size:12px;font-weight:700;color:#6b7280;text-transform:uppercase;margin:0 0 8px;letter-spacing:.5px;">Signature on Cheque</h6>
+            ${chequeImg}
+          </div>
+        </div>
+        <div style="margin-top:16px;text-align:left;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <span style="font-size:12.5px;font-weight:700;color:#374151;">Match Accuracy</span>
+            <span style="font-size:16px;font-weight:800;color:${color};">${score.toFixed(1)}%</span>
+          </div>
+          <div style="height:8px;background:#e5e7eb;border-radius:99px;overflow:hidden;">
+            <div style="height:100%;width:${score}%;background:${color};border-radius:99px;"></div>
+          </div>
+          <p style="margin-top:8px;font-size:12px;font-weight:700;color:${color};">
+            ${verified ? 'Signature matched' : 'Signature does not match'} the cheque signature.
+          </p>
+        </div>`,
+      confirmButtonText: 'Close',
+      confirmButtonColor: '#5a2181'
+    });
+  }
+
   fetchSignatureImages(): void {
     if (!this.chequeDetails) {
       this.signatureImageError = 'No cheque details available';
@@ -443,6 +524,8 @@ export class ChequeDetailsComponent implements OnInit {
     this.isLoadingSignatureImages = true;
     this.signatureImageError = '';
     this.signatureImages = [];
+    this.signatureVerificationStatus = null;
+    this.signatureMatchScore = null;
 
     // Prepare request body
     const requestBody = {

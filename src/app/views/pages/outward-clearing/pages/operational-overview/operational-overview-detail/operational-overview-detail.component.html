@@ -64,179 +64,401 @@
       </div>
     </div>
 
-    <!-- Two-column grid -->
+    <!-- Two-column grid (same layout as instrument entry page) -->
     <div class="ood-detail__grid">
 
-      <!-- LEFT -->
+      <!-- LEFT: read-only Instrument Details + MICR Verification -->
       <div class="ood-detail__left">
 
-        <!-- Cheque Preview -->
-        <div class="ood-detail__card">
-          <div class="ood-detail__card-header">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <rect x="2" y="5" width="20" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/>
-              <path d="M2 10h20" fill="none" stroke="currentColor" stroke-width="1.8"/>
-            </svg>
-            Instrument Preview
-            <span class="ood-detail__confidence">{{ detailItem.processingTime }} processed</span>
-          </div>
-          <div class="ood-detail__cheque-mock">
-            <div class="ood-detail__mock-bank">{{ detailItem.drawerBank || 'Drawer Bank' }}</div>
-            <div class="ood-detail__mock-row">
-              <span>DATE: {{ detailItem.chequeDate }}</span>
-              <span class="ood-detail__mock-amt">{{ detailItem.currency }} {{ formatAmount(detailItem.amount) }}/-</span>
-            </div>
-            <div class="ood-detail__mock-payee">
-              PAY TO THE ORDER OF &nbsp;<strong>{{ detailItem.beneficiaryTitle }}</strong>
-            </div>
-            <div class="ood-detail__mock-micr">{{ detailItem.micr }}</div>
-            <div class="ood-detail__mock-footer">
-              <span>Cheque No: {{ detailItem.chequeNo }}</span>
-              <span>Branch: {{ detailItem.payingBranchCode }}</span>
-              <span>Received: {{ formatDate(detailItem.date) }}</span>
+        <!-- Card 1: Instrument Details (read-only) -->
+        <div class="bn-section">
+          <div class="bn-section__header">
+            <div>
+              <h6 class="bn-section__title">Instrument Details</h6>
+              <p class="bn-section__subtitle">Depositor slip and instrument particulars</p>
             </div>
           </div>
-        </div>
-        <div class="ood-detail__card">
-          <div class="ood-detail__card-header">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <rect x="2" y="5" width="20" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/>
-              <path d="M2 10h20" fill="none" stroke="currentColor" stroke-width="1.8"/>
-            </svg>
-            Instrument Preview Back
-            <span class="ood-detail__confidence">{{ detailItem.processingTime }} processed</span>
+          <div class="bn-field-row">
+            <div class="bn-field">
+              <label class="bn-label">Depositor Type</label>
+              <input class="bn-input" [value]="detailItem.depositorType || '—'" readonly/>
+            </div>
+            <div class="bn-field">
+              <label class="bn-label">Cheque Date</label>
+              <input class="bn-input" [value]="detailItem.chequeDate || '—'" readonly/>
+            </div>
           </div>
-          <div class="ood-detail__cheque-mock">
-            <div class="ood-detail__mock-bank">{{ detailItem.drawerBank || 'Drawer Bank' }}</div>
-            <div class="ood-detail__mock-row">
-              <span>DATE: {{ detailItem.chequeDate }}</span>
-              <span class="ood-detail__mock-amt">{{ detailItem.currency }} {{ formatAmount(detailItem.amount) }}/-</span>
+          <div class="bn-field-row">
+            <div class="bn-field">
+              <label class="bn-label">Beneficiary Account No</label>
+              <input class="bn-input" [value]="detailItem.beneficiaryAccountNumber || '—'" readonly/>
             </div>
-            <div class="ood-detail__mock-payee">
-              PAY TO THE ORDER OF &nbsp;<strong>{{ detailItem.beneficiaryTitle }}</strong>
+            <div class="bn-field">
+              <label class="bn-label">Account Title</label>
+              <input class="bn-input" [value]="detailItem.beneficiaryTitle || detailItem.depositorTitle || '—'" readonly/>
             </div>
-            <div class="ood-detail__mock-micr">{{ detailItem.micr }}</div>
-            <div class="ood-detail__mock-footer">
-              <span>Cheque No: {{ detailItem.chequeNo }}</span>
-              <span>Branch: {{ detailItem.payingBranchCode }}</span>
-              <span>Received: {{ formatDate(detailItem.date) }}</span>
+          </div>
+          <div class="bn-field-row">
+            <div class="bn-field">
+              <label class="bn-label">CNIC</label>
+              <input class="bn-input" [value]="detailItem.cnic || '—'" readonly/>
+            </div>
+            <div class="bn-field">
+              <label class="bn-label">Deposit Slip ID</label>
+              <input class="bn-input" [value]="detailItem.depositSlipId || '—'" readonly/>
+            </div>
+          </div>
+          <div class="bn-field-row">
+            <div class="bn-field">
+              <label class="bn-label">Drawer Bank</label>
+              <input class="bn-input" [value]="detailItem.drawerBank || detailItem.payingBankCode || '—'" readonly/>
+            </div>
+            <div class="bn-field">
+              <label class="bn-label">Drawer Branch</label>
+              <input class="bn-input" [value]="detailItem.payingBranchCode || '—'" readonly/>
+            </div>
+          </div>
+          <div class="bn-field-row">
+            <div class="bn-field">
+              <label class="bn-label">Instrument Type</label>
+              <input class="bn-input" [value]="detailItem.instrumentType || '—'" readonly/>
+            </div>
+            <div class="bn-field">
+              <label class="bn-label">Account Status</label>
+              <input class="bn-input" [value]="detailItem.accountStatus || '—'" readonly/>
+            </div>
+          </div>
+          <div class="bn-field-row">
+            <div class="bn-field">
+              <label class="bn-label">Amount ({{ detailItem.currency || 'PKR' }})</label>
+              <input class="bn-input" [value]="formatAmount(detailItem.amount)" readonly/>
+            </div>
+            <div class="bn-field">
+              <label class="bn-label">Inward Branch</label>
+              <input class="bn-input" [value]="detailItem.branchName || detailItem.receiverBranchCode || '—'" readonly/>
+            </div>
+          </div>
+          <div class="bn-field-row bn-field-row--full">
+            <div class="bn-field">
+              <label class="bn-label">Remarks</label>
+              <textarea class="bn-input" rows="2" readonly>{{ detailItem.remarks || '—' }}</textarea>
             </div>
           </div>
         </div>
 
+        <!-- Card 2: MICR / OCR Verification (read-only) -->
+        <div class="bn-section bn-micr-card">
+          <div class="bn-section__header">
+            <div>
+              <h6 class="bn-section__title">MICR Verification</h6>
+              <p class="bn-section__subtitle">MICR and OCR values compared with captured input</p>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="bn-micr-table">
+              <thead>
+                <tr>
+                  <th>Particulars</th>
+                  <th class="text-center">MICR</th>
+                  <th class="text-center">OCR</th>
+                  <th class="text-center">User Input</th>
+                  <th class="text-center">Matched</th>
+                  <th class="text-center">Not Matched</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (row of micrRows; track row.key) {
+                  @let status = getMicrRowStatus(row.key);
+                  <tr>
+                    <td class="bn-micr-table__label">{{ row.label }}</td>
+                    <td>
+                      <div class="bn-micr-value">{{ getMicrValue(row.key) || '—' }}</div>
+                    </td>
+                    <td>
+                      <div class="bn-micr-value" [class.bn-micr-value--words]="row.key === 'amount' && getOcrValue(row.key)">
+                        {{ getOcrValue(row.key) || '—' }}
+                      </div>
+                    </td>
+                    <td>
+                      <div class="bn-micr-input"
+                           [class.bn-micr-input--matched]="status === 'matched'"
+                           [class.bn-micr-input--not-matched]="status === 'notMatched'">
+                        <input [type]="row.key === 'amount' ? 'number' : 'text'"
+                               class="bn-input"
+                               [value]="getUserInput(row.key)"
+                               readonly/>
+                        @if (status === 'matched') {
+                          <ng-icon name="tablerCheck" class="bn-micr-input__icon"></ng-icon>
+                        } @else if (status === 'notMatched') {
+                          <ng-icon name="tablerX" class="bn-micr-input__icon"></ng-icon>
+                        }
+                      </div>
+                    </td>
+                    <td class="text-center">
+                      <input type="checkbox" class="bn-micr-check bn-micr-check--matched"
+                             [checked]="status === 'matched'" disabled/>
+                    </td>
+                    <td class="text-center">
+                      <input type="checkbox" class="bn-micr-check bn-micr-check--not-matched"
+                             [checked]="status === 'notMatched'" disabled/>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
 
-      <!-- RIGHT -->
+      <!-- RIGHT: Verification Viewer -->
       <div class="ood-detail__right">
-        <div class="ood-detail__card">
-          <div class="ood-detail__card-header">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="none" stroke="currentColor" stroke-width="1.8"/>
-            </svg>
-            Digital Verification Data
+        <div class="bn-viewer">
+          <div class="bn-viewer__header">
+            <h6 class="bn-viewer__title">Verification Viewer</h6>
+            <p class="bn-viewer__subtitle">Verify MICR and Legal Amount visibility</p>
           </div>
 
-          <!-- Depositor Info -->
-          <div class="ood-detail__section">
-            <p class="ood-detail__section-title">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" fill="none" stroke="currentColor" stroke-width="1.8"/>
-                <circle cx="12" cy="7" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/>
-              </svg>
-              Depositor Info
-            </p>
-            <div class="ood-detail__row">
-              <span class="ood-detail__key">Account Name</span>
-              <span class="ood-detail__val">{{ detailItem.depositorTitle }}</span>
-            </div>
-            <div class="ood-detail__row">
-              <span class="ood-detail__key">Account Number</span>
-              <span class="ood-detail__val ood-detail__val--mono">{{ detailItem.accountNo }}</span>
-            </div>
-            <div class="ood-detail__row">
-              <span class="ood-detail__key">Depositor Type</span>
-              <span class="ood-detail__val">{{ detailItem.depositorType }}</span>
-            </div>
-            <div class="ood-detail__row">
-              <span class="ood-detail__key">Account Status</span>
-              <span class="ood-detail__val">{{ detailItem.accountStatus }}</span>
+          <div class="bn-viewer__canvas">
+            <div class="bn-cheque-preview">
+              @if (hasImages) {
+
+                <!-- Image Controls Toolbar -->
+                <div class="image-controls-toolbar">
+                  <div class="control-group">
+                    <span class="control-label">Zoom: {{ (scanZoom * 100).toFixed(0) }}%</span>
+                    <button class="control-btn" (click)="zoomScanOut()" title="Zoom Out">
+                      <ng-icon name="tablerZoomOut"></ng-icon>
+                    </button>
+                    <button class="control-btn" (click)="resetScanZoom()" title="Reset Zoom">
+                      <ng-icon name="tablerZoomReset"></ng-icon>
+                    </button>
+                    <button class="control-btn" (click)="zoomScanIn()" title="Zoom In">
+                      <ng-icon name="tablerZoomIn"></ng-icon>
+                    </button>
+                  </div>
+                  <div class="control-group">
+                    <span class="control-label">Rotate: {{ scanRotation }}°</span>
+                    <button class="control-btn" (click)="rotateScanLeft()" title="Rotate Left">
+                      <ng-icon name="tablerRotate"></ng-icon>
+                    </button>
+                    <button class="control-btn" (click)="resetScanRotation()" title="Reset Rotation">
+                      <ng-icon name="tablerRefresh"></ng-icon>
+                    </button>
+                    <button class="control-btn" (click)="rotateScanRight()" title="Rotate Right">
+                      <ng-icon name="tablerRotateClockwise"></ng-icon>
+                    </button>
+                  </div>
+                  <div class="control-group">
+                    <span class="control-label">Brightness: {{ scanBrightness }}%</span>
+                    <button class="control-btn" (click)="decreaseScanBrightness()" title="Decrease Brightness">
+                      <ng-icon name="tablerBrightnessDown"></ng-icon>
+                    </button>
+                    <button class="control-btn" (click)="resetScanBrightness()" title="Reset Brightness">
+                      <ng-icon name="tablerBrightness"></ng-icon>
+                    </button>
+                    <button class="control-btn" (click)="increaseScanBrightness()" title="Increase Brightness">
+                      <ng-icon name="tablerBrightnessUp"></ng-icon>
+                    </button>
+                  </div>
+                  <div class="control-group">
+                    <span class="control-label">Contrast: {{ scanContrast }}%</span>
+                    <button class="control-btn" (click)="decreaseScanContrast()" title="Decrease Contrast">
+                      <ng-icon name="tablerContrast"></ng-icon>
+                    </button>
+                    <button class="control-btn" (click)="resetScanContrast()" title="Reset Contrast">
+                      <ng-icon name="tablerContrast"></ng-icon>
+                    </button>
+                    <button class="control-btn" (click)="increaseScanContrast()" title="Increase Contrast">
+                      <ng-icon name="tablerContrast"></ng-icon>
+                    </button>
+                  </div>
+                  <div class="control-group">
+                    <button class="control-btn btn-reset-all" (click)="resetAllScanSettings()" title="Reset All">
+                      <ng-icon name="tablerRefresh"></ng-icon>
+                      <span>Reset All</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Main Image Display with Magnifier -->
+                <div class="cheque-image-container">
+                  <div class="main-image-wrapper"
+                       (mousedown)="onScanMouseDown($event)"
+                       (mousemove)="onScanMouseMove($event)"
+                       (mouseup)="onScanMouseUp()"
+                       (mouseleave)="onScanMouseLeave()">
+                    @if (activeScanImage) {
+                      <img [src]="activeScanImage"
+                           class="main-cheque-image"
+                           [ngStyle]="getScanImageStyle()"
+                           [style.cursor]="scanZoom > 1 ? (isScanDragging ? 'grabbing' : 'grab') : 'zoom-in'"
+                           [alt]="'Cheque ' + chequeView + ' image'"/>
+                      @if (showScanMagnifier) {
+                        <div class="magnifier-lens"
+                             [style.background-image]="'url(' + activeScanImage + ')'"
+                             [style.background-position]="scanMagnifierBgPosition"
+                             [style.left]="scanMagnifierX + 'px'"
+                             [style.top]="scanMagnifierY + 'px'">
+                        </div>
+                      }
+                    } @else {
+                      <div class="bn-scan-empty">
+                        <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
+                          <rect x="3" y="3" width="18" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+                          <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/>
+                          <path d="m21 15-5-5L5 21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <p>No {{ chequeView === 'Ultra' ? 'Ultra Violet' : chequeView }} image captured for this cheque.</p>
+                      </div>
+                    }
+                  </div>
+                </div>
+
+                <!-- Thumbnail Images -->
+                <div class="thumbnail-container mt-2">
+                  <div class="thumbnail-item"
+                       [class.active]="chequeView === 'front'"
+                       (click)="selectScanView('front')">
+                    <img [src]="scanFrontImage" alt="Front"/>
+                    <span class="thumbnail-label">Front</span>
+                  </div>
+                  <div class="thumbnail-item"
+                       [class.active]="chequeView === 'back'"
+                       (click)="selectScanView('back')">
+                    <img [src]="scanBackImage" alt="Back"/>
+                    <span class="thumbnail-label">Back</span>
+                  </div>
+                  <div class="thumbnail-item"
+                       [class.active]="chequeView === 'Ultra'"
+                       (click)="selectScanView('Ultra')">
+                    <img [src]="scanUvImage" alt="Ultra Violet"/>
+                    <span class="thumbnail-label">Ultra Violet</span>
+                  </div>
+                </div>
+
+              } @else {
+              <div class="bn-cheque-mock">
+                <div class="bn-cheque-mock__header">
+                  <div class="bn-cheque-mock__logo">LOGO</div>
+                  <div class="bn-cheque-mock__date-box">DATE</div>
+                </div>
+                <div class="bn-cheque-mock__body">
+                  <p class="bn-cheque-mock__line">PAY TO THE ORDER OF</p>
+                  <div class="bn-cheque-mock__amount-box">PKR</div>
+                  <p class="bn-cheque-mock__line">NUMERICAL AMOUNT</p>
+                  <p class="bn-cheque-mock__micr">⑈1055588830⑈</p>
+                </div>
+              </div>
+              }
             </div>
           </div>
 
-          <!-- Beneficiary Info -->
-          <div class="ood-detail__section">
-            <p class="ood-detail__section-title">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" fill="none" stroke="currentColor" stroke-width="1.8"/>
-                <circle cx="9" cy="7" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/>
-                <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" fill="none" stroke="currentColor" stroke-width="1.8"/>
-              </svg>
-              Beneficiary Info
-            </p>
-            <div class="ood-detail__row">
-              <span class="ood-detail__key">Beneficiary Name</span>
-              <span class="ood-detail__val">{{ detailItem.beneficiaryTitle }}</span>
+          <!-- Verification Panel -->
+          <div class="bn-verify-panel">
+            <div class="bn-verify-panel__header">
+              <h6 class="bn-verify-panel__title">Verification Panel</h6>
+              <span class="bn-verify-panel__status">{{ scanStatus }}</span>
             </div>
-            <div class="ood-detail__row">
-              <span class="ood-detail__key">Beneficiary Branch</span>
-              <span class="ood-detail__val ood-detail__val--mono">{{ detailItem.beneficiaryBranchCode }}</span>
+
+            <p class="bn-verify-panel__section-title">INSTRUMENT DETAILS</p>
+            <div class="bn-verify-panel__row">
+              <span class="bn-verify-panel__label">Cheque Number</span>
+              <span class="bn-verify-panel__value">
+                <span class="bn-verify-panel__mono">{{ chequeNumber }}</span>
+                <span class="bn-badge bn-badge--verified">Verified</span>
+              </span>
+            </div>
+            <div class="bn-verify-panel__row">
+              <span class="bn-verify-panel__label">MICR Code Line</span>
+              <span class="bn-verify-panel__value">
+                <span class="bn-verify-panel__mono">{{ micrCode }}</span>
+                <span class="bn-badge"
+                      [class.bn-badge--verified]="micrMatch === true"
+                      [class.bn-badge--fraud]="micrMatch === false"
+                      [class.bn-badge--review]="micrMatch === null">
+                  {{ micrMatch === true ? 'Verified' : micrMatch === false ? 'Fraud' : 'Review' }}
+                </span>
+              </span>
+            </div>
+            <div class="bn-verify-panel__row">
+              <span class="bn-verify-panel__label">MICR OCR Line</span>
+              <span class="bn-verify-panel__value">
+                <span class="bn-verify-panel__mono">{{ scanMicrOcr || '—' }}</span>
+                @if (micrMatch === true) {
+                  <span class="bn-badge bn-badge--verified">Matched</span>
+                }
+                @if (micrMatch === false) {
+                  <span class="bn-badge bn-badge--fraud">Fraud Detected</span>
+                }
+              </span>
+            </div>
+
+            <p class="bn-verify-panel__section-title">CHEQUE ANALYTICS</p>
+            <div class="bn-analytics">
+              <div class="bn-analytics__tabs">
+                @for (tab of analyticsTabs; track tab.key) {
+                  <button type="button" class="bn-analytics-tab"
+                          [class.bn-analytics-tab--active]="activeAnalyticsTab === tab.key"
+                          (click)="activeAnalyticsTab = tab.key">
+                    <span class="bn-analytics-tab__title">
+                      {{ tab.title }} <strong>{{ tab.done }}/{{ tab.total }}</strong>
+                    </span>
+                    <span class="bn-analytics-tab__sub" [class.bn-analytics-tab__sub--alert]="tab.alert">{{ tab.note }}</span>
+                  </button>
+                }
+              </div>
+
+              <div class="bn-analytics__body">
+                @if (activeAnalyticsTab === 'risk') {
+                  <div class="bn-analytics-grid">
+                    @for (item of riskParameters; track item.label) {
+                      <div class="bn-analytics-item">
+                        <ng-icon [name]="item.icon" class="bn-analytics-item__icon bn-analytics-item__icon--{{ item.tone }}"></ng-icon>
+                        <span class="bn-analytics-item__label">{{ item.label }}</span>
+                        <span class="bn-analytics-item__value">{{ item.value }}</span>
+                      </div>
+                    }
+                  </div>
+                } @else if (activeAnalyticsTab === 'validation') {
+                  <div class="bn-analytics-grid">
+                    @for (item of validationChecks; track item.label) {
+                      <div class="bn-analytics-item">
+                        <ng-icon [name]="item.icon" class="bn-analytics-item__icon bn-analytics-item__icon--{{ item.tone }}"></ng-icon>
+                        <span class="bn-analytics-item__label">{{ item.label }}</span>
+                        <span class="bn-analytics-item__value">{{ item.value }}</span>
+                      </div>
+                    }
+                  </div>
+                } @else {
+                  <div class="bn-analytics-grid">
+                    @for (item of imageQualityChecks; track item.label) {
+                      <div class="bn-analytics-item">
+                        <ng-icon [name]="item.icon" class="bn-analytics-item__icon bn-analytics-item__icon--{{ item.tone }}"></ng-icon>
+                        <span class="bn-analytics-item__label">{{ item.label }}</span>
+                        <span class="bn-analytics-item__value">{{ item.value }}</span>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+
+            <p class="bn-verify-panel__section-title">BENEFICIARY / PAYEE</p>
+            <p class="bn-verify-panel__beneficiary">{{ beneficiaryTitle }}</p>
+
+            <div class="bn-verify-panel__meta">
+              <div class="bn-verify-panel__meta-row">
+                <span>OCR Engine:</span><strong>{{ scanOcrEngine }}</strong>
+              </div>
+              <div class="bn-verify-panel__meta-row">
+                <span>Processing Time:</span><strong>{{ scanProcessingTime }}</strong>
+              </div>
+              <div class="bn-verify-panel__meta-row">
+                <span>Confidence Score:</span><strong class="bn-verify-panel__accuracy">{{ scanAccuracy }}</strong>
+              </div>
             </div>
           </div>
-
-          <!-- Instrument Details -->
-          <div class="ood-detail__section">
-            <p class="ood-detail__section-title">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <rect x="3" y="3" width="18" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/>
-                <path d="M3 9h18M9 21V9" fill="none" stroke="currentColor" stroke-width="1.8"/>
-              </svg>
-              Instrument Details
-            </p>
-            <div class="ood-detail__row">
-              <span class="ood-detail__key">Cheque Number</span>
-              <span class="ood-detail__val ood-detail__val--mono">{{ detailItem.chequeNo }}</span>
-            </div>
-            <div class="ood-detail__row">
-              <span class="ood-detail__key">MICR Code</span>
-              <span class="ood-detail__val ood-detail__val--mono">{{ detailItem.micr }}</span>
-            </div>
-            <div class="ood-detail__row">
-              <span class="ood-detail__key">Instrument Date</span>
-              <span class="ood-detail__val">{{ detailItem.chequeDate }}</span>
-            </div>
-            <div class="ood-detail__row">
-              <span class="ood-detail__key">Drawer Bank</span>
-              <span class="ood-detail__val">{{ detailItem.drawerBank }}</span>
-            </div>
-            <div class="ood-detail__row">
-              <span class="ood-detail__key">Paying Bank Code</span>
-              <span class="ood-detail__val ood-detail__val--mono">{{ detailItem.payingBankCode }}</span>
-            </div>
-            <div class="ood-detail__row">
-              <span class="ood-detail__key">Receiver Branch</span>
-              <span class="ood-detail__val ood-detail__val--mono">{{ detailItem.receiverBranchCode }}</span>
-            </div>
-             <div class="ood-detail__row">
-              <span class="ood-detail__key">Total Amount</span>
-              <span class="ood-detail__val ood-detail__val--amount">{{ detailItem.currency }} {{ formatAmount(detailItem.amount) }}</span>
-            </div>
-            <div class="ood-detail__row">
-              <span class="ood-detail__key">Amount in Words</span>
-              <span class="ood-detail__val">{{ detailItem.amountInWords }}</span>
-            </div>
-            <div class="ood-detail__row">
-              <span class="ood-detail__key">Currency</span>
-              <span class="ood-detail__val">{{ detailItem.currency }}</span>
-            </div>
-          </div>
-
-          <p class="ood-detail__sync">
-            Created: {{ formatDate(detailItem.createdOn) }} by {{ detailItem.createdBy }}
-            @if (detailItem.updatedOn) {
-              &nbsp;·&nbsp; Updated: {{ formatDate(detailItem.updatedOn) }}
-            }
-          </p>
-
         </div>
       </div>
 
@@ -244,14 +466,14 @@
 
     <div class="ood-detail__decision">
       <div class="ood-detail__decision-row">
- <button class="ood-detail__decision-btn ood-detail__decision-btn--approve" type="button" (click)="onApproveInstrument()">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2" />
-          <path d="M8.5 12.5l2.5 2.5 4.5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-        Approve Instrument
-      </button>
-        <button class="ood-detail__decision-btn ood-detail__decision-btn--reject" type="button" (click)="onRejectInstrument()">
+        <button class="ood-detail__decision-btn ood-detail__decision-btn--approve" type="button" (click)="onAuthorizeInstrument()" [disabled]="isActionLoading">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2" />
+            <path d="M8.5 12.5l2.5 2.5 4.5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          Authorize
+        </button>
+        <button class="ood-detail__decision-btn ood-detail__decision-btn--reject" type="button" (click)="onRejectInstrument()" [disabled]="isActionLoading">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2" />
             <path d="M9 9l6 6M15 9l-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
@@ -259,9 +481,6 @@
           Reject
         </button>
       </div>
-
-     
-
       <p class="ood-detail__decision-note">AUTHORIZED DECISION REQUIRED</p>
     </div>
   }

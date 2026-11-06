@@ -766,4 +766,542 @@ $accent-blue: #0ea5e9;
     background: #e0f2fe;
     color: #0369a1;
   }
+  &--fraud {
+    background: #fee2e2;
+    color: #b91c1c;
+  }
+  &--demo {
+    background: #fef3c7;
+    color: #92400e;
+    margin-left: 6px;
+  }
+}
+ .bn-section-separator {
+  display: flex !important;
+  align-items: center;
+  width: 100% !important;
+  margin: 28px 0 20px !important;
+  gap: 12px;
+}
+
+.bn-section-separator::before,
+.bn-section-separator::after {
+  content: "";
+  display: block !important;
+  height: 1px !important;
+  background-color: #cbd5e1 !important;
+  flex: 1 1 auto !important;
+}
+
+.bn-section-separator span {
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  white-space: nowrap;
+} .bn-section-separator {
+  width: 100%;
+  margin: 24px 0;
+}
+
+// ── Scanner Integration ───────────────────────────────────────────────────
+.bn-scan-image {
+  display: block;
+  width: 100%;
+  min-height: 200px;
+  object-fit: contain;
+  background: #fff;
+  border: 2px solid $border;
+  border-radius: 10px;
+}
+
+.bn-scan-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 200px;
+  border: 2px dashed $border;
+  border-radius: 10px;
+  color: $text-muted;
+  font-size: 12px;
+
+  p { margin: 0; }
+}
+
+.bn-scan-queue {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 14px;
+
+  &__label {
+    font-size: 11px;
+    font-weight: 600;
+    color: $text-secondary;
+  }
+}
+
+.bn-scan-chip {
+  padding: 4px 12px;
+  border: 1px solid $border;
+  border-radius: 12px;
+  background: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  color: $text-secondary;
+  cursor: pointer;
+  transition: all .2s;
+
+  &--active {
+    background: $text-primary;
+    color: #fff;
+    border-color: $text-primary;
+  }
+
+  &--fraud {
+    border-color: #fca5a5;
+    color: #b91c1c;
+
+    &.bn-scan-chip--active {
+      background: #b91c1c;
+      color: #fff;
+    }
+  }
+}
+
+// ── Scan Image Viewer (same controls as Cheque Details page) ─────────────
+.image-controls-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  border: 1px solid #dee2e6;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: #fff;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.control-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #495057;
+  white-space: nowrap;
+  min-width: 70px;
+}
+
+.control-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid #dee2e6;
+  background: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #495057;
+
+  &:hover {
+    background: $meezan-deep;
+    color: #fff;
+    border-color: $meezan-deep;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(90, 33, 129, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  ng-icon {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.control-btn.btn-reset-all {
+  width: auto;
+  padding: 4px 12px;
+  gap: 4px;
+  background: $meezan-deep;
+  color: #fff;
+  border-color: $meezan-deep;
+
+  span {
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  &:hover {
+    background: darken($meezan-deep, 8%);
+    border-color: darken($meezan-deep, 8%);
+  }
+}
+
+.cheque-image-container {
+  position: relative;
+  width: 100%;
+  height: auto;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 2px solid #dee2e6;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+}
+
+.main-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 350px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: zoom-in;
+  padding: 0;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.main-cheque-image {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  object-position: center;
+  border-radius: 8px;
+  padding: 0;
+  background-color: #fff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  min-width: 100%;
+  min-height: 100%;
+}
+
+.magnifier-lens {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border: 4px solid #fff;
+  border-radius: 50%;
+  background-repeat: no-repeat;
+  background-size: 500% 500%;
+  box-shadow:
+    0 12px 48px rgba(0, 0, 0, 0.5),
+    0 0 0 2px rgba(90, 33, 129, 0.4),
+    inset 0 0 30px rgba(0, 0, 0, 0.15);
+  pointer-events: none;
+  z-index: 100;
+  backdrop-filter: blur(3px);
+  transition: opacity 0.3s ease, transform 0.15s ease;
+  opacity: 0.98;
+}
+
+.thumbnail-container {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  padding: 16px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 16px;
+  border: 2px solid #dee2e6;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.thumbnail-item {
+  position: relative;
+  width: 120px;
+  height: 90px;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 3px solid transparent;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+
+  &:hover {
+    transform: scale(1.1) translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.18);
+  }
+
+  &.active {
+    border-color: $meezan-deep;
+    box-shadow:
+      0 0 0 4px rgba(90, 33, 129, 0.25),
+      0 6px 20px rgba(90, 33, 129, 0.35);
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .thumbnail-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(90, 33, 129, 0.95), rgba(90, 33, 129, 0.75));
+    color: #fff;
+    font-size: 0.75rem;
+    padding: 6px 8px;
+    text-align: center;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+}
+
+// ── Instrument Details: 2 fields per line ────────────────────────────────
+.bn-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 14px;
+
+  .bn-field { margin-bottom: 0; min-width: 0; }
+
+  &__full { grid-column: 1 / -1; }
+}
+
+// ── MICR Verification card ───────────────────────────────────────────────
+.bn-micr-card {
+  margin-top: 16px;
+
+  .bn-form-actions { margin-top: 16px; }
+}
+
+.bn-micr-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 6px;
+
+  th {
+    font-size: 11px;
+    font-weight: 700;
+    color: $text-primary;
+    text-transform: uppercase;
+    letter-spacing: .2px;
+    padding: 4px 6px 8px;
+    border-bottom: 1px solid $border;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 4px 4px;
+    vertical-align: middle;
+  }
+
+  // Checkbox columns only need their header width
+  th:nth-child(5), th:nth-child(6),
+  td:nth-child(5), td:nth-child(6) {
+    width: 1%;
+  }
+
+  &__label {
+    font-size: 12px;
+    font-weight: 700;
+    color: $text-primary;
+    white-space: nowrap;
+  }
+}
+
+.bn-micr-value {
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 8px;
+  background: #f1f5f9;
+  border-radius: 6px;
+  font-family: 'Courier New', monospace;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: $text-primary;
+  text-align: center;
+  white-space: nowrap;
+  user-select: text;
+
+  &--words {
+    font-family: inherit;
+    font-style: italic;
+    font-weight: 700;
+    color: #1e3a8a;
+  }
+}
+
+.bn-micr-input {
+  position: relative;
+  min-width: 130px;
+
+  .bn-input {
+    padding-right: 28px;
+    text-align: right;
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+  }
+
+  &__icon {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+  }
+
+  &--matched {
+    .bn-input { border-color: #16a34a; }
+    .bn-micr-input__icon { color: #16a34a; }
+  }
+
+  &--not-matched {
+    .bn-input { border-color: #dc2626; }
+    .bn-micr-input__icon { color: #dc2626; }
+  }
+}
+
+.bn-micr-check {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+
+  &--matched { accent-color: #166534; }
+  &--not-matched { accent-color: #b91c1c; }
+}
+
+// ── Cheque Analytics tabs (Verification Panel) ────────────────────────────
+.bn-analytics {
+  border: 1px solid $border;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+
+  &__tabs {
+    display: flex;
+    border-bottom: 1px solid $border;
+    background: #f8fafc;
+  }
+
+  &__body {
+    padding: 10px 12px;
+  }
+}
+
+.bn-analytics-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  padding: 8px 10px;
+  border: none;
+  border-bottom: 3px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  transition: all .2s;
+
+  &--active {
+    background: #fff;
+    border-bottom-color: $meezan-deep;
+    box-shadow: inset 0 0 0 1px $border;
+    border-radius: 6px 6px 0 0;
+  }
+
+  &__title {
+    font-size: 12px;
+    font-weight: 700;
+    color: $text-primary;
+
+    strong {
+      float: none;
+      margin-left: 4px;
+      font-size: 13px;
+      color: $text-primary;
+    }
+  }
+
+  &__sub {
+    font-size: 10px;
+    color: $text-muted;
+
+    &--alert { color: #dc2626; font-weight: 600; }
+  }
+}
+
+.bn-analytics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 18px;
+}
+
+.bn-analytics-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 2px;
+  border-bottom: 1px dashed #eef2f7;
+  font-size: 12px;
+
+  &__icon {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+
+    &--warn { color: #eab308; }
+    &--ok   { color: #16a34a; }
+  }
+
+  &__label {
+    flex: 1;
+    color: $text-primary;
+  }
+
+  &__value {
+    font-weight: 700;
+    font-size: 11px;
+    color: $text-primary;
+    white-space: nowrap;
+  }
+}
+
+.bn-analytics-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 28px 10px;
+  color: $text-muted;
+  font-size: 12px;
+
+  ng-icon { width: 22px; height: 22px; }
+  p { margin: 0; }
 }
